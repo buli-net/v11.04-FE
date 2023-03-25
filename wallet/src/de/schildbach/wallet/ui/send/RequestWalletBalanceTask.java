@@ -65,6 +65,7 @@ import java.io.InputStreamReader;
 import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
@@ -236,7 +237,7 @@ public final class RequestWalletBalanceTask {
                                         return null;
                                     }
                                     final Transaction tx = new Transaction(Constants.NETWORK_PARAMETERS,
-                                            Constants.HEX.decode(transactionResponse.result));
+                                            ByteBuffer.wrap(Constants.HEX.decode(transactionResponse.result)));
                                     if (!tx.getTxId().equals(utxo.getHash()))
                                         log.warn("{} - lied about txid", server.socketAddress);
                                     else if (!tx.getOutput(utxo.getIndex()).getValue().equals(utxo.getValue()))
