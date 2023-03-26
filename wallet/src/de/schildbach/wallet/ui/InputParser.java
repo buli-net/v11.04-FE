@@ -161,7 +161,7 @@ public abstract class InputParser {
         public void parse() {
             if (Constants.MIMETYPE_TRANSACTION.equals(inputType)) {
                 try {
-                    final Transaction tx = new Transaction(Constants.NETWORK_PARAMETERS, input);
+                    final Transaction tx = new Transaction(Constants.NETWORK_PARAMETERS, ByteBuffer.wrap(input));
 
                     handleDirectTransaction(tx);
                 } catch (final VerificationException x) {
