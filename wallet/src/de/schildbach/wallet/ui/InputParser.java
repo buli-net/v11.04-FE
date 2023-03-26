@@ -49,6 +49,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.util.ArrayList;
@@ -104,7 +105,7 @@ public abstract class InputParser {
             } else if (PATTERN_TRANSACTION_BASE43.matcher(input).matches()) {
                 try {
                     final Transaction tx = new Transaction(Constants.NETWORK_PARAMETERS,
-                            Qr.decodeDecompressBinary(input));
+                            ByteBuffer.wrap(Qr.decodeDecompressBinary(input)));
                     handleDirectTransaction(tx);
                 } catch (final IOException | ProtocolException x) {
                     log.info("got invalid transaction", x);
@@ -112,7 +113,7 @@ public abstract class InputParser {
                 }
             } else if (PATTERN_TRANSACTION_HEX.matcher(input).matches()) {
                 try {
-                    final Transaction tx = new Transaction(Constants.NETWORK_PARAMETERS, Constants.HEX.decode(input));
+                    final Transaction tx = new Transaction(Constants.NETWORK_PARAMETERS, ByteBuffer.wrap(Constants.HEX.decode(input)));
                     handleDirectTransaction(tx);
                 } catch (final IllegalArgumentException | ProtocolException x) {
                     log.info("got invalid transaction", x);
