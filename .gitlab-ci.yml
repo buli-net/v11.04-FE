@@ -57,8 +57,8 @@ jammy-jdk11:
     paths:
       - wallet/build/outputs/apk/**/*.apk
 
-lunar-jdk17:
-  image: ubuntu:lunar
+noble-jdk17:
+  image: ubuntu:noble
   script:
     - apt-get update
     - apt-get -y install openjdk-17-jdk-headless gradle sdkmanager
