@@ -37,7 +37,7 @@ requiring your Ubuntu user password.
 
 On your PC, within your Linux shell, install the following Ubuntu packages:
 
-    sudo apt install openjdk-11-jdk openssl git gradle
+    sudo apt install openjdk-17-jdk openssl git gradle
 
 
 ## LOCATING THE BACKUP FILES
@@ -77,7 +77,7 @@ password.
 
 We need wallet-tool from bitcoinj. First, in a working directory, let's get bitcoinj:
 
-    git clone -b release-0.16 https://github.com/bitcoinj/bitcoinj.git
+    git clone -b release-0.17 https://github.com/bitcoinj/bitcoinj.git
     cd bitcoinj
 
 Make sure everything is compiled and ready to go by using once:
