@@ -106,6 +106,7 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
         syncModePreference.setEntries(new CharSequence[] {
                 Html.fromHtml(getString(R.string.preferences_sync_mode_labels_connection_filter)),
                 Html.fromHtml(getString(R.string.preferences_sync_mode_labels_full)) });
+        syncModePreference.setDefaultValue(config.getSyncModeDefault().name());
         if (!application.fullSyncCapable())
             removeOrDisablePreference(syncModePreference);
 

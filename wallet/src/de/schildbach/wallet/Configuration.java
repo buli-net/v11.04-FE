@@ -26,6 +26,7 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.net.HostAndPort;
 import de.schildbach.wallet.util.Formats;
+import org.bitcoinj.base.BitcoinNetwork;
 import org.bitcoinj.base.Coin;
 import org.bitcoinj.base.utils.MonetaryFormat;
 import org.slf4j.Logger;
@@ -144,8 +145,13 @@ public class Configuration {
         return prefs.getBoolean(PREFS_KEY_SEND_COINS_AUTOCLOSE, true);
     }
 
+    public SyncMode getSyncModeDefault() {
+        return Constants.NETWORK_PARAMETERS.getId().equals(BitcoinNetwork.ID_MAINNET) ?
+                SyncMode.CONNECTION_FILTER : SyncMode.FULL;
+    }
+
     public SyncMode getSyncMode() {
-        return SyncMode.valueOf(prefs.getString(PREFS_KEY_SYNC_MODE, SyncMode.CONNECTION_FILTER.name()));
+        return SyncMode.valueOf(prefs.getString(PREFS_KEY_SYNC_MODE, getSyncModeDefault().name()));
     }
 
     public enum SyncMode {

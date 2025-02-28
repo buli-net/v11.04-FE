@@ -54,8 +54,7 @@
         <ListPreference
             android:key="sync_mode"
             android:title="@string/preferences_sync_mode_title"
-            android:summary="@string/preferences_sync_mode_summary"
-            android:defaultValue="CONNECTION_FILTER" />
+            android:summary="@string/preferences_sync_mode_summary" />
 
         <EditTextPreference
             android:key="trusted_peer"
