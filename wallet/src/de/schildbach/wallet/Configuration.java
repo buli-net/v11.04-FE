@@ -85,6 +85,10 @@ public class Configuration {
         this.res = res;
 
         this.lastVersionCode = prefs.getInt(PREFS_KEY_LAST_VERSION, 0);
+
+        // migrations
+        if (prefs.contains(PREFS_KEY_BTC_PRECISION) && prefs.getString(PREFS_KEY_BTC_PRECISION, null).equals("4"))
+            prefs.edit().putString(PREFS_KEY_BTC_PRECISION, "6").apply();
     }
 
     private int getBtcPrecision() {

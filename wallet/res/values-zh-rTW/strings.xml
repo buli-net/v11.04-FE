@@ -223,7 +223,6 @@
   <string name="preferences_precision_summary">改變顯示單位，但不影響計算。</string>
   <string name="preferences_precision_labels_8">BTC，小數 8 位</string>
   <string name="preferences_precision_labels_6">BTC，小數 6 位</string>
-  <string name="preferences_precision_labels_4">BTC，小數 4 位</string>
   <string name="preferences_precision_labels_4_3">mBTC，小數 4 位</string>
   <string name="preferences_precision_labels_2_3">mBTC，小數 2 位</string>
   <string name="preferences_precision_labels_2_6">µBTC，小數 2 位</string>

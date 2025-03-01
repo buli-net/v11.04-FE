@@ -243,7 +243,6 @@
   <string name="preferences_precision_summary">Jednostka w której ma być podawana ilość. Nie wpływa na obliczenia.</string>
   <string name="preferences_precision_labels_8">BTC, 8 miejsc po przecinku</string>
   <string name="preferences_precision_labels_6">BTC, 6 miejsc po przecinku</string>
-  <string name="preferences_precision_labels_4">BTC, 4 miejsca po przecinku</string>
   <string name="preferences_precision_labels_4_3">mBTC, 4 miejsca po przecinku</string>
   <string name="preferences_precision_labels_2_3">mBTC, 2 miejsca po przecinku</string>
   <string name="preferences_precision_labels_2_6">µBTC, 2 miejsca po przecinku</string>

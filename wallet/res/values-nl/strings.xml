@@ -242,7 +242,6 @@
   <string name="preferences_precision_summary">Grootheid om waarden in te tonen. Dit heeft geen invloed op berekeningen.</string>
   <string name="preferences_precision_labels_8">BTC, 8 decimale getallen</string>
   <string name="preferences_precision_labels_6">BTC, 6 decimale getallen</string>
-  <string name="preferences_precision_labels_4">BTC, 4 decimale getallen</string>
   <string name="preferences_precision_labels_4_3">mBTC, 4 decimale getallen</string>
   <string name="preferences_precision_labels_2_3">mBTC, 2 decimale getallen</string>
   <string name="preferences_precision_labels_2_6">µBTC, 2 decimale getallen</string>

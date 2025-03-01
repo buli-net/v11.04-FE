@@ -242,7 +242,6 @@
   <string name="preferences_precision_summary">Uned i ddangos symiau ynddi. Dyw hyn ddim yn cael effaith ar gyfrifiannau.</string>
   <string name="preferences_precision_labels_8">BTC, 8 lle degol</string>
   <string name="preferences_precision_labels_6">BTC, 6 lle degol</string>
-  <string name="preferences_precision_labels_4">BTC, 4 lle degol</string>
   <string name="preferences_precision_labels_4_3">mBTC, 4 lle degol</string>
   <string name="preferences_precision_labels_2_3">mBTC, 2 lle degol</string>
   <string name="preferences_precision_labels_2_6">µBTC, 2 lle degol</string>

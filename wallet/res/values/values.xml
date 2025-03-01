@@ -9,7 +9,6 @@
     <string-array name="preferences_precision_values">
         <item>8</item>
         <item>6</item>
-        <item>4</item>
         <item>4/3</item>
         <item>2/3</item>
         <item>2/6</item>
@@ -19,7 +18,6 @@
     <string-array name="preferences_precision_labels">
         <item>@string/preferences_precision_labels_8</item>
         <item>@string/preferences_precision_labels_6</item>
-        <item>@string/preferences_precision_labels_4</item>
         <item>@string/preferences_precision_labels_4_3</item>
         <item>@string/preferences_precision_labels_2_3</item>
         <item>@string/preferences_precision_labels_2_6</item>

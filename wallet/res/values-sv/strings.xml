@@ -224,7 +224,6 @@
   <string name="preferences_precision_summary">Enhet att visa belopp i. Detta påverkar inte beräkningar.</string>
   <string name="preferences_precision_labels_8">BTC, 8 decimaler</string>
   <string name="preferences_precision_labels_6">BTC, 6 decimaler</string>
-  <string name="preferences_precision_labels_4">BTC, 4 decimaler</string>
   <string name="preferences_precision_labels_4_3">mBTC, 4 decimaler</string>
   <string name="preferences_precision_labels_2_3">mBTC, 2 decimaler</string>
   <string name="preferences_precision_labels_2_6">µBTC, 2 decimaler</string>

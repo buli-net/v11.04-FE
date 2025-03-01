@@ -242,7 +242,6 @@
   <string name="preferences_precision_summary">Unità per mostrare gli importi. Questo non influisce calcoli.</string>
   <string name="preferences_precision_labels_8">BTC, 8 cifre decimali</string>
   <string name="preferences_precision_labels_6">µBTC, 6 cifre decimali</string>
-  <string name="preferences_precision_labels_4">µBTC, 4 cifre decimali</string>
   <string name="preferences_precision_labels_4_3">µBTC, 4 cifre decimali</string>
   <string name="preferences_precision_labels_2_3">µBTC, 2 cifre decimali</string>
   <string name="preferences_precision_labels_2_6">µBTC, 2 cifre decimali</string>

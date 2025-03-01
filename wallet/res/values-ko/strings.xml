@@ -225,7 +225,6 @@
   <string name="preferences_precision_summary">수량 표시 영역의 단위입니다. 산정되는 수치에는 영향을 미치지 않습니다.</string>
   <string name="preferences_precision_labels_8">BTC, 소수 8자리</string>
   <string name="preferences_precision_labels_6">BTC, 소수 6자리</string>
-  <string name="preferences_precision_labels_4">BTC, 소수 4자리</string>
   <string name="preferences_precision_labels_4_3">mBTC, 소수 4자리</string>
   <string name="preferences_precision_labels_2_3">mBTC, 소수 2자리</string>
   <string name="preferences_precision_labels_2_6">µBTC, 소수 2자리</string>

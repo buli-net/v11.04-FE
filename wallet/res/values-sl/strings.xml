@@ -241,7 +241,6 @@
   <string name="preferences_precision_summary">Enota za prikaz. Ne vpliva na računanje.</string>
   <string name="preferences_precision_labels_8">BTC, 8 decimalnih mest</string>
   <string name="preferences_precision_labels_6">BTC, 6 decimalnih mest</string>
-  <string name="preferences_precision_labels_4">BTC, 4 decimalna mesta</string>
   <string name="preferences_precision_labels_4_3">mBTC, 4 decimalni mesti</string>
   <string name="preferences_precision_labels_2_3">mBTC, 2 decimalni mesti</string>
   <string name="preferences_precision_labels_2_6">µBTC, 2 decimalni mesti</string>
