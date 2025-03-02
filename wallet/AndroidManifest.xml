@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="wallet"
     android:installLocation="internalOnly"
-    android:versionCode="102600"
-    android:versionName="10.26">
+    android:versionCode="110000"
+    android:versionName="11.0">
 
     <uses-sdk
         android:minSdkVersion="28"

@@ -1,3 +1,14 @@
+v11.0
+
+* Requires Android 9.0 (Pie) or higher for running.
+* Requires JDK 17 for building.
+* New app flavor for Signet.
+* Based on bitcoinj 0.17.
+* Change base application ID to 'corp.wallet.bitcoin'.
+  However Mainnet and Testnet IDs stay unchanged for compatibility reasons.
+* Uses a shorter Java package internally.
+* Source code repository and issue tracker switched to GitLab.
+
 v10.25-v10.26
 
 * Add mBTC and µBTC denominations with more decimal places.
