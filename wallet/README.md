@@ -7,7 +7,7 @@ Your wallet contains your private keys and various transaction related metadata.
 storage:
 
     Testnet: /data/data/de.schildbach.wallet_test/files/wallet-protobuf-testnet
-    Signet:  /data/data/de.schildbach.wallet.signet/files/wallet-protobuf-signet
+    Signet:  /data/data/corp.wallet.bitcoin.signet/files/wallet-protobuf-signet
     Mainnet: /data/data/de.schildbach.wallet/files/wallet-protobuf
 
 The wallet file format is not compatible to wallet.dat (Satoshi client). Rather, it uses a custom protobuf format
@@ -16,7 +16,7 @@ which should be compatible between clients using bitcoinj.
 Certain actions cause automatic rolling backups of your wallet to app-private storage:
 
     Testnet: /data/data/de.schildbach.wallet_test/files/key-backup-protobuf-testnet
-    Signet:  /data/data/de.schildbach.wallet.signet/files/key-backup-protobuf-signet
+    Signet:  /data/data/corp.wallet.bitcoin.signet/files/key-backup-protobuf-signet
     Mainnet: /data/data/de.schildbach.wallet/files/key-backup-protobuf
 
 Your wallet can be manually backed up to and restored from a share of the storage access framework (likely Google Drive):
@@ -32,7 +32,7 @@ The current fee rate for each of the fee categories (economic, normal, priority)
 app-private storage:
 
     Testnet: /data/data/de.schildbach.wallet_test/files/fees-testnet.txt
-    Signet:  /data/data/de.schildbach.wallet.signet/files/fees-signet.txt
+    Signet:  /data/data/corp.wallet.bitcoin.signet/files/fees-signet.txt
     Mainnet: /data/data/de.schildbach.wallet/files/fees.txt
 
 
@@ -41,7 +41,7 @@ app-private storage:
 The wallet file can be pulled from a device using:
 
     Testnet: adb pull /data/data/de.schildbach.wallet_test/files/wallet-protobuf-testnet
-    Signet:  adb pull /data/data/de.schildbach.wallet.signet/files/wallet-protobuf-signet
+    Signet:  adb pull /data/data/corp.wallet.bitcoin.signet/files/wallet-protobuf-signet
 
 Log messages can be viewed by:
 

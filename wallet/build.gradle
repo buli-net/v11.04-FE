@@ -44,7 +44,8 @@ android {
     buildToolsVersion '35.0.0'
 
     defaultConfig {
-        applicationId 'de.schildbach'
+        // if you fork the app for an alt-coin, change this ID
+        applicationId 'corp.wallet.bitcoin'
     }
 
     buildTypes {
@@ -63,15 +64,19 @@ android {
     productFlavors {
         Testnet { // capital T because testnet flavor not allowed
             dimension 'network'
-            applicationIdSuffix '.wallet_test'
+            // if you fork the app, replace the following applicationId by this:
+            // applicationIdSuffix '.testnet'
+            applicationId 'de.schildbach.wallet_test'
         }
         Signet {
             dimension 'network'
-            applicationIdSuffix '.wallet.signet'
+            applicationIdSuffix '.signet'
         }
         Mainnet {
             dimension 'network'
-            applicationIdSuffix '.wallet'
+            // if you fork the app, replace the following applicationId by this:
+            // applicationIdSuffix '.mainnet'
+            applicationId 'de.schildbach.wallet'
         }
     }
 
