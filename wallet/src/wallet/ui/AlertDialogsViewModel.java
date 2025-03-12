@@ -191,52 +191,6 @@ public class AlertDialogsViewModel extends AndroidViewModel {
                         return;
                     }
                 }
-
-                // Maybe show insecure device alert.
-                if (Build.VERSION.SECURITY_PATCH.compareToIgnoreCase(Constants.SECURITY_PATCH_INSECURE_BELOW) < 0) {
-                    showInsecureDeviceAlertDialog.postValue(new Event<>(Constants.SECURITY_PATCH_INSECURE_BELOW));
-                    return;
-                }
-
-                // Maybe show low storage alert.
-                final Intent stickyIntent = application.registerReceiver(null,
-                        new IntentFilter(Intent.ACTION_DEVICE_STORAGE_LOW));
-                if (stickyIntent != null) {
-                    showLowStorageAlertDialog.postValue(Event.simple());
-                    return;
-                }
-
-                // Maybe show too much balance alert.
-                if (Constants.NETWORK_PARAMETERS.getId().equals(BitcoinNetwork.ID_MAINNET)) {
-                    final Coin balance = application.getWallet().getBalance();
-                    if (balance.isGreaterThan(Constants.TOO_MUCH_BALANCE_THRESHOLD)) {
-                        showTooMuchBalanceAlertDialog.postValue(Event.simple());
-                        return;
-                    }
-                }
-
-                final boolean walletIsEmpty = application.getWallet().getTransactions(true).isEmpty();
-
-                // Maybe show battery optimization dialog.
-                if (config.isTimeForBatteryOptimizationDialog() &&
-                        ContextCompat.checkSelfPermission(application,
-                                Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS) == PackageManager.PERMISSION_GRANTED &&
-                        !powerManager.isIgnoringBatteryOptimizations(application.getPackageName()) &&
-                        !walletIsEmpty) {
-                    showBatteryOptimizationDialog.postValue(Event.simple());
-                    return;
-                }
-
-                // Maybe request notification permission.
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-                        ContextCompat.checkSelfPermission(application,
-                                Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED &&
-                        !walletIsEmpty) {
-                    requestNotificationPermissionDialog.postValue(Event.simple());
-                    return;
-                }
-
-                log.info("all good, no alert dialog shown");
             }
         } catch (final Exception x) {
             if (x instanceof UnknownHostException || x instanceof SocketException || x instanceof SocketTimeoutException) {
@@ -248,6 +202,52 @@ public class AlertDialogsViewModel extends AndroidViewModel {
                 log.warn("problem parsing", x);
             }
         }
+
+        // Maybe show insecure device alert.
+        if (Build.VERSION.SECURITY_PATCH.compareToIgnoreCase(Constants.SECURITY_PATCH_INSECURE_BELOW) < 0) {
+            showInsecureDeviceAlertDialog.postValue(new Event<>(Constants.SECURITY_PATCH_INSECURE_BELOW));
+            return;
+        }
+
+        // Maybe show low storage alert.
+        final Intent stickyIntent = application.registerReceiver(null,
+                new IntentFilter(Intent.ACTION_DEVICE_STORAGE_LOW));
+        if (stickyIntent != null) {
+            showLowStorageAlertDialog.postValue(Event.simple());
+            return;
+        }
+
+        // Maybe show too much balance alert.
+        if (Constants.NETWORK_PARAMETERS.getId().equals(BitcoinNetwork.ID_MAINNET)) {
+            final Coin balance = application.getWallet().getBalance();
+            if (balance.isGreaterThan(Constants.TOO_MUCH_BALANCE_THRESHOLD)) {
+                showTooMuchBalanceAlertDialog.postValue(Event.simple());
+                return;
+            }
+        }
+
+        final boolean walletIsEmpty = application.getWallet().getTransactions(true).isEmpty();
+
+        // Maybe show battery optimization dialog.
+        if (config.isTimeForBatteryOptimizationDialog() &&
+                ContextCompat.checkSelfPermission(application,
+                        Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS) == PackageManager.PERMISSION_GRANTED &&
+                !powerManager.isIgnoringBatteryOptimizations(application.getPackageName()) &&
+                !walletIsEmpty) {
+            showBatteryOptimizationDialog.postValue(Event.simple());
+            return;
+        }
+
+        // Maybe request notification permission.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                ContextCompat.checkSelfPermission(application,
+                        Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED &&
+                !walletIsEmpty) {
+            requestNotificationPermissionDialog.postValue(Event.simple());
+            return;
+        }
+
+        log.info("all good, no alert dialog shown");
     }
 
     @MainThread
