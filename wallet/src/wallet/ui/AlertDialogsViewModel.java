@@ -111,95 +111,97 @@ public class AlertDialogsViewModel extends AndroidViewModel {
 
     @WorkerThread
     private void processAsync(final HttpUrl versionUrl) {
-        try {
-            log.debug("querying \"{}\"...", versionUrl);
-            final Request.Builder request = new Request.Builder();
-            request.url(versionUrl);
-            final Headers.Builder headers = new Headers.Builder();
-            headers.add("Accept-Charset", "utf-8");
-            final String userAgent = application.httpUserAgent();
-            if (userAgent != null)
-                headers.add("User-Agent", userAgent);
-            request.headers(headers.build());
+        if (config.isEnableVersionCheck()) {
+            try {
+                log.debug("querying \"{}\"...", versionUrl);
+                final Request.Builder request = new Request.Builder();
+                request.url(versionUrl);
+                final Headers.Builder headers = new Headers.Builder();
+                headers.add("Accept-Charset", "utf-8");
+                final String userAgent = application.httpUserAgent();
+                if (userAgent != null)
+                    headers.add("User-Agent", userAgent);
+                request.headers(headers.build());
 
-            final OkHttpClient.Builder httpClientBuilder = Constants.HTTP_CLIENT.newBuilder();
-            httpClientBuilder.connectionSpecs(Collections.singletonList(ConnectionSpec.RESTRICTED_TLS));
-            final Call call = httpClientBuilder.build().newCall(request.build());
+                final OkHttpClient.Builder httpClientBuilder = Constants.HTTP_CLIENT.newBuilder();
+                httpClientBuilder.connectionSpecs(Collections.singletonList(ConnectionSpec.RESTRICTED_TLS));
+                final Call call = httpClientBuilder.build().newCall(request.build());
 
-            final Response response = call.execute();
-            if (response.isSuccessful()) {
-                // Maybe show timeskew alert.
-                final Instant serverTime = response.headers().getInstant("Date");
-                if (serverTime != null) {
-                    final Duration diff = Duration.between(serverTime, Instant.now()).abs();
-                    if (diff.compareTo(Duration.ofHours(1)) > 0) {
-                        log.info("according to \"" + versionUrl + "\", system clock is off by " + diff.toMinutes()
-                                + " minutes");
-                        showTimeskewAlertDialog.postValue(new Event<>(diff));
-                        return;
-                    }
-                }
-
-                // Read properties from server.
-                final Map<String, String> properties = new HashMap<>();
-                try (final BufferedReader reader = new BufferedReader(response.body().charStream())) {
-                    while (true) {
-                        final String line = reader.readLine();
-                        if (line == null)
-                            break;
-                        if (line.charAt(0) == '#')
-                            continue;
-
-                        final Splitter splitter = Splitter.on('=').trimResults();
-                        final Iterator<String> split = splitter.split(line).iterator();
-                        if (!split.hasNext())
-                            continue;
-                        final String key = split.next();
-                        if (!split.hasNext()) {
-                            properties.put(null, key);
-                            continue;
+                final Response response = call.execute();
+                if (response.isSuccessful()) {
+                    // Maybe show timeskew alert.
+                    final Instant serverTime = response.headers().getInstant("Date");
+                    if (serverTime != null) {
+                        final Duration diff = Duration.between(serverTime, Instant.now()).abs();
+                        if (diff.compareTo(Duration.ofHours(1)) > 0) {
+                            log.info("according to \"" + versionUrl + "\", system clock is off by " + diff.toMinutes()
+                                    + " minutes");
+                            showTimeskewAlertDialog.postValue(new Event<>(diff));
+                            return;
                         }
-                        final String value = split.next();
-                        if (!split.hasNext()) {
-                            properties.put(key.toLowerCase(Locale.US), value);
-                            continue;
-                        }
-                        log.info("Ignoring line: {}", line);
                     }
-                }
 
-                // Maybe show version alert.
-                String recommendedVersionKey = "version";
-                Integer recommendedVersion = properties.containsKey(recommendedVersionKey) ?
-                        Ints.tryParse(properties.get(recommendedVersionKey)) : null;
-                Installer recommendedMarket = Installer.F_DROID;
-                if (installer != null) {
-                    final String versionKey = "version." + installer.name().toLowerCase(Locale.US);
-                    final Integer version = properties.containsKey(versionKey) ?
-                            Ints.tryParse(properties.get(versionKey)) : null;
-                    if (recommendedVersion == null || (version != null && version > recommendedVersion)) {
-                        recommendedVersionKey = versionKey;
-                        recommendedVersion = version;
-                        recommendedMarket = installer;
+                    // Read properties from server.
+                    final Map<String, String> properties = new HashMap<>();
+                    try (final BufferedReader reader = new BufferedReader(response.body().charStream())) {
+                        while (true) {
+                            final String line = reader.readLine();
+                            if (line == null)
+                                break;
+                            if (line.charAt(0) == '#')
+                                continue;
+
+                            final Splitter splitter = Splitter.on('=').trimResults();
+                            final Iterator<String> split = splitter.split(line).iterator();
+                            if (!split.hasNext())
+                                continue;
+                            final String key = split.next();
+                            if (!split.hasNext()) {
+                                properties.put(null, key);
+                                continue;
+                            }
+                            final String value = split.next();
+                            if (!split.hasNext()) {
+                                properties.put(key.toLowerCase(Locale.US), value);
+                                continue;
+                            }
+                            log.info("Ignoring line: {}", line);
+                        }
+                    }
+
+                    // Maybe show version alert.
+                    String recommendedVersionKey = "version";
+                    Integer recommendedVersion = properties.containsKey(recommendedVersionKey) ?
+                            Ints.tryParse(properties.get(recommendedVersionKey)) : null;
+                    Installer recommendedMarket = Installer.F_DROID;
+                    if (installer != null) {
+                        final String versionKey = "version." + installer.name().toLowerCase(Locale.US);
+                        final Integer version = properties.containsKey(versionKey) ?
+                                Ints.tryParse(properties.get(versionKey)) : null;
+                        if (recommendedVersion == null || (version != null && version > recommendedVersion)) {
+                            recommendedVersionKey = versionKey;
+                            recommendedVersion = version;
+                            recommendedMarket = installer;
+                        }
+                    }
+                    if (recommendedVersion != null) {
+                        log.info("according to \"{}\" strongly recommended minimum app {} is \"{}\", recommended " +
+                                "market is {}", versionUrl, recommendedVersionKey, recommendedVersion, recommendedMarket);
+                        if (recommendedVersion > application.packageInfo().versionCode) {
+                            showVersionAlertDialog.postValue(new Event<>(recommendedMarket));
+                            return;
+                        }
                     }
                 }
-                if (recommendedVersion != null) {
-                    log.info("according to \"{}\" strongly recommended minimum app {} is \"{}\", recommended " +
-                            "market is {}", versionUrl, recommendedVersionKey, recommendedVersion, recommendedMarket);
-                    if (recommendedVersion > application.packageInfo().versionCode) {
-                        showVersionAlertDialog.postValue(new Event<>(recommendedMarket));
-                        return;
-                    }
+            } catch (final Exception x) {
+                if (x instanceof UnknownHostException || x instanceof SocketException || x instanceof SocketTimeoutException) {
+                    // swallow
+                    log.debug("problem reading", x);
+                } else {
+                    CrashReporter.saveBackgroundTrace(new RuntimeException(versionUrl.toString(), x),
+                            application.packageInfo());
+                    log.warn("problem parsing", x);
                 }
-            }
-        } catch (final Exception x) {
-            if (x instanceof UnknownHostException || x instanceof SocketException || x instanceof SocketTimeoutException) {
-                // swallow
-                log.debug("problem reading", x);
-            } else {
-                CrashReporter.saveBackgroundTrace(new RuntimeException(versionUrl.toString(), x),
-                        application.packageInfo());
-                log.warn("problem parsing", x);
             }
         }
 

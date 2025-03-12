@@ -115,6 +115,11 @@ public final class SettingsFragment extends PreferenceFragment implements OnPref
         trustedPeerOnlyPreference = findPreference(Configuration.PREFS_KEY_TRUSTED_PEERS_ONLY);
         trustedPeerOnlyPreference.setOnPreferenceChangeListener(this);
 
+        final Preference enableVersionCheckPreferenceToRemove = findPreference(config.getEnableVersionCheckDefault() ?
+                Configuration.PREFS_KEY_ENABLE_VERSION_CHECK_DEFAULT_FALSE :
+                Configuration.PREFS_KEY_ENABLE_VERSION_CHECK);
+        removePreference(enableVersionCheckPreferenceToRemove);
+
         final Preference enableExchangeRatesPreference = findPreference(Configuration.PREFS_KEY_ENABLE_EXCHANGE_RATES);
         if (!Constants.ENABLE_EXCHANGE_RATES)
             removePreference(enableExchangeRatesPreference);

@@ -275,6 +275,8 @@
     <string name="preferences_trusted_peer_only_summary">Verhindert Verbindungen zu Peers außer dem vertrauenswürdigen Peer.</string>
     <string name="preferences_block_explorer_title">Block-Explorer</string>
     <string name="preferences_block_explorer_summary">Externer Block-Explorer, der für die Anzeige von Transaktionen, Adressen und Blocks verwendet wird.</string>
+    <string name="preferences_enable_version_check_title">Nach kritischen Updates suchen</string>
+    <string name="preferences_enable_version_check_summary">Regelmäßige Suche nach kritischen Updates der App. Vor einer Installation wirst du trotzdem noch gefragt. Diese Auswahl sammelt keine persönlichen Daten.</string>
     <string name="preferences_enable_exchange_rates_title">Lokale Beträge zeigen</string>
     <string name="preferences_enable_exchange_rates_summary">Ruft die Wechselkurse von einem Feed ab, um lokale Beträge auszurechnen.</string>
     <string name="preferences_data_usage_title">Datenverbrauch</string>

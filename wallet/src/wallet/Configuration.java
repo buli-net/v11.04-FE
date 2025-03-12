@@ -52,6 +52,8 @@ public class Configuration {
     public static final String PREFS_KEY_TRUSTED_PEERS = "trusted_peer";
     public static final String PREFS_KEY_TRUSTED_PEERS_ONLY = "trusted_peer_only";
     public static final String PREFS_KEY_BLOCK_EXPLORER = "block_explorer";
+    public static final String PREFS_KEY_ENABLE_VERSION_CHECK = "enable_version_check";
+    public static final String PREFS_KEY_ENABLE_VERSION_CHECK_DEFAULT_FALSE = "enable_version_check_default_false";
     public static final String PREFS_KEY_ENABLE_EXCHANGE_RATES = "enable_exchange_rates";
     public static final String PREFS_KEY_DATA_USAGE = "data_usage";
     public static final String PREFS_KEY_BATTERY_OPTIMIZATION = "battery_optimization";
@@ -187,6 +189,16 @@ public class Configuration {
     public Uri getBlockExplorer() {
         return Uri.parse(prefs.getString(PREFS_KEY_BLOCK_EXPLORER,
                 res.getStringArray(R.array.preferences_block_explorer_values)[0]));
+    }
+
+    public boolean getEnableVersionCheckDefault() {
+        return Constants.NETWORK_PARAMETERS.getId().equals(BitcoinNetwork.ID_MAINNET);
+    }
+
+    public boolean isEnableVersionCheck() {
+        return prefs.getBoolean(getEnableVersionCheckDefault() ?
+                PREFS_KEY_ENABLE_VERSION_CHECK : PREFS_KEY_ENABLE_VERSION_CHECK_DEFAULT_FALSE,
+                getEnableVersionCheckDefault());
     }
 
     public boolean isEnableExchangeRates() {

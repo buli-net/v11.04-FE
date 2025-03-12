@@ -42,6 +42,18 @@
                 android:action="android.settings.IGNORE_BATTERY_OPTIMIZATION_SETTINGS" />
         </Preference>
 
+        <!-- needs two copies because we can't set the defaultValue programmatically -->
+        <CheckBoxPreference
+            android:key="enable_version_check"
+            android:title="@string/preferences_enable_version_check_title"
+            android:summary="@string/preferences_enable_version_check_summary"
+            android:defaultValue="true" />
+        <CheckBoxPreference
+            android:key="enable_version_check_default_false"
+            android:title="@string/preferences_enable_version_check_title"
+            android:summary="@string/preferences_enable_version_check_summary"
+            android:defaultValue="false" />
+
         <Preference
             android:key="notifications"
             android:title="@string/preferences_notifications_title"
