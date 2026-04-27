@@ -26,7 +26,6 @@ import com.google.common.io.ByteStreams;
 import okhttp3.Call;
 import okhttp3.Headers;
 import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
@@ -49,7 +48,6 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 public class DynamicFeeLiveData extends LiveData<Map<FeeCategory, Coin>> {
     private final HttpUrl dynamicFeesUrl;
@@ -163,12 +161,7 @@ public class DynamicFeeLiveData extends LiveData<Map<FeeCategory, Coin>> {
             headers.add("If-Modified-Since", Instant.ofEpochMilli(targetFile.lastModified()));
         request.headers(headers.build());
 
-        final OkHttpClient.Builder httpClientBuilder = Constants.HTTP_CLIENT.newBuilder();
-        httpClientBuilder.connectTimeout(5, TimeUnit.SECONDS);
-        httpClientBuilder.writeTimeout(5, TimeUnit.SECONDS);
-        httpClientBuilder.readTimeout(5, TimeUnit.SECONDS);
-        final OkHttpClient httpClient = httpClientBuilder.build();
-        final Call call = httpClient.newCall(request.build());
+        final Call call = Constants.HTTP_CLIENT.newCall(request.build());
         try {
             final Response response = call.execute();
             final int status = response.code();
