@@ -100,7 +100,6 @@ public class AlertDialogsViewModel extends AndroidViewModel {
         final String installerPackageName = Installer.installerPackageName(application);
         if (installerPackageName != null)
             url.addEncodedQueryParameter("installer", installerPackageName);
-        url.addQueryParameter("sdk", Integer.toString(Build.VERSION.SDK_INT));
         url.addQueryParameter("current", Integer.toString(packageInfo.versionCode));
 
         executor.execute(() -> processAsync(url.build()));
