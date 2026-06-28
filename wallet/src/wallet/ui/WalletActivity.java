@@ -170,13 +170,13 @@ root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlob
             return;
         }
         
-// lấy màu động
+// dynamic color
 int syncTextColor = tv.getCurrentTextColor();
 percent.setTextColor(syncTextColor);
 
-int btcColor = syncTextColor;   // <-- khai báo luôn ở đây
+int btcColor = syncTextColor;   // <-- Declare it here.
 if (tv != null) {
-    btcColor = tv.getCurrentTextColor(); // thực ra = syncTextColor
+    btcColor = tv.getCurrentTextColor(); // actually = syncTextColor
 }
 bar.setProgressTintList(android.content.res.ColorStateList.valueOf(btcColor));
 bar.setProgressBackgroundTintList(android.content.res.ColorStateList.valueOf(btcColor & 0x33FFFFFF));
@@ -207,7 +207,8 @@ bar.setProgressBackgroundTintList(android.content.res.ColorStateList.valueOf(btc
         percentX = Math.max(percentX, left + (int)(4 * d));
 
         percent.setX(percentX);
-        // canh % theo baseline của chữ sync
+        
+        //Adjust the percentage according to the baseline of the word sync.
         int tvBaseline = tv.getBaseline();
         int pBaseline = percent.getBaseline();
         if (tvBaseline > 0 && pBaseline > 0) {
@@ -246,7 +247,7 @@ bar.setProgressBackgroundTintList(android.content.res.ColorStateList.valueOf(btc
         }
     }
 
-    // tìm chữ Synchronizing trên màn hình, lấy màu mẫu để tô màu cho thanh bar sync
+    // Find the word "Synchronizing" on the screen, and use the sample color to color the sync bar.
     private TextView findSync(ViewGroup g) {
         for (int i = 0; i < g.getChildCount(); i++) {
             View v = g.getChildAt(i);
