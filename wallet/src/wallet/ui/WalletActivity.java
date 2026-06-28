@@ -73,8 +73,7 @@ import wallet.ui.send.SweepWalletActivity;
 import wallet.util.CrashReporter;
 import wallet.util.Nfc;
 import wallet.util.OnFirstPreDraw;
-
-// add bar sync
+// add bar sync 1/2
 import android.content.SharedPreferences;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -146,8 +145,7 @@ public final class WalletActivity extends AbstractWalletActivity {
         getActionBar().setDisplayHomeAsUpEnabled(false);
         contentView = findViewById(android.R.id.content);
 
-        //add sync bar
-        
+ //add sync bar  2/2      
 final View root = findViewById(android.R.id.content);
 final SharedPreferences prefs = getSharedPreferences("sync_prefs", MODE_PRIVATE);
 final int[] lastProg = { -1 };
@@ -171,25 +169,15 @@ root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlob
             percent.setVisibility(View.GONE);
             return;
         }
-
-                
+        
 // lấy màu động
 int syncTextColor = tv.getCurrentTextColor();
 percent.setTextColor(syncTextColor);
 
-// thay đoạn tìm "Bitcoin" bằng:
 int btcColor = syncTextColor;   // <-- khai báo luôn ở đây
 if (tv != null) {
     btcColor = tv.getCurrentTextColor(); // thực ra = syncTextColor
 }
-
-// --- LẤY MÀU BTC TỪ TIÊU ĐỀ "Bitcoin" ---
-/*int btcColor = syncTextColor; // fallback
-ViewGroup decor = (ViewGroup) getWindow().getDecorView();
-TextView title = findTextViewWithText(decor, "Bitcoin");
-if (title != null) {
-    btcColor = title.getCurrentTextColor();
-}*/
 bar.setProgressTintList(android.content.res.ColorStateList.valueOf(btcColor));
 bar.setProgressBackgroundTintList(android.content.res.ColorStateList.valueOf(btcColor & 0x33FFFFFF));
 //end
@@ -225,10 +213,12 @@ bar.setProgressBackgroundTintList(android.content.res.ColorStateList.valueOf(btc
         if (tvBaseline > 0 && pBaseline > 0) {
         percent.setY(top + tvBaseline - pBaseline);
         } else {
+            
       // fallback nếu baseline chưa có
         percent.setY(top + tv.getHeight() - percent.getMeasuredHeight());
         }
         //end
+        
         percent.setVisibility(View.VISIBLE);
         bar.setX(left);
         bar.setY(top + tv.getHeight() + (int)(4 * d));
@@ -256,7 +246,7 @@ bar.setProgressBackgroundTintList(android.content.res.ColorStateList.valueOf(btc
         }
     }
 
-    // tìm chữ bitcoin trên màn hình, lấy màu mẫu để tô màu cho thanh bar sync
+    // tìm chữ Synchronizing trên màn hình, lấy màu mẫu để tô màu cho thanh bar sync
     private TextView findSync(ViewGroup g) {
         for (int i = 0; i < g.getChildCount(); i++) {
             View v = g.getChildAt(i);
@@ -302,8 +292,7 @@ private TextView findTextViewWithText(ViewGroup g, String txt) {
         return l[0];
     }
 });
-        //end add sync bar
-
+     //end add sync bar
         
         final View insetTopView = contentView.findViewWithTag("inset_top");
         if (insetTopView != null) {
