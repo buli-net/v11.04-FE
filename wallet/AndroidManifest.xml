@@ -179,12 +179,17 @@
             android:configChanges="keyboard|keyboardHidden"
             android:label="@string/network_monitor_activity_title"
             android:theme="@style/My.Theme" />
-
+<!-- test add false -->
         <activity
             android:name="wallet.ui.preference.PreferenceActivity"
             android:label="@string/preferences_activity_title"
+            android:exported="false"
             android:theme="@android:style/Theme.Material.Light.DarkActionBar" />
 
+
+            
+
+        
         <activity
             android:name="wallet.ui.backup.BackupWalletActivity"
             android:configChanges="orientation|keyboard|keyboardHidden"
