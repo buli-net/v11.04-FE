@@ -10,23 +10,25 @@ import android.widget.Toast;
 
 import org.bitcoinj.base.Coin;
 import org.bitcoinj.base.Sha256Hash;
-
+import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionConfidence;
+import org.bitcoinj.core.TransactionInput;
+import org.bitcoinj.core.TransactionOutput;
+import org.bitcoinj.script.Script;
+import org.bitcoinj.script.ScriptPattern;
 import org.bitcoinj.wallet.Wallet;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.Locale;
 
-// --- sửa 3 import dưới đây cho khớp package trong repo của bạn ---
-// nếu IDE báo đỏ, đổi wallet.* thành de.schildbach.wallet.*
 import wallet.R;
 import wallet.WalletApplication;
-import wallet.util.WalletUtils;
-// ----------------------------------------------------------------
 
 public class TransactionDetailsActivity extends Activity {
-    private TextView tvAmount, tvStatus, tvFee, tvTime, tvFrom, tvTo, tvTxid, tvHeight, tvDirection;
+    private TextView tvDirection, tvAmount, tvStatus, tvFee, tvTime, tvFrom, tvTo, tvTxid, tvHeight, tvMeta;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,60 +44,101 @@ public class TransactionDetailsActivity extends Activity {
         tvTo = findViewById(R.id.tv_to);
         tvTxid = findViewById(R.id.tv_txid);
         tvHeight = findViewById(R.id.tv_height);
+        tvMeta = findViewById(R.id.tv_meta);
 
         String txidStr = getIntent().getStringExtra("txid");
         if (txidStr == null) { finish(); return; }
 
         WalletApplication app = (WalletApplication) getApplication();
         Wallet wallet = app.getWallet();
+        NetworkParameters params = wallet.getNetworkParameters();
+
         Transaction tx = wallet.getTransaction(Sha256Hash.wrap(txidStr));
         if (tx == null) { finish(); return; }
 
         Coin value = tx.getValue(wallet);
-        boolean isSend = value.signum() < 0;
-        tvDirection.setText(isSend ? "Sent" : "Receive");
+        boolean isSend = value.isNegative();
         Coin absValue = isSend ? value.negate() : value;
-tvAmount.setText((isSend ? "-" : "+") + absValue.toPlainString() + " BTC");
+
+        tvDirection.setText(isSend ? "Sent" : "Receive");
+        tvAmount.setText((isSend ? "-" : "+") + absValue.toPlainString() + " BTC");
+        tvAmount.setTextColor(getResources().getColor(isSend ? R.color.tx_amount_sent : R.color.tx_amount_recv));
 
         TransactionConfidence confidence = tx.getConfidence();
-        if (confidence.getConfidenceType() == TransactionConfidence.ConfidenceType.BUILDING) {
-            tvStatus.setText("Success");
-            tvStatus.setTextColor(0xFF00C853);
-        } else {
-            tvStatus.setText("Pending");
-            tvStatus.setTextColor(0xFFFFC107);
-        }
+        int depth = confidence.getDepthInBlocks();
+        boolean confirmed = confidence.getConfidenceType() == TransactionConfidence.ConfidenceType.BUILDING;
+        tvStatus.setText(confirmed ? "Confirmed" : "Pending");
+        tvStatus.setTextColor(getResources().getColor(confirmed ? R.color.tx_status_ok : R.color.tx_status_pending));
 
         Coin fee = tx.getFee();
         tvFee.setText(fee != null ? fee.toPlainString() + " BTC" : "—");
 
-        if (tx.getUpdateTime() != null) {
-            tvTime.setText(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(tx.getUpdateTime()));
+        Date updateTime = tx.getUpdateTime();
+        if (updateTime != null) {
+            tvTime.setText(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(updateTime));
         }
 
-        // dùng đúng API của ví, tránh lỗi getFromAddress()
-        String fromAddr = "";
-        String toAddr = "";
-        try {
-            if (isSend) {
-                toAddr = WalletUtils.getToAddressOfSent(tx, wallet).toString();
-                fromAddr = wallet.getWatchedAddresses().isEmpty() ? "My wallet" : wallet.getWatchedAddresses().get(0).toString();
-            } else {
-                toAddr = WalletUtils.getWalletAddressOfReceived(tx, wallet).toString();
-                fromAddr = "External";
+        int height = confidence.getAppearedAtChainHeight();
+        String confStr = (depth > 0 ? depth + " confirmations" : "unconfirmed") +
+                (height > 0 ? " · height " + height : "");
+        tvHeight.setText(confStr);
+
+        int size = tx.getMessageSize();
+        int weight = tx.getWeight();
+        boolean rbf = tx.isOptInFullRBF();
+        String feeRate = "";
+        if (fee != null && weight > 0) {
+            long satPerVbyte = fee.getValue() * 4 / weight;
+            feeRate = " · " + satPerVbyte + " sat/vB";
+        }
+        tvMeta.setText(size + " bytes · " + weight + " wu" + feeRate + (rbf ? " · RBF" : ""));
+
+        LinkedHashSet<String> fromAddrs = new LinkedHashSet<>();
+        for (TransactionInput in : tx.getInputs()) {
+            try {
+                var outpoint = in.getOutpoint();
+                if (outpoint != null && outpoint.getConnectedOutput() != null) {
+                    Script script = outpoint.getConnectedOutput().getScriptPubKey();
+                    String a = getAddressFromScript(script, params);
+                    if (a != null) fromAddrs.add(a);
+                }
+            } catch (Exception ignored) {}
+            if (fromAddrs.isEmpty()) {
+                try { fromAddrs.add(in.getOutpoint().toString()); } catch (Exception ignored) {}
             }
-        } catch (Exception ignored) {}
-        tvFrom.setText(fromAddr);
-        tvTo.setText(toAddr);
-        copyOnClick(tvFrom, fromAddr);
-        copyOnClick(tvTo, toAddr);
+        }
+
+        LinkedHashSet<String> toAddrs = new LinkedHashSet<>();
+        for (TransactionOutput out : tx.getOutputs()) {
+            try {
+                String a = getAddressFromScript(out.getScriptPubKey(), params);
+                if (a != null) toAddrs.add(a + " · " + out.getValue().toPlainString() + " BTC");
+                else toAddrs.add(out.getScriptPubKey().toString() + " · " + out.getValue().toPlainString() + " BTC");
+            } catch (Exception ignored) {}
+        }
+
+        String fromText = fromAddrs.isEmpty() ? "coinbase" : String.join("\n", fromAddrs);
+        String toText = String.join("\n", toAddrs);
+
+        tvFrom.setText(fromText);
+        tvTo.setText(toText);
+        copyOnClick(tvFrom, fromText);
+        copyOnClick(tvTo, toText);
 
         String hash = tx.getTxId().toString();
-        tvTxid.setText(hash.substring(0,6) + "…" + hash.substring(hash.length()-6));
-        tvTxid.setOnClickListener(v -> copy(hash));
+        tvTxid.setText(hash);
+        copyOnClick(tvTxid, hash);
+    }
 
-        int height = confidence.getAppearedAtChainHeight();
-        tvHeight.setText(height > 0 ? String.valueOf(height) : "—");
+    private String getAddressFromScript(Script script, NetworkParameters params) {
+        try {
+            if (ScriptPattern.isP2PKH(script)) return ScriptPattern.extractHashFromP2PKH(script).toString();
+            if (ScriptPattern.isP2WPKH(script)) return ScriptPattern.extractHashFromP2WH(script).toString();
+            if (ScriptPattern.isP2SH(script)) return ScriptPattern.extractHashFromP2SH(script).toString();
+            return script.getToAddress(params).toString();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private void copyOnClick(TextView tv, String text) {
