@@ -79,18 +79,30 @@ public class TransactionDetailsActivity extends Activity {
             tvAmount.setTextColor(getResources().getColor(isSend ? R.color.tx_amount_sent : R.color.tx_amount_recv));
         } catch (Exception ignored) {}
 
+        // Status 3 levels: Pending / Building / Confirmed
         TransactionConfidence confidence = tx.getConfidence();
         int depth = 0;
-        boolean confirmed = false;
         int height = 0;
         if (confidence != null) {
             try { depth = confidence.getDepthInBlocks(); } catch (Exception ignored) {}
-            try { confirmed = confidence.getConfidenceType() == TransactionConfidence.ConfidenceType.BUILDING; } catch (Exception ignored) {}
             try { height = confidence.getAppearedAtChainHeight(); } catch (Exception ignored) {}
         }
-        tvStatus.setText(confirmed ? "Confirmed" : "Pending");
+
+        String statusText;
+        int statusColorRes;
+        if (depth <= 0) {
+            statusText = "Pending";
+            statusColorRes = R.color.tx_status_pending;
+        } else if (depth < 6) {
+            statusText = "Building";
+            statusColorRes = R.color.tx_status_building;
+        } else {
+            statusText = "Confirmed";
+            statusColorRes = R.color.tx_status_ok;
+        }
+        tvStatus.setText(statusText);
         try {
-            tvStatus.setTextColor(getResources().getColor(confirmed ? R.color.tx_status_ok : R.color.tx_status_pending));
+            tvStatus.setTextColor(getResources().getColor(statusColorRes));
         } catch (Exception ignored) {}
 
         Coin fee = null;
@@ -105,8 +117,16 @@ public class TransactionDetailsActivity extends Activity {
             tvTime.setText("—");
         }
 
-        String confStr = (depth > 0 ? depth + " confirmations" : "unconfirmed") +
-                (height > 0 ? " · height " + height : "");
+        // Confirmations - live real count
+        String confStr;
+        if (depth <= 0) {
+            confStr = "unconfirmed";
+        } else {
+            confStr = depth + " confirmations";
+        }
+        if (height > 0) {
+            confStr += " · height " + height;
+        }
         tvHeight.setText(confStr);
 
         int size = 0, weight = 0;
