@@ -182,7 +182,7 @@
         
         <activity
             android:name="wallet.ui.preference.PreferenceActivity"
-            android:label="@string/preferences_activity_title"
+            android:label="@string/preferences_activity_title" />
         <!--    android:theme="@android:style/Theme.Material.Light.DarkActionBar" />
         -->
         <activity
