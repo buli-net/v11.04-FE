@@ -1,7 +1,19 @@
 
 v11.04 mod by buli
 * - 29/06/2026
+
++ Fix theme ui setting bug light/dark
+
+- wallet/AndroidManifest.xml [ add line 186, // line 187->188 ]
+- wallet/res/values-night/styles.xml [ add code line 56->87 ]
+- wallet/res/values/styles.xml [ add code line 130->161 ]
+- wallet/res/values/colors.xml [ add code line 20 --> 22 ]
+- wallet/res/values-night/colors.xml [ add code line 11-->13 ]
+
+------------------------------------------------------------------
+
 + Add button i show info transaction
+
 - Create file wallet/res/drawable/ic_info_white_24dp.xml
 - Create file wallet/src/wallet/ui/TransactionDetailsActivity.java
 - Create file wallet/res/layout/activity_transaction_details.xml
@@ -12,10 +24,11 @@ v11.04 mod by buli
 - Add code file wallet/AndroidManifest.xml [ add code line 91-->98 ]
 - Add code file wallet/src/wallet/ui/WalletTransactionsFragment.java [ add code line 63-->65, 313-->319 ]
 
-
+=====================================================================
 
 * - 28/06/2026
 + update link check version wallet.schildbach.de/version -> buli-net.github.io/version
+
 - wallet/src/wallet/Constants.java [ // line 153. add code line 154 ]
 - wallet/res/xml/network_security_config.xml [ // line 14. add code line 15 ]
 - wallet/AndroidManifest.xml [ // line 70. add code line 71 ]
@@ -23,7 +36,10 @@ v11.04 mod by buli
 - Create file: buli-net.github.io/version-test [ check version update testnet3 ]
 - Create file: buli.github.io/version-signet [ check version update signet ]
 
+-----------------------------------------------------------------------
+
 + update link check fees wallet.schildbach.de/fees ->. buli-net.github.io/fees
+
 - wallet/src/wallet/Constants.java [ // line 157. add code line 158 ]
 - Create file buli-net.github.io/fees [ check fees mainnet ]
 - Create file buli-net.github.io/fees-test [ check fees testnet3 ]
@@ -32,10 +48,16 @@ v11.04 mod by buli
 + Create index [ web main index ]
 - Create file buli-net.github.io/index.html
 
+-------------------------------------------------------------------------
+
 + update email report: bitcoin.wallet.developers@gmail.com --> hvlrcb@gmail.com
+
 - wallet/src/wallet/Constants.java [ // line 180, add code line 181]
 
+--------------------------------------------------------------------------
+
 + Add bar sync block start app
+
 - wallet/src/wallet/ui/WalletActivity.java
 [ Add code line 76->84, add line 148->296 ]
 
