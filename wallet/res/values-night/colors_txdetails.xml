@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="tx_page_bg">#121212</color>
-    <color name="tx_card_bg">#1e1e1e</color>
+    <color name="tx_page_bg">#14171f</color>
+    <color name="tx_card_bg">#2a303c</color>
     <color name="tx_text_primary">#e0e0e0</color>
-    <color name="tx_text_secondary">#9e9e9e</color>
+    <color name="tx_text_secondary">#9aa0aa</color>
     <color name="tx_amount_sent">#ff6b6b</color>
-    <color name="tx_amount_recv">#4caf50</color>
-    <color name="tx_status_ok">#4caf50</color>
-    <color name="tx_status_pending">#ffb74d</color>
-    <color name="tx_status_building">#64b5f6</color>
+    <color name="tx_amount_recv">#5cd68a</color>
+    <color name="tx_status_ok">#5cd68a</color>
+    <color name="tx_status_pending">#ffb84d</color>
+    <color name="tx_status_building">#5aa9ff</color>
 </resources>
