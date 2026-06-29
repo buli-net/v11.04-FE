@@ -60,6 +60,9 @@ import wallet.ui.TransactionsAdapter.WarningType;
 import wallet.ui.send.RaiseFeeDialogFragment;
 import wallet.util.Qr;
 import wallet.util.WalletUtils;
+//add i info transaction
+import android.content.Intent;
+//end
 
 public class WalletTransactionsFragment extends Fragment implements TransactionsAdapter.OnClickListener,
         TransactionsAdapter.ContextMenuCallback {
@@ -306,6 +309,16 @@ public class WalletTransactionsFragment extends Fragment implements Transactions
             final Bitmap qrCodeBitmap = Qr.bitmap(Qr.encodeCompressBinary(txSerialized));
             viewModel.showBitmapDialog.setValue(new Event<>(qrCodeBitmap));
             return true;
+//add i info transaction
+} else if (itemId == R.id.wallet_transactions_context_show_details) {
+    Intent intent = new Intent(requireContext(), TransactionDetailsActivity.class);
+    intent.putExtra("txid", transactionId.toString());
+    startActivity(intent);
+    return true;
+}
+                //end
+
+                
         } else if (itemId == R.id.wallet_transactions_context_raise_fee) {
             RaiseFeeDialogFragment.show(fragmentManager, transactionId);
             return true;
