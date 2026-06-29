@@ -54,7 +54,8 @@ public class TransactionDetailsActivity extends Activity {
         Coin value = tx.getValue(wallet);
         boolean isSend = value.signum() < 0;
         tvDirection.setText(isSend ? "Sent" : "Receive");
-        tvAmount.setText((isSend ? "-" : "+") + value.negateIf(isSend).toPlainString() + " BTC");
+        Coin absValue = isSend ? value.negate() : value;
+tvAmount.setText((isSend ? "-" : "+") + absValue.toPlainString() + " BTC");
 
         TransactionConfidence confidence = tx.getConfidence();
         if (confidence.getConfidenceType() == TransactionConfidence.ConfidenceType.BUILDING) {
