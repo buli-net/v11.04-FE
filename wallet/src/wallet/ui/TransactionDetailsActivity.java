@@ -96,7 +96,7 @@ public class TransactionDetailsActivity extends Activity {
         LinkedHashSet<String> fromAddrs = new LinkedHashSet<>();
         for (TransactionInput in : tx.getInputs()) {
             try {
-                var outpoint = in.getOutpoint();
+                TransactionOutPoint outpoint = in.getOutpoint();
                 if (outpoint != null && outpoint.getConnectedOutput() != null) {
                     Script script = outpoint.getConnectedOutput().getScriptPubKey();
                     String a = getAddressFromScript(script, params);
