@@ -229,4 +229,53 @@
                     android:textSize="16sp"
                     android:textColor="@color/tx_text_primary"
                     android:layout_marginTop="12dp"
-                    android:layout
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <TextView android:id="@+id/tv_to"
+                    android:textColor="@color/tx_text_secondary"
+                    android:textIsSelectable="true"
+                    android:fontFamily="monospace"
+                    android:textSize="13sp"
+                    android:lineSpacingExtra="2dp"
+                    android:breakStrategy="simple"
+                    android:layout_marginTop="4dp"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Transaction ID card -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="2dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="@color/tx_card_bg">
+            <LinearLayout
+                android:padding="16dp"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView android:text="Transaction ID"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:textColor="@color/tx_text_primary"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                <TextView android:id="@+id/tv_txid"
+                    android:textColor="@color/tx_text_secondary"
+                    android:textIsSelectable="true"
+                    android:fontFamily="monospace"
+                    android:layout_marginTop="4dp"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"/>
+                <TextView android:id="@+id/tv_txid_copy"
+                    android:text="Tap to copy"
+                    android:textColor="@color/tx_text_secondary"
+                    android:textSize="12sp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:layout_marginTop="4dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+</ScrollView>
