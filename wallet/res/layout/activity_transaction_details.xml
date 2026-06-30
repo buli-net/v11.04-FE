@@ -24,12 +24,16 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+                <!-- Direction label - 20sp bold to match ActionBar title -->
                 <TextView android:id="@+id/tv_direction"
                     android:textStyle="bold"
-                    android:textSize="16sp"
+                    android:textSize="20sp"
                     android:textColor="@color/tx_text_primary"
+                    android:fontFamily="sans-serif-medium"
+                    android:textAppearance="@null"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
+                <!-- Amount value - color is set in code (sent=red / recv=green) -->
                 <TextView android:id="@+id/tv_amount"
                     android:textSize="28sp"
                     android:textStyle="bold"
@@ -40,6 +44,7 @@
         </androidx.cardview.widget.CardView>
 
         <!-- Sender / Receiver card -->
+        <!-- Shows the counterparty address only, separate from the amount card -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -184,7 +189,7 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <!-- Changed from "From" to "Sent Details" -->
+                <!-- Sent Details header -->
                 <TextView android:text="Sent Details"
                     android:textStyle="bold"
                     android:textSize="16sp"
@@ -202,7 +207,7 @@
                     android:layout_width="match_parent" android:layout_height="wrap_content"/>
                 <View android:layout_width="match_parent" android:layout_height="1dp"
                     android:background="#33000000"/>
-                <!-- Changed from "To" to "Received Details" -->
+                <!-- Received Details header -->
                 <TextView android:text="Received Details"
                     android:textStyle="bold"
                     android:textSize="16sp"
