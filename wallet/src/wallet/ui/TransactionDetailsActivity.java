@@ -389,7 +389,7 @@ public class TransactionDetailsActivity extends Activity {
         } catch (Exception ignored) {}
     }
 
-    // ---------- QR live / copy full - QR luôn đen trắng, khung theo theme ----------
+    // ---------- QR live / copy full ----------
 
     private boolean isDark() {
         return (getResources().getConfiguration().uiMode 
@@ -399,8 +399,6 @@ public class TransactionDetailsActivity extends Activity {
 
     private void setupQr() {
         if (ivQr != null) {
-            // nền khung QR theo theme, QR bên trong luôn trắng
-            ivQr.setBackgroundColor(isDark() ? Color.BLACK : Color.WHITE);
             ivQr.setOnClickListener(v -> showQrDialog(currentQrBitmap));
         }
         if (tvTxidCopy != null) {
@@ -432,7 +430,7 @@ public class TransactionDetailsActivity extends Activity {
     private void updateLiveQr() {
         if (ivQr == null) return;
         try {
-            // QR luôn đen trắng chuẩn
+            // QR luôn đen trắng chuẩn, không viền
             currentQrBitmap = encodeQr(buildLiveTxText(), 512);
             ivQr.setImageBitmap(currentQrBitmap);
         } catch (Exception e) {
@@ -445,7 +443,7 @@ public class TransactionDetailsActivity extends Activity {
     }
 
     private void showQrDialog(Bitmap qr) {
-        // nền dialog theo theme, QR bên trong vẫn đen trắng
+        // QR màu bình thường, nền xung quanh đổi theo theme
         boolean dark = isDark();
         Dialog dialog = new Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
         ImageView iv = new ImageView(this);
