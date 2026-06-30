@@ -71,6 +71,11 @@ public class TransactionDetailsActivity extends Activity {
     };
     // --- END LIVE PATCH ---
 
+    // --- QR DIALOG LIVE PATCH ---
+    private Dialog qrDialog;
+    private ImageView qrDialogImageView;
+    // --- END QR DIALOG LIVE PATCH ---
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -390,7 +395,7 @@ public class TransactionDetailsActivity extends Activity {
 
     private void setupQr() {
         if (ivQr != null) {
-            ivQr.setOnClickListener(v -> showQrDialog(currentQrBitmap));
+            ivQr.setOnClickListener(v -> showQrDialog());
         }
         if (tvTxidCopy != null) {
             tvTxidCopy.setOnClickListener(v -> copyFullTx());
@@ -419,11 +424,18 @@ public class TransactionDetailsActivity extends Activity {
     }
 
     private void updateLiveQr() {
-        if (ivQr == null) return;
         try {
-            // QR luôn đen trắng chuẩn, không viền
-            currentQrBitmap = encodeQr(buildLiveTxText(), 512);
-            ivQr.setImageBitmap(currentQrBitmap);
+            String text = buildLiveTxText();
+            // QR nhỏ trong card
+            if (ivQr != null) {
+                currentQrBitmap = encodeQr(text, 512);
+                ivQr.setImageBitmap(currentQrBitmap);
+            }
+            // QR phóng to trong dialog - live luôn
+            if (qrDialog != null && qrDialog.isShowing() && qrDialogImageView != null) {
+                Bitmap big = encodeQr(text, 1024);
+                qrDialogImageView.setImageBitmap(big);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -433,21 +445,27 @@ public class TransactionDetailsActivity extends Activity {
         copy(buildLiveTxText());
     }
 
-    private void showQrDialog(Bitmap qr) {
-        // QR màu bình thường, nền xung quanh đổi theo theme
+    private void showQrDialog() {
         boolean dark = isDark();
-        Dialog dialog = new Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-        ImageView iv = new ImageView(this);
-        iv.setImageBitmap(qr);
-        iv.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        iv.setPadding(48, 48, 48, 48);
-        iv.setBackgroundColor(dark ? Color.BLACK : Color.WHITE);
-        dialog.setContentView(iv, new ViewGroup.LayoutParams(
+        qrDialog = new Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+        qrDialogImageView = new ImageView(this);
+        qrDialogImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        qrDialogImageView.setPadding(48, 48, 48, 48);
+        qrDialogImageView.setBackgroundColor(dark ? Color.BLACK : Color.WHITE);
+        
+        qrDialog.setContentView(qrDialogImageView, new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));
-        iv.setOnClickListener(v -> dialog.dismiss());
-        dialog.setCancelable(true);
-        dialog.show();
+        qrDialogImageView.setOnClickListener(v -> qrDialog.dismiss());
+        qrDialog.setCancelable(true);
+        qrDialog.setOnDismissListener(d -> {
+            qrDialog = null;
+            qrDialogImageView = null;
+        });
+        qrDialog.show();
+        
+        // render lần đầu
+        updateLiveQr();
     }
 
     public static Bitmap encodeQr(String text, int size) throws WriterException {
