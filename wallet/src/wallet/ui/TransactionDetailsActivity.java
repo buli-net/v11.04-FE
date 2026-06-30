@@ -2,13 +2,23 @@ package wallet.ui;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 
 import org.bitcoinj.base.Coin;
 import org.bitcoinj.base.Sha256Hash;
@@ -43,6 +53,11 @@ public class TransactionDetailsActivity extends Activity {
     // Actual counterparty sender/receiver views (single address)
     private TextView tvActualFrom, tvActualTo;
 
+    // QR live
+    private ImageView ivQr;
+    private Bitmap currentQrBitmap;
+    private TextView tvTxidCopy;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +83,8 @@ public class TransactionDetailsActivity extends Activity {
         tvTo = findViewById(R.id.tv_to);
         tvActualFrom = findViewById(R.id.tv_actual_from);
         tvActualTo = findViewById(R.id.tv_actual_to);
+        ivQr = findViewById(R.id.iv_tx_qr);
+        tvTxidCopy = findViewById(R.id.tv_txid_copy);
 
         // Get transaction hash from intent
         String txidStr = getIntent().getStringExtra("txid");
@@ -185,8 +202,6 @@ public class TransactionDetailsActivity extends Activity {
         tvMeta.setText(size + " bytes · " + weight + " wu" + feeRate + (rbf ? " · RBF" : ""));
 
         // --- Actual sender / receiver (counterparty only) ---
-        // For a sent tx: receiver = first non-mine output, sender = first mine input
-        // For a received tx: sender = first non-mine input, receiver = first mine output
         String actualFrom = null;
         String actualTo = null;
         try {
@@ -209,7 +224,6 @@ public class TransactionDetailsActivity extends Activity {
         copyOnClick(tvActualTo, actualTo);
 
         // --- Full input / output list ---
-        // Build a multi-line list with address, script type, and amount
         StringBuilder fromSb = new StringBuilder();
         Coin totalFrom = Coin.ZERO;
         int inCount = 0;
@@ -263,6 +277,16 @@ public class TransactionDetailsActivity extends Activity {
         String hash = tx.getTxId().toString();
         tvTxid.setText(hash);
         copyOnClick(tvTxid, hash);
+
+        // --- QR live + copy full ---
+        setupQr();
+        updateLiveQr();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateLiveQr();
     }
 
     @Override
@@ -363,5 +387,82 @@ public class TransactionDetailsActivity extends Activity {
             cm.setPrimaryClip(ClipData.newPlainText("tx", text));
             Toast.makeText(this, "Copied", Toast.LENGTH_SHORT).show();
         } catch (Exception ignored) {}
+    }
+
+    // ---------- QR live / copy full ----------
+
+    private void setupQr() {
+        if (ivQr != null) {
+            ivQr.setOnClickListener(v -> {
+                if (currentQrBitmap != null) showQrDialog(currentQrBitmap);
+            });
+        }
+        if (tvTxidCopy != null) {
+            tvTxidCopy.setOnClickListener(v -> copyFullTx());
+        }
+    }
+
+    private String buildLiveTxText() {
+        return "Direction: " + getTv(tvDirection) + "\n"
+                + "Amount: " + getTv(tvAmount) + "\n\n"
+                + "Sender / Receiver\n"
+                + "From: " + getTv(tvActualFrom) + "\n"
+                + "To: " + getTv(tvActualTo) + "\n\n"
+                + "Transaction details\n"
+                + "Status: " + getTv(tvStatus) + "\n"
+                + "Fee: " + getTv(tvFee) + "\n"
+                + "Size / Weight: " + getTv(tvMeta) + "\n"
+                + "Confirmations: " + getTv(tvHeight) + "\n"
+                + "Time: " + getTv(tvTime) + "\n\n"
+                + "Sent Details\n" + getTv(tvFrom) + "\n\n"
+                + "Received Details\n" + getTv(tvTo) + "\n\n"
+                + "Transaction ID\n" + getTv(tvTxid);
+    }
+
+    private String getTv(TextView tv) {
+        return tv != null && tv.getText() != null ? tv.getText().toString() : "";
+    }
+
+    private void updateLiveQr() {
+        if (ivQr == null) return;
+        try {
+            currentQrBitmap = encodeQr(buildLiveTxText(), 512);
+            ivQr.setImageBitmap(currentQrBitmap);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void copyFullTx() {
+        copy(buildLiveTxText());
+    }
+
+    private void showQrDialog(Bitmap qr) {
+        Dialog dialog = new Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+        ImageView iv = new ImageView(this);
+        iv.setImageBitmap(qr);
+        iv.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        iv.setPadding(48, 48, 48, 48);
+        iv.setBackgroundColor(Color.WHITE);
+        dialog.setContentView(iv, new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
+        iv.setOnClickListener(v -> dialog.dismiss());
+        dialog.setCancelable(true);
+        dialog.show();
+    }
+
+    public static Bitmap encodeQr(String text, int size) throws WriterException {
+        QRCodeWriter writer = new QRCodeWriter();
+        BitMatrix bitMatrix = writer.encode(text, BarcodeFormat.QR_CODE, size, size);
+        int w = bitMatrix.getWidth();
+        int h = bitMatrix.getHeight();
+        Bitmap bmp = Bitmap.createBitmap(w, h, Bitmap.Config.RGB_565);
+        for (int x = 0; x < w; x++) {
+            for (int y = 0; y < h; y++) {
+                bmp.setPixel(x, y, bitMatrix.get(x, y) ? Color.BLACK : Color.WHITE);
+            }
+        }
+        return bmp;
     }
 }
