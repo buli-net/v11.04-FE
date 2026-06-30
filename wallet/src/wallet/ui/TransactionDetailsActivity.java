@@ -30,56 +30,93 @@ import java.util.Locale;
 import wallet.R;
 import wallet.WalletApplication;
 
+/**
+ * Transaction Details screen.
+ * Shows amount, status, fee, and full input/output breakdown.
+ * Compatible with AppTheme.My.Preference, extends android.app.Activity.
+ */
 public class TransactionDetailsActivity extends Activity {
-    private TextView tvDirection, tvAmount, tvStatus, tvFee, tvTime, tvFrom, tvTo, tvTxid, tvHeight, tvMeta;
+    // Main amount / status views
+    private TextView tvDirection, tvAmount, tvStatus, tvFee, tvTime, tvHeight, tvMeta, tvTxid;
+    // Full input/output list views
+    private TextView tvFrom, tvTo;
+    // Actual counterparty sender/receiver views (single address)
+    private TextView tvActualFrom, tvActualTo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transaction_details);
 
+        // Setup ActionBar
         ActionBar ab = getActionBar();
         if (ab != null) {
             ab.setDisplayHomeAsUpEnabled(true);
             ab.setTitle("Transaction Details");
         }
 
+        // Bind views
         tvDirection = findViewById(R.id.tv_direction);
         tvAmount = findViewById(R.id.tv_amount);
         tvStatus = findViewById(R.id.tv_status);
         tvFee = findViewById(R.id.tv_fee);
         tvTime = findViewById(R.id.tv_time);
-        tvFrom = findViewById(R.id.tv_from);
-        tvTo = findViewById(R.id.tv_to);
-        tvTxid = findViewById(R.id.tv_txid);
         tvHeight = findViewById(R.id.tv_height);
         tvMeta = findViewById(R.id.tv_meta);
+        tvTxid = findViewById(R.id.tv_txid);
+        tvFrom = findViewById(R.id.tv_from);
+        tvTo = findViewById(R.id.tv_to);
+        tvActualFrom = findViewById(R.id.tv_actual_from);
+        tvActualTo = findViewById(R.id.tv_actual_to);
 
+        // Get transaction hash from intent
         String txidStr = getIntent().getStringExtra("txid");
-        if (txidStr == null) { Toast.makeText(this, "Missing txid", Toast.LENGTH_SHORT).show(); finish(); return; }
+        if (txidStr == null) {
+            Toast.makeText(this, "Missing txid", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
 
+        // Load wallet
         WalletApplication app = (WalletApplication) getApplication();
         Wallet wallet = app.getWallet();
-        if (wallet == null) { Toast.makeText(this, "Wallet not ready", Toast.LENGTH_SHORT).show(); finish(); return; }
+        if (wallet == null) {
+            Toast.makeText(this, "Wallet not ready", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
         NetworkParameters params = wallet.getNetworkParameters();
 
+        // Load transaction
         Transaction tx;
         try {
             tx = wallet.getTransaction(Sha256Hash.wrap(txidStr));
-        } catch (Exception e) { tx = null; }
-        if (tx == null) { Toast.makeText(this, "Transaction not found", Toast.LENGTH_SHORT).show(); finish(); return; }
+        } catch (Exception e) {
+            tx = null;
+        }
+        if (tx == null) {
+            Toast.makeText(this, "Transaction not found", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
 
+        // --- Amount and direction ---
         Coin value = Coin.ZERO;
-        try { Coin v = tx.getValue(wallet); if (v != null) value = v; } catch (Exception ignored) {}
+        try {
+            Coin v = tx.getValue(wallet);
+            if (v != null) value = v;
+        } catch (Exception ignored) {}
         boolean isSend = value.isNegative();
         Coin absValue = isSend ? value.negate() : value;
 
         tvDirection.setText(isSend ? "Sent" : "Received");
         tvAmount.setText((isSend ? "-" : "+") + absValue.toPlainString() + " BTC");
         try {
-            tvAmount.setTextColor(getResources().getColor(isSend ? R.color.tx_amount_sent : R.color.tx_amount_recv));
+            tvAmount.setTextColor(getResources().getColor(
+                isSend ? R.color.tx_amount_sent : R.color.tx_amount_recv));
         } catch (Exception ignored) {}
 
+        // --- Confirmation status: Pending / Building / Confirmed ---
         TransactionConfidence confidence = tx.getConfidence();
         int depth = 0;
         int height = 0;
@@ -105,10 +142,12 @@ public class TransactionDetailsActivity extends Activity {
             tvStatus.setTextColor(getResources().getColor(statusColorRes));
         } catch (Exception ignored) {}
 
+        // --- Fee ---
         Coin fee = null;
         try { fee = tx.getFee(); } catch (Exception ignored) {}
         tvFee.setText(fee != null ? fee.toPlainString() + " BTC" : "—");
 
+        // --- Time ---
         Date updateTime = null;
         try { updateTime = tx.getUpdateTime(); } catch (Exception ignored) {}
         if (updateTime != null) {
@@ -117,6 +156,7 @@ public class TransactionDetailsActivity extends Activity {
             tvTime.setText("—");
         }
 
+        // --- Confirmations ---
         String confStr;
         if (depth <= 0) {
             confStr = "unconfirmed";
@@ -128,6 +168,7 @@ public class TransactionDetailsActivity extends Activity {
         }
         tvHeight.setText(confStr);
 
+        // --- Size / weight / fee rate / RBF ---
         int size = 0, weight = 0;
         boolean rbf = false;
         try { size = tx.getMessageSize(); } catch (Exception ignored) {}
@@ -143,7 +184,32 @@ public class TransactionDetailsActivity extends Activity {
         }
         tvMeta.setText(size + " bytes · " + weight + " wu" + feeRate + (rbf ? " · RBF" : ""));
 
-        // From / To full list
+        // --- Actual sender / receiver (counterparty only) ---
+        // For a sent tx: receiver = first non-mine output, sender = first mine input
+        // For a received tx: sender = first non-mine input, receiver = first mine output
+        String actualFrom = null;
+        String actualTo = null;
+        try {
+            if (isSend) {
+                actualTo = getOutputAddress(tx, params, wallet, false);
+                actualFrom = getInputAddress(tx, params, wallet, true);
+            } else {
+                actualFrom = getInputAddress(tx, params, wallet, false);
+                actualTo = getOutputAddress(tx, params, wallet, true);
+            }
+            if (actualFrom == null) actualFrom = getInputAddress(tx, params, wallet, null);
+            if (actualTo == null) actualTo = getOutputAddress(tx, params, wallet, null);
+        } catch (Exception ignored) {}
+        if (actualFrom == null) actualFrom = "—";
+        if (actualTo == null) actualTo = "—";
+
+        tvActualFrom.setText(actualFrom);
+        tvActualTo.setText(actualTo);
+        copyOnClick(tvActualFrom, actualFrom);
+        copyOnClick(tvActualTo, actualTo);
+
+        // --- Full input / output list ---
+        // Build a multi-line list with address, script type, and amount
         StringBuilder fromSb = new StringBuilder();
         Coin totalFrom = Coin.ZERO;
         int inCount = 0;
@@ -193,6 +259,7 @@ public class TransactionDetailsActivity extends Activity {
         copyOnClick(tvFrom, fromText);
         copyOnClick(tvTo, toText);
 
+        // --- Transaction ID ---
         String hash = tx.getTxId().toString();
         tvTxid.setText(hash);
         copyOnClick(tvTxid, hash);
@@ -207,6 +274,7 @@ public class TransactionDetailsActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    /** Extract a base58/bech32 address from a script, or null if not standard. */
     private String getAddressFromScript(Script script, NetworkParameters params) {
         if (script == null) return null;
         try {
@@ -218,6 +286,7 @@ public class TransactionDetailsActivity extends Activity {
         }
     }
 
+    /** Detect script type from address prefix and script pattern. */
     private String getAddressType(String addr, Script script) {
         try {
             if (script != null && ScriptPattern.isOpReturn(script)) return "OP_RETURN";
@@ -231,10 +300,63 @@ public class TransactionDetailsActivity extends Activity {
         return "nonstandard";
     }
 
+    /**
+     * Find the first input address matching the mine filter.
+     * @param mineOnly true = only mine, false = only non-mine, null = any
+     */
+    private String getInputAddress(Transaction tx, NetworkParameters params, Wallet wallet, Boolean mineOnly) {
+        if (tx.getInputs() == null) return null;
+        for (TransactionInput in : tx.getInputs()) {
+            try {
+                TransactionOutPoint outpoint = in.getOutpoint();
+                if (outpoint != null && outpoint.getConnectedOutput() != null) {
+                    TransactionOutput connected = outpoint.getConnectedOutput();
+                    if (mineOnly != null) {
+                        boolean isMine;
+                        try { isMine = connected.isMine(wallet); } catch (Exception e) { continue; }
+                        if (isMine != mineOnly) continue;
+                    }
+                    String a = getAddressFromScript(connected.getScriptPubKey(), params);
+                    if (a != null) return a;
+                }
+                if (mineOnly == null) {
+                    try {
+                        String a = getAddressFromScript(in.getScriptSig(), params);
+                        if (a != null) return a;
+                    } catch (Exception ignored) {}
+                }
+            } catch (Exception ignored) {}
+        }
+        return null;
+    }
+
+    /**
+     * Find the first output address matching the mine filter.
+     * @param mineOnly true = only mine, false = only non-mine, null = any
+     */
+    private String getOutputAddress(Transaction tx, NetworkParameters params, Wallet wallet, Boolean mineOnly) {
+        if (tx.getOutputs() == null) return null;
+        for (TransactionOutput out : tx.getOutputs()) {
+            try {
+                if (mineOnly != null) {
+                    boolean isMine;
+                    try { isMine = out.isMine(wallet); } catch (Exception e) { continue; }
+                    if (isMine != mineOnly) continue;
+                }
+                String a = getAddressFromScript(out.getScriptPubKey(), params);
+                if (a != null) return a;
+            } catch (Exception ignored) {}
+        }
+        return null;
+    }
+
+    /** Make a TextView copy its content on tap. */
     private void copyOnClick(TextView tv, String text) {
         if (tv == null) return;
         tv.setOnClickListener(v -> copy(text));
     }
+
+    /** Copy text to clipboard with a toast. */
     private void copy(String text) {
         try {
             ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
