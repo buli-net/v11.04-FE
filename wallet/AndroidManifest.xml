@@ -95,7 +95,14 @@
             android:exported="false"
             android:parentActivityName="wallet.ui.WalletActivity"
             android:theme="@style/My.Preference" />
-<!-- end  -->     
+<!-- Create paper wallet -->     
+        <activity
+    android:name="wallet.ui.PaperWalletActivity"
+    android:label="Create paper wallet"
+    android:exported="false"
+    android:parentActivityName="wallet.ui.WalletActivity"
+    android:theme="@style/My.Preference" />
+<!-- end -->
         <activity
             android:name="wallet.ui.WalletActivity"
             android:configChanges="keyboard|keyboardHidden"
