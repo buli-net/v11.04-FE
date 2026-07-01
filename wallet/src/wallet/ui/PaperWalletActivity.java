@@ -20,11 +20,11 @@ import androidx.core.content.FileProvider;
 import org.bitcoinj.crypto.ECKey;
 import org.bitcoinj.base.Network;
 import org.bitcoinj.base.ScriptType;
+import org.bitcoinj.base.BitcoinNetwork;
 
 import java.io.File;
 import java.io.FileOutputStream;
 
-import wallet.Constants;
 import wallet.R;
 import wallet.util.Qr;
 
@@ -44,7 +44,7 @@ public class PaperWalletActivity extends AbstractWalletActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_paper_wallet);
 
-        if (getActionBar()!= null)
+        if (getActionBar() != null)
             getActionBar().setDisplayHomeAsUpEnabled(true);
 
         cardView = findViewById(R.id.paper_wallet_card);
@@ -64,15 +64,15 @@ public class PaperWalletActivity extends AbstractWalletActivity {
         findViewById(R.id.paper_wallet_generate).setOnClickListener(v -> generateNew());
         findViewById(R.id.paper_wallet_save).setOnClickListener(v -> savePaperWallet());
         findViewById(R.id.paper_wallet_share).setOnClickListener(v -> sharePaperWallet());
-
+        
         View printBtn = findViewById(R.id.paper_wallet_print);
-        if (printBtn!= null) printBtn.setVisibility(View.GONE);
+        if (printBtn != null) printBtn.setVisibility(View.GONE);
 
         generateNew();
     }
 
     private void generateNew() {
-        final Network network = Constants.NETWORK;
+        final Network network = BitcoinNetwork.MAINNET;
         final ECKey key = new ECKey();
 
         currentAddress = key.toAddress(ScriptType.P2PKH, network).toString();
@@ -100,7 +100,7 @@ public class PaperWalletActivity extends AbstractWalletActivity {
     }
 
     private void toggleKeyVisibility() {
-        keyVisible =!keyVisible;
+        keyVisible = !keyVisible;
         updatePrivKeyView();
     }
 
