@@ -17,7 +17,7 @@ import android.widget.Toast;
 
 import androidx.core.content.FileProvider;
 
-import org.bitcoinj.core.ECKey;
+import org.bitcoinj.crypto.ECKey;
 import org.bitcoinj.core.NetworkParameters;
 
 import java.io.File;
@@ -93,7 +93,7 @@ public class PaperWalletActivity extends AbstractWalletActivity {
             privKeyView.setText(currentPrivKey);
             toggleKeyButton.setText(R.string.paper_wallet_hide_key);
         } else {
-            privKeyView.setText("••••••••••••••••••••••••••••••••••••••••");
+            privKeyView.setText("••••••••••••••••••••••••");
             toggleKeyButton.setText(R.string.paper_wallet_show_key);
         }
     }
