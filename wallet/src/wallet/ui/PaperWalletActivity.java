@@ -2,12 +2,15 @@ package wallet.ui;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -25,12 +28,15 @@ import org.bitcoinj.core.NetworkParameters;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.OutputStream;
 
 import wallet.Constants;
 import wallet.R;
 import wallet.util.Qr;
 
 public class PaperWalletActivity extends AbstractWalletActivity {
+    private static final String FILE_PROVIDER_AUTHORITY = "de.schildbach.wallet.fileprovider";
+
     private View cardView;
     private ImageView qrAddressView, qrKeyView;
     private TextView addressView, pubKeyView, privKeyView;
@@ -139,8 +145,19 @@ public class PaperWalletActivity extends AbstractWalletActivity {
 
     private void savePaperWallet() {
         try {
-            File file = getShareFile();
-            Toast.makeText(this, "Saved: " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
+            Bitmap bitmap = renderCard();
+            String filename = "paperwallet_" + System.currentTimeMillis() + ".png";
+            
+            ContentValues values = new ContentValues();
+            values.put(MediaStore.Images.Media.DISPLAY_NAME, filename);
+            values.put(MediaStore.Images.Media.MIME_TYPE, "image/png");
+            values.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/PaperWallet");
+            
+            Uri uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+            try (OutputStream out = getContentResolver().openOutputStream(uri)) {
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+            }
+            Toast.makeText(this, "Saved to Pictures/PaperWallet/" + filename, Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             Toast.makeText(this, "Save failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
@@ -149,7 +166,7 @@ public class PaperWalletActivity extends AbstractWalletActivity {
     private void sharePaperWallet() {
         try {
             File file = getShareFile();
-            Uri uri = FileProvider.getUriForFile(this, getPackageName() + ".fileprovider", file);
+            Uri uri = FileProvider.getUriForFile(this, FILE_PROVIDER_AUTHORITY, file);
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("image/png");
             intent.putExtra(Intent.EXTRA_STREAM, uri);
