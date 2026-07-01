@@ -35,7 +35,8 @@ import wallet.R;
 import wallet.util.Qr;
 
 public class PaperWalletActivity extends AbstractWalletActivity {
-    private static final String FILE_PROVIDER_AUTHORITY = "de.schildbach.wallet.fileprovider";
+    // dùng provider gốc của buli-net
+    private static final String FILE_PROVIDER_AUTHORITY = BuildConfig.APPLICATION_ID + ".file_attachment";
 
     private View cardView;
     private ImageView qrAddressView, qrKeyView;
