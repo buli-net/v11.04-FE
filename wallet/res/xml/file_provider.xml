@@ -10,4 +10,5 @@
     <cache-path 
         name="paperwallet" 
         path="paperwallet/" />
+    <!-- end add create paper wallet -->
 </paths>
