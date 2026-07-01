@@ -21,10 +21,12 @@ import org.bitcoinj.crypto.ECKey;
 import org.bitcoinj.base.Network;
 import org.bitcoinj.base.ScriptType;
 import org.bitcoinj.base.BitcoinNetwork;
+import org.bitcoinj.core.NetworkParameters;
 
 import java.io.File;
 import java.io.FileOutputStream;
 
+import wallet.Constants;
 import wallet.R;
 import wallet.util.Qr;
 
@@ -71,8 +73,16 @@ public class PaperWalletActivity extends AbstractWalletActivity {
         generateNew();
     }
 
+    private Network getNetwork() {
+        NetworkParameters params = Constants.NETWORK_PARAMETERS;
+        String id = params.getId().toLowerCase();
+        if (id.contains("regtest")) return BitcoinNetwork.REGTEST;
+        if (id.contains("test")) return BitcoinNetwork.TESTNET;
+        return BitcoinNetwork.MAINNET;
+    }
+
     private void generateNew() {
-        final Network network = BitcoinNetwork.MAINNET;
+        final Network network = getNetwork();
         final ECKey key = new ECKey();
 
         currentAddress = key.toAddress(ScriptType.P2PKH, network).toString();
