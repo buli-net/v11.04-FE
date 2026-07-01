@@ -29,11 +29,6 @@ import org.bitcoinj.base.ScriptType;
 import org.bitcoinj.base.BitcoinNetwork;
 import org.bitcoinj.core.NetworkParameters;
 
-// BIP38 - có sẵn trong bitcoinj 0.16+
-// Nếu bản bitcoinj của bạn cũ hơn, thêm:
-// implementation 'org.bitcoinj:bitcoinj-core:0.16.2'
-import org.bitcoinj.crypto.BIP38PrivateKey;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
@@ -44,6 +39,7 @@ import java.util.concurrent.Executors;
 import wallet.Constants;
 import wallet.R;
 import wallet.util.Qr;
+import wallet.util.Bip38Helper;
 
 public class PaperWalletActivity extends AbstractWalletActivity {
     private static final int QR_SIZE = 512;
@@ -67,6 +63,7 @@ public class PaperWalletActivity extends AbstractWalletActivity {
     private String currentPrivKeyBip38 = "";
 
     private ScriptType addressType = ScriptType.P2WPKH;
+
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     private String getFileProviderAuthority() {
@@ -193,6 +190,7 @@ public class PaperWalletActivity extends AbstractWalletActivity {
         currentPrivKeyHex = key.getPrivateKeyAsHex();
         privKeyHexMode = false;
         bip38Mode = false;
+        currentPrivKeyBip38 = "";
 
         addressView.setText(currentAddress);
         pubKeyView.setText(currentPubKey);
@@ -214,21 +212,15 @@ public class PaperWalletActivity extends AbstractWalletActivity {
             return;
         }
 
-        // BIP38 encrypt off UI thread - scrypt nặng
+        // BIP38 encrypt off UI thread
         final String passphrase = p1;
         final ECKey keyFinal = key;
+        final boolean isMainNet = network == BitcoinNetwork.MAINNET;
         Toast.makeText(this, "Encrypting BIP38...", Toast.LENGTH_SHORT).show();
+        
         executor.execute(() -> {
             try {
-                // API bitcoinj: BIP38PrivateKey.encrypt(...)
-                // Nếu bản bitcoinj của bạn khác API, sửa 1 dòng này thôi
-                BIP38PrivateKey bip38 = BIP38PrivateKey.encrypt(
-                    network == BitcoinNetwork.MAINNET,
-                    keyFinal.getPrivKey(),
-                    keyFinal.isCompressed(),
-                    passphrase
-                );
-                currentPrivKeyBip38 = bip38.toString();
+                currentPrivKeyBip38 = Bip38Helper.encrypt(keyFinal, passphrase, isMainNet);
                 bip38Mode = true;
                 runOnUiThread(() -> {
                     updatePrivKeyView();
@@ -293,7 +285,6 @@ public class PaperWalletActivity extends AbstractWalletActivity {
         Toast.makeText(this, label + " copied", Toast.LENGTH_SHORT).show();
     }
 
-    // Render cho in / share / save - nền trắng chữ đen
     private Bitmap buildPrintBitmap() {
         View printView = getLayoutInflater().inflate(R.layout.paper_wallet_print, null);
         
