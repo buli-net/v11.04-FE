@@ -64,7 +64,6 @@
         android:fontFamily="monospace"
         android:textSize="12sp" />
 
-    <!-- divider cho bản in -->
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -77,7 +76,8 @@
         android:layout_height="wrap_content"
         android:text="Private key"
         android:textStyle="bold"
-        android:textColor="#000000" />
+        android:textColor="#000000"
+        android:tag="print_privkey_label" />
 
     <ImageView
         android:id="@+id/print_qr_key"
