@@ -381,6 +381,8 @@
     <string name="error_bluetooth">Bluetooth error: %1$s</string>
 
    <!-- add create paper wallet -->
+    <string name="paper_wallet_activity_title">Create paper wallet</string>
+    
     <string name="paper_wallet_warning">Anyone with the private key can spend. Store offline.</string>
     <string name="paper_wallet_address_label">Address</string>
     <string name="paper_wallet_pubkey_label">Public key</string>
