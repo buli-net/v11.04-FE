@@ -248,7 +248,7 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="@string/paper_wallet_export_txt" />
-
+        </LinearLayout>
     </LinearLayout> 
         
 </ScrollView>
