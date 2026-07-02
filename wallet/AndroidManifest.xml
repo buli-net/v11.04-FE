@@ -188,7 +188,7 @@
             android:label="@string/network_monitor_activity_title"
             android:theme="@style/My.Theme" />
         
-        <!-- fix theme sreen settings ui line add line 195->//197 -->
+        <!-- fix theme sreen settings ui - add line 195->//196-197 -->
         <activity
             android:name="wallet.ui.preference.PreferenceActivity"
             android:label="@string/preferences_activity_title"
