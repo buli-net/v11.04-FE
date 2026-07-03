@@ -383,15 +383,12 @@
    <!-- add create paper wallet -->
     
     <!-- Paper Wallet Activity -->
-    <string name="paper_wallet_activity_title">Create paper wallet</string>
+    <string name="paper_wallet_activity_title">Bitcoin Paper Wallet</string>
     
     <!-- Labels -->
     <string name="paper_wallet_warning">Anyone with the private key can spend. Store offline.</string>
     <string name="paper_wallet_public_label">Public</string>
     <string name="paper_wallet_private_label">Private</string>
-    <string name="paper_wallet_address_label">Address</string>
-    <string name="paper_wallet_pubkey_label">Public key</string>
-    <string name="paper_wallet_key_label">Private key</string>
 
     <!-- Buttons -->
     <string name="paper_wallet_copy">Copy</string>
@@ -410,7 +407,6 @@
     <string name="paper_wallet_public_format_legacy">P2PKH</string>
     <string name="paper_wallet_public_format_p2sh">P2SH</string>
     <string name="paper_wallet_public_format_hex">HEX</string>
-    <string name="paper_wallet_address_tap_hint">tap to switch</string>
 
     <!-- Private formats -->
     <string name="paper_wallet_private_format_wif">WIF</string>
