@@ -383,7 +383,7 @@
    <!-- add create paper wallet -->
     
     <!-- Paper Wallet Activity -->
-    <string name="paper_wallet_activity_title">Bitcoin Paper Wallet</string>
+    <string name="paper_wallet_activity_title">Create paper wallet</string>
     
     <!-- Labels -->
     <string name="paper_wallet_warning">Anyone with the private key can spend. Store offline.</string>
