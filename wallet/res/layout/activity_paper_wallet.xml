@@ -21,16 +21,15 @@
             android:textColor="?android:attr/textColorSecondary"
             android:layout_marginBottom="16dp" />
 
-        <!-- ========== Public section ========== -->
+        <!-- ========== Public / Address section ========== -->
         <TextView
-            android:id="@+id/paper_wallet_public_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/paper_wallet_public_label"
+            android:text="@string/paper_wallet_address_label"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="?android:attr/textColorPrimary" />
 
-        <!-- QR code for public -->
+        <!-- QR code for the receive address -->
         <ImageView
             android:id="@+id/paper_wallet_qr_address"
             android:layout_width="200dp"
@@ -40,7 +39,7 @@
             android:background="#ffffff"
             android:padding="8dp" />
 
-        <!-- Text representation of public -->
+        <!-- Text representation of the address -->
         <TextView
             android:id="@+id/paper_wallet_address"
             android:layout_width="match_parent"
@@ -50,7 +49,7 @@
             android:gravity="center"
             android:layout_marginTop="8dp" />
 
-        <!-- Tap to switch address type -->
+        <!-- Tap to switch address type (e.g. SegWit bech32) -->
         <TextView
             android:id="@+id/paper_wallet_address_type"
             android:layout_width="wrap_content"
@@ -61,58 +60,57 @@
             android:paddingTop="4dp"
             android:clickable="true"
             android:focusable="true"
-            android:text="@string/paper_wallet_address_tap_hint" />
+            android:text="SegWit bech32" />
 
-        <!-- Public actions: Copy / Format toggle / Hide -->
-        <LinearLayout
+        <Button
+            android:id="@+id/paper_wallet_copy_address"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/paper_wallet_copy" />
+
+        <!-- Public key (hex) -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/paper_wallet_pubkey_label"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="?android:attr/textColorPrimary"
+            android:layout_marginTop="12dp" />
+
+        <TextView
+            android:id="@+id/paper_wallet_pubkey"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="4dp">
+            android:textIsSelectable="true"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
 
-            <Button
-                android:id="@+id/paper_wallet_copy_address"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="@string/paper_wallet_copy" />
-
-            <Button
-                android:id="@+id/paper_wallet_public_format"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="HEX" />
-
-            <Button
-                android:id="@+id/paper_wallet_public_hide"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="@string/paper_wallet_hide" />
-        </LinearLayout>
+        <Button
+            android:id="@+id/paper_wallet_copy_pubkey"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/paper_wallet_copy" />
 
         <!-- Divider between public and private sections -->
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="?android:attr/listDivider"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp" />
 
-        <!-- ========== Private section ========== -->
+        <!-- ========== Private key section ========== -->
         <TextView
             android:id="@+id/paper_wallet_key_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/paper_wallet_private_label"
+            android:text="@string/paper_wallet_key_label"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="?android:attr/textColorPrimary" />
 
-        <!-- QR code for private -->
+        <!-- QR code for the private key (WIF or BIP38) -->
         <ImageView
             android:id="@+id/paper_wallet_qr_key"
             android:layout_width="200dp"
@@ -122,7 +120,7 @@
             android:background="#ffffff"
             android:padding="8dp" />
 
-        <!-- Text representation of private -->
+        <!-- Text representation of the private key -->
         <TextView
             android:id="@+id/paper_wallet_key"
             android:layout_width="match_parent"
@@ -132,7 +130,7 @@
             android:gravity="center"
             android:layout_marginTop="8dp" />
 
-        <!-- Private actions: Copy / Format toggle / Hide -->
+        <!-- Private key actions: Copy / Format toggle / Hide -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -160,7 +158,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="@string/paper_wallet_hide" />
+                android:text="@string/paper_wallet_hide_key" />
         </LinearLayout>
 
         <!-- ========== BIP38 encryption options ========== -->
