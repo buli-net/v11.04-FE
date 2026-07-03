@@ -26,7 +26,7 @@
             android:id="@+id/paper_wallet_public_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Public"
+            android:text="@string/paper_wallet_public_label"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="?android:attr/textColorPrimary" />
 
@@ -70,7 +70,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="ADDRESS" />
+                android:text="@string/paper_wallet_public_format_bech32" />
 
             <Button
                 android:id="@+id/paper_wallet_toggle_address"
@@ -78,7 +78,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="Hide" />
+                android:text="@string/paper_wallet_hide" />
         </LinearLayout>
 
         <!-- Divider between public and private sections -->
@@ -94,7 +94,7 @@
             android:id="@+id/paper_wallet_key_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Private"
+            android:text="@string/paper_wallet_private_label"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="?android:attr/textColorPrimary" />
 
@@ -138,7 +138,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="WIF" />
+                android:text="@string/paper_wallet_private_format_wif" />
 
             <Button
                 android:id="@+id/paper_wallet_toggle_key"
@@ -162,7 +162,7 @@
             android:id="@+id/paper_wallet_show_pass"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Show passphrase"
+            android:text="@string/paper_wallet_show"
             android:textColor="?android:attr/textColorPrimary"
             android:visibility="gone" />
 
