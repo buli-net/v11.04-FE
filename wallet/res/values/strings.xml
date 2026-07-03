@@ -445,6 +445,6 @@
     <!-- Print/Export -->
     <string name="paper_wallet_hidden">HIDDEN</string>
     <string name="paper_wallet_public_type">Public type: %s</string>
-</resources>
+
 <!-- end add create paper wallet -->
 </resources>
