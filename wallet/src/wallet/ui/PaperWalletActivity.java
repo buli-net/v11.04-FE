@@ -28,7 +28,7 @@ import org.bitcoinj.base.Network;
 import org.bitcoinj.base.ScriptType;
 import org.bitcoinj.base.BitcoinNetwork;
 import org.bitcoinj.core.NetworkParameters;
-import org.bitcoinj.base.utils.Utils;
+import org.bitcoinj.core.Utils; // FIX: Đúng package cho bitcoinj cũ
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -46,15 +46,15 @@ import wallet.util.Bip38Helper;
  * Paper Wallet creation activity.
  *
  * Generates a fresh ECKey and displays:
- * - Public (Address / HEX)
+ * - Public (Address / HEX toggleable)
  * - Private (WIF / HEX / BIP38)
  * - QR codes for public and private
  *
  * Features:
  * - BIP38 encryption with user passphrase (off UI thread)
- * - Copy / Hide / Format toggle for public and private
+ * - Copy / Hide / Format toggle for private key
  * - Save as PNG, Share, Print, Export TXT
- * - Public type switch: Legacy P2PKH <-> SegWit bech32 <-> P2SH
+ * - Address type switch: Legacy P2PKH <-> SegWit bech32 <-> P2SH
  *
  * This is cold-storage key generation only. Balance lookup / sweeping
  * is handled by SweepWalletActivity.
@@ -264,7 +264,7 @@ public class PaperWalletActivity extends AbstractWalletActivity {
         generateBtn.setEnabled(false);
         key = new ECKey();
 
-        // Derive address, public key, and private key in both WIF and HEX
+        // Derive public key, and private key in both WIF and HEX
         currentPubKey = key.getPublicKeyAsHex();
         currentPrivKeyWif = key.getPrivateKeyAsWiF(network);
         currentPrivKeyHex = key.getPrivateKeyAsHex();
