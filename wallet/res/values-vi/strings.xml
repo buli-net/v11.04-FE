@@ -458,6 +458,8 @@
 <string name="tx_details_status_confirmed">Đã xác nhận</string>
 <string name="tx_details_unconfirmed">Chưa xác nhận</string>
 <string name="tx_details_confirmations_value">%1$d xác nhận · khối %2$d</string>
+<string name="tx_details_total_from">Tổng: %1$s BTC từ %2$d</string>
+<string name="tx_details_total_to">Tổng: %1$s BTC tới %2$d</string>
 <string name="tx_details_copied">Đã sao chép</string>
 <string name="tx_details_save">Lưu</string>
 <string name="tx_details_share">Chia sẻ</string>
