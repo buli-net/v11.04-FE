@@ -484,6 +484,7 @@
 <string name="qr_confirmations">Xác nhận</string>
 <string name="qr_time">Thời gian</string>
 <string name="qr_age">Tuổi</string>
+<string name="qr_ago">trước</string>
 <string name="qr_sent_details">Chi tiết đã gửi</string>
 <string name="qr_received_details">Chi tiết đã nhận</string>
 <string name="qr_txid">Mã giao dịch</string>
