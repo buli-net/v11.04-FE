@@ -251,8 +251,9 @@ bar.setProgressBackgroundTintList(android.content.res.ColorStateList.valueOf(btc
     private TextView findSync(ViewGroup g) {
         for (int i = 0; i < g.getChildCount(); i++) {
             View v = g.getChildAt(i);
-            if (v instanceof TextView && ((TextView) v).getText().toString().contains("Synchronizing"))
-                return (TextView) v;
+          //  if (v instanceof TextView && ((TextView) v).getText().toString().contains("Synchronizing"))
+        if (v instanceof TextView && ((TextView) v).getText().toString().contains(","))
+            return (TextView) v;
             if (v instanceof ViewGroup) {
                 TextView t = findSync((ViewGroup) v);
                 if (t!= null) return t;
