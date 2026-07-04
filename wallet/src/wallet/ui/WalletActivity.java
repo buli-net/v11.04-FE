@@ -428,7 +428,8 @@ root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlob
             View v = g.getChildAt(i);
             if (v instanceof TextView) {
                 String t = ((TextView) v).getText().toString();
-                if (t.contains("Synchronizing") || t.contains("đồng bộ") || t.contains("BTC")) return (TextView) v;
+               // if (t.contains("Synchronizing") || t.contains("đồng bộ") || t.contains("BTC")) return (TextView) v;
+                if (t.contains(",") || t.contains("BTC")) return (TextView) v;
             }
             if (v instanceof ViewGroup) {
                 TextView t = findSync((ViewGroup) v);
