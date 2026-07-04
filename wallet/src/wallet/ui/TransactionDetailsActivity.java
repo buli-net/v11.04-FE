@@ -499,7 +499,7 @@ qrDialog.getWindow().getDecorView().setSystemUiVisibility(
 
         qrDialogImageView = new ImageView(this);
         qrDialogImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        qrDialogImageView.setPadding(48, 48);
+        qrDialogImageView.setPadding(48, 48, 48, 48);
         LinearLayout.LayoutParams imgLp = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f);
         qrDialogImageView.setLayoutParams(imgLp);
@@ -538,7 +538,7 @@ qrDialog.getWindow().getDecorView().setSystemUiVisibility(
         col.setLayoutParams(lp);
         col.setClickable(true);
         col.setOnClickListener(onClick);
-        col.setPadding(8, 8);
+        col.setPadding(8, 8, 8, 8);
 
         ImageView iv = new ImageView(this);
         iv.setImageResource(iconRes);
