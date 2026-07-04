@@ -18,6 +18,14 @@
 	<string name="exchange_rates_fragment_rate">tỉ lệ</string>
 	<string name="exchange_rates_fragment_balance">cân bằng</string>
 	<string name="exchange_rates_fragment_source">Giá được tải về từ %s</string>
+
+<!-- Create paper wallet -->
+
+    <string name="paper_wallet_activity_title">Tạo ví giấy</string>
+    <string name="paper_wallet_print_title">Ví Giấy</string>
+
+<!-- end -->
+	
 	<string name="wallet_transactions_options_filter_received">Đã nhận</string>
 	<string name="wallet_transactions_options_filter_all">Cả hai</string>
 	<string name="wallet_transactions_options_filter_sent">Đã gửi</string>
