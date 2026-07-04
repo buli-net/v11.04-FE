@@ -636,29 +636,47 @@ qrDialog.getWindow().getDecorView().setSystemUiVisibility(
 
 private String formatAge(Date txTime) {
     if (txTime == null) return "—";
-    long diffSec = (System.currentTimeMillis() - txTime.getTime()) / 1000;
-    if (diffSec < 0) diffSec = 0;
-
-    long years = diffSec / (365L * 24 * 3600);
-    diffSec %= 365L * 24 * 3600;
-    long months = diffSec / (30L * 24 * 3600);
-    diffSec %= 30L * 24 * 3600;
-    long days = diffSec / (24 * 3600);
-    diffSec %= 24 * 3600;
-    long hours = diffSec / 3600;
-    diffSec %= 3600;
-    long minutes = diffSec / 60;
-    long seconds = diffSec % 60;
-
-    StringBuilder sb = new StringBuilder();
-    if (years > 0) sb.append(years).append("y ");
-    if (months > 0) sb.append(months).append("mo ");
-    if (days > 0) sb.append(days).append("d ");
-    if (hours > 0 || sb.length() > 0) sb.append(hours).append("h ");
-    if (minutes > 0 || sb.length() > 0) sb.append(minutes).append("m ");
-    sb.append(seconds).append("s ");
-    sb.append(getString(R.string.qr_ago));
-    return sb.toString().trim();
+    
+    try {
+        java.time.ZonedDateTime then = txTime.toInstant().atZone(java.time.ZoneId.systemDefault());
+        java.time.ZonedDateTime now = java.time.ZonedDateTime.now();
+        
+        if (then.isAfter(now)) then = now;
+        
+        // Tính chính xác năm-tháng-ngày
+        java.time.Period period = java.time.Period.between(then.toLocalDate(), now.toLocalDate());
+        java.time.Duration timePart = java.time.Duration.between(then.toLocalTime(), now.toLocalTime());
+        
+        // Nếu giờ âm thì mượn 1 ngày
+        if (timePart.isNegative()) {
+            period = period.minusDays(1);
+            timePart = timePart.plusDays(1);
+        }
+        
+        long years = period.getYears();
+        long months = period.getMonths();
+        long days = period.getDays();
+        long hours = timePart.toHours();
+        long minutes = timePart.toMinutes() % 60;
+        long seconds = timePart.getSeconds() % 60;
+        
+        StringBuilder sb = new StringBuilder();
+        
+        if (years > 0) sb.append(years).append(" ").append(getString(years == 1 ? R.string.qr_year : R.string.qr_years)).append(" ");
+        if (months > 0) sb.append(months).append(" ").append(getString(months == 1 ? R.string.qr_month : R.string.qr_months)).append(" ");
+        if (days > 0) sb.append(days).append(" ").append(getString(days == 1 ? R.string.qr_day : R.string.qr_days)).append(" ");
+        if (hours > 0 || sb.length() > 0) sb.append(hours).append(" ").append(getString(hours == 1 ? R.string.qr_hour : R.string.qr_hours)).append(" ");
+        if (minutes > 0 || sb.length() > 0) sb.append(minutes).append(" ").append(getString(minutes == 1 ? R.string.qr_minute : R.string.qr_minutes)).append(" ");
+        sb.append(seconds).append(" ").append(getString(seconds == 1 ? R.string.qr_second : R.string.qr_seconds)).append(" ");
+        sb.append(getString(R.string.qr_ago));
+        
+        return sb.toString().trim().replaceAll(" +", " ");
+        
+    } catch (Exception e) {
+        // Fallback về cách cũ nếu máy cũ không có java.time
+        long diffSec = (System.currentTimeMillis() - txTime.getTime()) / 1000;
+        return diffSec + " " + getString(R.string.qr_seconds) + " " + getString(R.string.qr_ago);
+    }
 }
     
     // ---------- LIVE PATCH: refresh status/conf + QR ----------
