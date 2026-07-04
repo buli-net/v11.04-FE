@@ -498,7 +498,6 @@
 <string name="qr_minutes">minutes</string>
 <string name="qr_second">second</string>
 <string name="qr_seconds">seconds</string>
-<string name="qr_ago">ago</string>
     
 <string name="qr_sent_details">Sent Details</string>
 <string name="qr_received_details">Received Details</string>
