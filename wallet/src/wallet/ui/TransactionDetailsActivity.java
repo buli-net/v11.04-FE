@@ -634,50 +634,69 @@ qrDialog.getWindow().getDecorView().setSystemUiVisibility(
     }
 
     // Format elapsed time as years/months/days/hours/minutes/seconds ago
-
 private String formatAge(Date txTime) {
     if (txTime == null) return "—";
-    
-    try {
-        java.time.ZonedDateTime then = txTime.toInstant().atZone(java.time.ZoneId.systemDefault());
-        java.time.ZonedDateTime now = java.time.ZonedDateTime.now();
-        
-        if (then.isAfter(now)) then = now;
-        
-        // Tính chính xác năm-tháng-ngày
-        java.time.Period period = java.time.Period.between(then.toLocalDate(), now.toLocalDate());
-        java.time.Duration timePart = java.time.Duration.between(then.toLocalTime(), now.toLocalTime());
-        
-        // Nếu giờ âm thì mượn 1 ngày
-        if (timePart.isNegative()) {
-            period = period.minusDays(1);
-            timePart = timePart.plusDays(1);
-        }
-        
-        long years = period.getYears();
-        long months = period.getMonths();
-        long days = period.getDays();
-        long hours = timePart.toHours();
-        long minutes = timePart.toMinutes() % 60;
-        long seconds = timePart.getSeconds() % 60;
-        
-        StringBuilder sb = new StringBuilder();
-        
-        if (years > 0) sb.append(years).append(" ").append(getString(years == 1 ? R.string.qr_year : R.string.qr_years)).append(" ");
-        if (months > 0) sb.append(months).append(" ").append(getString(months == 1 ? R.string.qr_month : R.string.qr_months)).append(" ");
-        if (days > 0) sb.append(days).append(" ").append(getString(days == 1 ? R.string.qr_day : R.string.qr_days)).append(" ");
-        if (hours > 0 || sb.length() > 0) sb.append(hours).append(" ").append(getString(hours == 1 ? R.string.qr_hour : R.string.qr_hours)).append(" ");
-        if (minutes > 0 || sb.length() > 0) sb.append(minutes).append(" ").append(getString(minutes == 1 ? R.string.qr_minute : R.string.qr_minutes)).append(" ");
-        sb.append(seconds).append(" ").append(getString(seconds == 1 ? R.string.qr_second : R.string.qr_seconds)).append(" ");
-        sb.append(getString(R.string.qr_ago));
-        
-        return sb.toString().trim().replaceAll(" +", " ");
-        
-    } catch (Exception e) {
-        // Fallback về cách cũ nếu máy cũ không có java.time
-        long diffSec = (System.currentTimeMillis() - txTime.getTime()) / 1000;
-        return diffSec + " " + getString(R.string.qr_seconds) + " " + getString(R.string.qr_ago);
+
+    // Lấy thời gian lúc giao dịch và bây giờ
+    java.util.Calendar then = java.util.Calendar.getInstance();
+    then.setTime(txTime);
+    java.util.Calendar now = java.util.Calendar.getInstance();
+
+    // Tính chênh lệch từng phần
+    int years = now.get(java.util.Calendar.YEAR) - then.get(java.util.Calendar.YEAR);
+    int months = now.get(java.util.Calendar.MONTH) - then.get(java.util.Calendar.MONTH);
+    int days = now.get(java.util.Calendar.DAY_OF_MONTH) - then.get(java.util.Calendar.DAY_OF_MONTH);
+    int hours = now.get(java.util.Calendar.HOUR_OF_DAY) - then.get(java.util.Calendar.HOUR_OF_DAY);
+    int minutes = now.get(java.util.Calendar.MINUTE) - then.get(java.util.Calendar.MINUTE);
+    int seconds = now.get(java.util.Calendar.SECOND) - then.get(java.util.Calendar.SECOND);
+
+    // Nếu âm thì mượn đơn vị lớn hơn
+    if (seconds < 0) {
+        seconds = seconds + 60;
+        minutes = minutes - 1;
     }
+    if (minutes < 0) {
+        minutes = minutes + 60;
+        hours = hours - 1;
+    }
+    if (hours < 0) {
+        hours = hours + 24;
+        days = days - 1;
+    }
+    if (days < 0) {
+        // Lấy số ngày của tháng trước
+        java.util.Calendar temp = (java.util.Calendar) now.clone();
+        temp.add(java.util.Calendar.MONTH, -1);
+        int daysInLastMonth = temp.getActualMaximum(java.util.Calendar.DAY_OF_MONTH);
+        days = days + daysInLastMonth;
+        months = months - 1;
+    }
+    if (months < 0) {
+        months = months + 12;
+        years = years - 1;
+    }
+
+    // Ghép chuỗi kết quả
+    String result = "";
+    if (years > 0) {
+        result = result + years + " " + getString(years == 1 ? R.string.qr_year : R.string.qr_years) + " ";
+    }
+    if (months > 0) {
+        result = result + months + " " + getString(months == 1 ? R.string.qr_month : R.string.qr_months) + " ";
+    }
+    if (days > 0) {
+        result = result + days + " " + getString(days == 1 ? R.string.qr_day : R.string.qr_days) + " ";
+    }
+    if (hours > 0 || result.length() > 0) {
+        result = result + hours + " " + getString(hours == 1 ? R.string.qr_hour : R.string.qr_hours) + " ";
+    }
+    if (minutes > 0 || result.length() > 0) {
+        result = result + minutes + " " + getString(minutes == 1 ? R.string.qr_minute : R.string.qr_minutes) + " ";
+    }
+    result = result + seconds + " " + getString(seconds == 1 ? R.string.qr_second : R.string.qr_seconds) + " ";
+    result = result + getString(R.string.qr_ago);
+
+    return result;
 }
     
     // ---------- LIVE PATCH: refresh status/conf + QR ----------
