@@ -109,7 +109,7 @@ public class TransactionDetailsActivity extends Activity {
         ActionBar ab = getActionBar();
         if (ab != null) {
             ab.setDisplayHomeAsUpEnabled(true);
-            ab.setTitle("Transaction Details");
+            ab.setTitle(R.string.tx_details_title);
         }
 
         // Bind views
@@ -140,7 +140,7 @@ public class TransactionDetailsActivity extends Activity {
         // Get transaction hash from intent
         String txidStr = getIntent().getStringExtra("txid");
         if (txidStr == null) {
-            Toast.makeText(this, "Missing txid", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.tx_details_missing_txid), Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -149,7 +149,7 @@ public class TransactionDetailsActivity extends Activity {
         WalletApplication app = (WalletApplication) getApplication();
         wallet = app.getWallet();
         if (wallet == null) {
-            Toast.makeText(this, "Wallet not ready", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.tx_details_wallet_not_ready), Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -162,7 +162,7 @@ public class TransactionDetailsActivity extends Activity {
             tx = null;
         }
         if (tx == null) {
-            Toast.makeText(this, "Transaction not found", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.tx_details_transaction_not_found), Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -176,7 +176,7 @@ public class TransactionDetailsActivity extends Activity {
         boolean isSend = value.isNegative();
         Coin absValue = isSend ? value.negate() : value;
 
-        tvDirection.setText(isSend ? "Sent" : "Received");
+        tvDirection.setText(isSend ? getString(R.string.tx_details_sent) : getString(R.string.tx_details_received));
         tvAmount.setText((isSend ? "-" : "+") + absValue.toPlainString() + " BTC");
         try {
             tvAmount.setTextColor(getResources().getColor(
@@ -403,7 +403,7 @@ public class TransactionDetailsActivity extends Activity {
         try {
             ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
             cm.setPrimaryClip(ClipData.newPlainText("tx", text));
-            Toast.makeText(this, "Copied", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.tx_details_copied), Toast.LENGTH_SHORT).show();
         } catch (Exception ignored) {}
     }
 
@@ -499,7 +499,7 @@ qrDialog.getWindow().getDecorView().setSystemUiVisibility(
 
         qrDialogImageView = new ImageView(this);
         qrDialogImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        qrDialogImageView.setPadding(48, 48, 48, 48);
+        qrDialogImageView.setPadding(48, 48, 48);
         LinearLayout.LayoutParams imgLp = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f);
         qrDialogImageView.setLayoutParams(imgLp);
@@ -515,9 +515,9 @@ qrDialog.getWindow().getDecorView().setSystemUiVisibility(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        bar.addView(makeActionButton(android.R.drawable.ic_menu_save, "Save", dark, v -> saveQrBitmap()));
-        bar.addView(makeActionButton(android.R.drawable.ic_menu_share, "Share", dark, v -> shareTx()));
-        bar.addView(makeActionButton(android.R.drawable.ic_menu_search, "Explore", dark, v -> exploreTx()));
+        bar.addView(makeActionButton(android.R.drawable.ic_menu_save, getString(R.string.tx_details_save), dark, v -> saveQrBitmap()));
+        bar.addView(makeActionButton(android.R.drawable.ic_menu_share, getString(R.string.tx_details_share), dark, v -> shareTx()));
+        bar.addView(makeActionButton(android.R.drawable.ic_menu_search, getString(R.string.tx_details_explore), dark, v -> exploreTx()));
 
         root.addView(bar);
         qrDialog.setContentView(root);
@@ -538,7 +538,7 @@ qrDialog.getWindow().getDecorView().setSystemUiVisibility(
         col.setLayoutParams(lp);
         col.setClickable(true);
         col.setOnClickListener(onClick);
-        col.setPadding(8, 8, 8, 8);
+        col.setPadding(8, 8, 8);
 
         ImageView iv = new ImageView(this);
         iv.setImageResource(iconRes);
@@ -550,7 +550,7 @@ qrDialog.getWindow().getDecorView().setSystemUiVisibility(
 
         TextView tv = new TextView(this);
         tv.setText(label);
-        tv.setTextColor(dark ? 0xFFBBBBBB : 0xFF666666);
+        tv.setTextColor(dark ? 0xFFBBBBBB : 0xFF666);
         tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13);
         tv.setGravity(Gravity.CENTER);
         tv.setPadding(0, 8, 0, 0);
@@ -573,18 +573,18 @@ qrDialog.getWindow().getDecorView().setSystemUiVisibility(
                 values.put(MediaStore.Images.Media.IS_PENDING, 1);
             }
             Uri uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-            if (uri == null) { Toast.makeText(this, "Save failed", Toast.LENGTH_SHORT).show(); return; }
+            if (uri == null) { Toast.makeText(this, getString(R.string.tx_details_save_failed), Toast.LENGTH_SHORT).show(); return; }
             try (OutputStream os = getContentResolver().openOutputStream(uri)) {
                 bmp.compress(Bitmap.CompressFormat.PNG, 100, os);
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 values.clear();
                 values.put(MediaStore.Images.Media.IS_PENDING, 0);
-                getContentResolver().update(uri, values, null, null);
+                getContentResolver().update(uri, values, null);
             }
-            Toast.makeText(this, "Saved to Pictures/WalletQR", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.tx_details_saved_to_pictures), Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
-            Toast.makeText(this, "Save failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.tx_details_save_failed_msg, e.getMessage()), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -595,7 +595,7 @@ qrDialog.getWindow().getDecorView().setSystemUiVisibility(
             Intent i = new Intent(Intent.ACTION_SEND);
             i.setType("text/plain");
             i.putExtra(Intent.EXTRA_TEXT, shareText);
-            startActivity(Intent.createChooser(i, "Share transaction"));
+            startActivity(Intent.createChooser(i, getString(R.string.tx_details_share_tx)));
         } catch (Exception ignored) {}
     }
 
@@ -605,13 +605,13 @@ qrDialog.getWindow().getDecorView().setSystemUiVisibility(
             Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("https://mempool.space/tx/" + txid));
             startActivity(i);
         } catch (Exception e) {
-            Toast.makeText(this, "No browser found", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.tx_details_no_browser), Toast.LENGTH_SHORT).show();
         }
     }
 
     public static Bitmap encodeQr(String text, int size) throws WriterException {
         QRCodeWriter writer = new QRCodeWriter();
-        BitMatrix bitMatrix = writer.encode(text, BarcodeFormat.QR_CODE, size, size);
+        BitMatrix bitMatrix = writer.encode(text, BarcodeFormat.QR_CODE, size);
         int w = bitMatrix.getWidth();
         int h = bitMatrix.getHeight();
         Bitmap bmp = Bitmap.createBitmap(w, h, Bitmap.Config.RGB_565);
@@ -665,13 +665,13 @@ qrDialog.getWindow().getDecorView().setSystemUiVisibility(
         String statusText;
         int statusColorRes;
         if (depth <= 0) {
-            statusText = "Pending";
+            statusText = getString(R.string.tx_details_status_pending);
             statusColorRes = R.color.tx_status_pending;
         } else if (depth < 6) {
-            statusText = "Building";
+            statusText = getString(R.string.tx_details_status_building);
             statusColorRes = R.color.tx_status_building;
         } else {
-            statusText = "Confirmed";
+            statusText = getString(R.string.tx_details_status_confirmed);
             statusColorRes = R.color.tx_status_ok;
         }
         tvStatus.setText(statusText);
@@ -681,12 +681,9 @@ qrDialog.getWindow().getDecorView().setSystemUiVisibility(
 
         String confStr;
         if (depth <= 0) {
-            confStr = "unconfirmed";
+            confStr = getString(R.string.tx_details_unconfirmed);
         } else {
-            confStr = depth + " confirmations";
-        }
-        if (height > 0) {
-            confStr += " · height " + height;
+            confStr = getString(R.string.tx_details_confirmations_value, depth, height);
         }
         tvHeight.setText(confStr);
 
