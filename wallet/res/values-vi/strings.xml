@@ -483,8 +483,23 @@
 <string name="qr_size_weight">Kích thước / Trọng số</string>
 <string name="qr_confirmations">Xác nhận</string>
 <string name="qr_time">Thời gian</string>
+	
 <string name="qr_age">Tuổi</string>
 <string name="qr_ago">trước</string>
+<string name="qr_year">năm</string>
+<string name="qr_years">năm</string>
+<string name="qr_month">tháng</string>
+<string name="qr_months">tháng</string>
+<string name="qr_day">ngày</string>
+<string name="qr_days">ngày</string>
+<string name="qr_hour">giờ</string>
+<string name="qr_hours">giờ</string>
+<string name="qr_minute">phút</string>
+<string name="qr_minutes">phút</string>
+<string name="qr_second">giây</string>
+<string name="qr_seconds">giây</string>
+<string name="qr_ago">trước</string>
+	
 <string name="qr_sent_details">Chi tiết đã gửi</string>
 <string name="qr_received_details">Chi tiết đã nhận</string>
 <string name="qr_txid">Mã giao dịch</string>
