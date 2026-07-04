@@ -633,32 +633,34 @@ qrDialog.getWindow().getDecorView().setSystemUiVisibility(
     }
 
     // Format elapsed time as years/months/days/hours/minutes/seconds ago
-    private String formatAge(Date txTime) {
-        if (txTime == null) return "—";
-        long diffSec = (System.currentTimeMillis() - txTime.getTime()) / 1000;
-        if (diffSec < 0) diffSec = 0;
 
-        long years = diffSec / (365L * 24 * 3600);
-        diffSec %= 365L * 24 * 3600;
-        long months = diffSec / (30L * 24 * 3600);
-        diffSec %= 30L * 24 * 3600;
-        long days = diffSec / (24 * 3600);
-        diffSec %= 24 * 3600;
-        long hours = diffSec / 3600;
-        diffSec %= 3600;
-        long minutes = diffSec / 60;
-        long seconds = diffSec % 60;
+private String formatAge(Date txTime) {
+    if (txTime == null) return "—";
+    long diffSec = (System.currentTimeMillis() - txTime.getTime()) / 1000;
+    if (diffSec < 0) diffSec = 0;
 
-        StringBuilder sb = new StringBuilder();
-        if (years > 0) sb.append(years).append("y ");
-        if (months > 0) sb.append(months).append("mo ");
-        if (days > 0) sb.append(days).append("d ");
-        if (hours > 0 || sb.length() > 0) sb.append(hours).append("h ");
-        if (minutes > 0 || sb.length() > 0) sb.append(minutes).append("m ");
-        sb.append(seconds).append("s ago");
-        return sb.toString().trim();
-    }
+    long years = diffSec / (365L * 24 * 3600);
+    diffSec %= 365L * 24 * 3600;
+    long months = diffSec / (30L * 24 * 3600);
+    diffSec %= 30L * 24 * 3600;
+    long days = diffSec / (24 * 3600);
+    diffSec %= 24 * 3600;
+    long hours = diffSec / 3600;
+    diffSec %= 3600;
+    long minutes = diffSec / 60;
+    long seconds = diffSec % 60;
 
+    StringBuilder sb = new StringBuilder();
+    if (years > 0) sb.append(years).append("y ");
+    if (months > 0) sb.append(months).append("mo ");
+    if (days > 0) sb.append(days).append("d ");
+    if (hours > 0 || sb.length() > 0) sb.append(hours).append("h ");
+    if (minutes > 0 || sb.length() > 0) sb.append(minutes).append("m ");
+    sb.append(seconds).append("s ");
+    sb.append(getString(R.string.qr_ago));
+    return sb.toString().trim();
+}
+    
     // ---------- LIVE PATCH: refresh status/conf + QR ----------
     private void refreshLiveFields() {
         if (tx == null || tvStatus == null || tvHeight == null) return;
