@@ -470,6 +470,24 @@
 <string name="tx_details_share_tx">Share transaction</string>
 <string name="tx_details_no_browser">No browser found</string>
 
+    <!-- qr copy txt-->
+
+<string name="qr_direction">Direction</string>
+<string name="qr_amount">Amount</string>
+<string name="qr_sender_receiver">Sender / Receiver</string>
+<string name="qr_from">From</string>
+<string name="qr_to">To</string>
+<string name="qr_tx_details">Transaction details</string>
+<string name="qr_status">Status</string>
+<string name="qr_fee">Fee</string>
+<string name="qr_size_weight">Size / Weight</string>
+<string name="qr_confirmations">Confirmations</string>
+<string name="qr_time">Time</string>
+<string name="qr_age">Age</string>
+<string name="qr_sent_details">Sent Details</string>
+<string name="qr_received_details">Received Details</string>
+<string name="qr_txid">Transaction ID</string>
+
       <!-- wallet/res/layout/activity_transaction_details.xml -->
 
 <string name="tx_details_qr_desc">Transaction QR</string>
