@@ -155,7 +155,7 @@
 
 -->
 
-<!--Add VN -->
+<!-- Add VN -->
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="toast_wallet_reset">Ví của bạn đã được đặt lại!\nSẽ mất một thời gian để phục hồi.</string>
