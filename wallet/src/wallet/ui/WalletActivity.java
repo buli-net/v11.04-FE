@@ -416,7 +416,7 @@ bar.setProgressBackgroundTintList(android.content.res.ColorStateList.valueOf(btc
         }
         return null;
     }
-
+});
         
      //end add sync bar
         
