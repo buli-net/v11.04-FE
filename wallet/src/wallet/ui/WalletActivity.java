@@ -321,17 +321,11 @@ root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlob
             return;
         }
 
-// dynamic color
-int syncTextColor = tv.getCurrentTextColor();
-percent.setTextColor(syncTextColor);
+        int syncTextColor = tv.getCurrentTextColor();
+        percent.setTextColor(syncTextColor);
+        bar.setProgressTintList(android.content.res.ColorStateList.valueOf(syncTextColor));
+        bar.setProgressBackgroundTintList(android.content.res.ColorStateList.valueOf(syncTextColor & 0x33FFFFFF));
 
-int btcColor = syncTextColor; // <-- Declare it here.
-if (tv!= null) {
-    btcColor = tv.getCurrentTextColor(); // actually = syncTextColor
-}
-bar.setProgressTintList(android.content.res.ColorStateList.valueOf(btcColor));
-bar.setProgressBackgroundTintList(android.content.res.ColorStateList.valueOf(btcColor & 0x33FFFFFF));
-//end
         int[] loc = new int[2];
         tv.getLocationOnScreen(loc);
         int left = loc[0];
@@ -356,20 +350,15 @@ bar.setProgressBackgroundTintList(android.content.res.ColorStateList.valueOf(btc
             percentX = left + barWidth - padEnd - percentW;
         }
         percentX = Math.max(percentX, left + (int)(4 * d));
-
         percent.setX(percentX);
 
-        //Adjust the percentage according to the baseline of the word sync.
         int tvBaseline = tv.getBaseline();
         int pBaseline = percent.getBaseline();
         if (tvBaseline > 0 && pBaseline > 0) {
-        percent.setY(top + tvBaseline - pBaseline);
+            percent.setY(top + tvBaseline - pBaseline);
         } else {
-
-      // fallback nếu baseline chưa có
-        percent.setY(top + tv.getHeight() - percent.getMeasuredHeight());
+            percent.setY(top + tv.getHeight() - percent.getMeasuredHeight());
         }
-        //end
 
         percent.setVisibility(View.VISIBLE);
         bar.setX(left);
@@ -377,8 +366,9 @@ bar.setProgressBackgroundTintList(android.content.res.ColorStateList.valueOf(btc
         bar.getLayoutParams().width = barWidth;
         bar.setVisibility(View.VISIBLE);
 
-        // FIX: chỉ thêm 2 dòng này
+        // FIX 1 – bám theo khi cuộn
         tv.addOnLayoutChangeListener((v, l, t, r, b, ol, ot, or, ob) -> root.requestLayout());
+        // FIX 2 – cập nhật liên tục
         percent.postDelayed(() -> root.requestLayout(), 100);
 
         String s = tv.getText().toString().toLowerCase();
@@ -402,19 +392,36 @@ bar.setProgressBackgroundTintList(android.content.res.ColorStateList.valueOf(btc
         }
     }
 
-    // Find the word "Synchronizing" on the screen, and use the sample color to color the sync bar.
     private TextView findSync(ViewGroup g) {
         for (int i = 0; i < g.getChildCount(); i++) {
             View v = g.getChildAt(i);
-          // if (v instanceof TextView && ((TextView) v).getText().toString().contains("Synchronizing"))
-        if (v instanceof TextView && ((TextView) v).getText().toString().contains(","))
-            return (TextView) v;
+            if (v instanceof TextView && ((TextView) v).getText().toString().contains(","))
+                return (TextView) v;
             if (v instanceof ViewGroup) {
                 TextView t = findSync((ViewGroup) v);
                 if (t!= null) return t;
             }
         }
         return null;
+    }
+
+    private View findQr(ViewGroup g) {
+        for (int i = 0; i < g.getChildCount(); i++) {
+            View v = g.getChildAt(i);
+            if (v instanceof ImageView && v.getWidth() > 50 && v.getX() > g.getWidth() * 0.6)
+                return v;
+            if (v instanceof ViewGroup) {
+                View t = findQr((ViewGroup) v);
+                if (t!= null) return t;
+            }
+        }
+        return null;
+    }
+
+    private int getLeftOnScreen(View v) {
+        int[] l = new int[2];
+        v.getLocationOnScreen(l);
+        return l[0];
     }
 });
         
