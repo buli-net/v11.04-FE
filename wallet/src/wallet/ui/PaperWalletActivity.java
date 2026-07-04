@@ -311,6 +311,7 @@ public class PaperWalletActivity extends AbstractWalletActivity {
         });
     }
 });
+    }
 
     /**
      * Refresh the public TextView, QR code, and format buttons.
