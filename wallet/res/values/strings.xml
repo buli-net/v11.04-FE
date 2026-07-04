@@ -483,8 +483,23 @@
 <string name="qr_size_weight">Size / Weight</string>
 <string name="qr_confirmations">Confirmations</string>
 <string name="qr_time">Time</string>
+    
 <string name="qr_age">Age</string>
 <string name="qr_ago">ago</string>
+<string name="qr_year">year</string>
+<string name="qr_years">years</string>
+<string name="qr_month">month</string>
+<string name="qr_months">months</string>
+<string name="qr_day">day</string>
+<string name="qr_days">days</string>
+<string name="qr_hour">hour</string>
+<string name="qr_hours">hours</string>
+<string name="qr_minute">minute</string>
+<string name="qr_minutes">minutes</string>
+<string name="qr_second">second</string>
+<string name="qr_seconds">seconds</string>
+<string name="qr_ago">ago</string>
+    
 <string name="qr_sent_details">Sent Details</string>
 <string name="qr_received_details">Received Details</string>
 <string name="qr_txid">Transaction ID</string>
