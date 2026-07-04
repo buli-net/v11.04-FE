@@ -290,23 +290,27 @@ public class PaperWalletActivity extends AbstractWalletActivity {
         Toast.makeText(this, R.string.paper_wallet_encrypting_bip38, Toast.LENGTH_SHORT).show();
 
                 executor.execute(() -> {
-            try {
-                BIP38PrivateKey bip38 = BIP38PrivateKey.encrypt(keyFinal, passphrase);
-                currentPrivKeyBip38 = bip38.toBase58();
-                bip38Mode = true;
-                runOnUiThread(() -> {
-                    updatePrivKeyView();
-                    generateBtn.setEnabled(true);
-                    Toast.makeText(this, R.string.paper_wallet_bip38_ready, Toast.LENGTH_SHORT).show();
-                });
-            } catch (Exception e) {
-                runOnUiThread(() -> {
-                    generateBtn.setEnabled(true);
-                    Toast.makeText(this, getString(R.string.paper_wallet_bip38_failed, e.getMessage()), Toast.LENGTH_LONG).show();
-                });
-            }
+    try {
+        // bitcoinj 0.17.1 fromPrivateKey
+        BIP38PrivateKey bip38 = BIP38PrivateKey.fromPrivateKey(
+            keyFinal.getPrivKeyBytes(), 
+            passphrase, 
+            network
+        );
+        currentPrivKeyBip38 = bip38.toBase58();
+        bip38Mode = true;
+        runOnUiThread(() -> {
+            updatePrivKeyView();
+            generateBtn.setEnabled(true);
+            Toast.makeText(this, R.string.paper_wallet_bip38_ready, Toast.LENGTH_SHORT).show();
+        });
+    } catch (Exception e) {
+        runOnUiThread(() -> {
+            generateBtn.setEnabled(true);
+            Toast.makeText(this, getString(R.string.paper_wallet_bip38_failed, e.getMessage()), Toast.LENGTH_LONG).show();
         });
     }
+});
 
     /**
      * Refresh the public TextView, QR code, and format buttons.
