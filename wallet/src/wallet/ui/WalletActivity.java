@@ -310,11 +310,11 @@ root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlob
         TextView tv = findSync((ViewGroup) root);
         if (tv == null) return;
 
-        if (tv.getTag(R.id.sync_wrapped)!= null) {
+        if ("wrapped".equals(tv.getTag())) {
             updateProgress(tv);
             return;
         }
-        tv.setTag(R.id.sync_wrapped, true);
+        tv.setTag("wrapped");
 
         tv.post(() -> {
             try {
@@ -380,7 +380,6 @@ root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlob
             percentRef[0].setText(String.format(Locale.US, "%.2f%%", prog / 100f));
             percentRef[0].setTextColor(tv.getCurrentTextColor());
             barRef[0].setProgress(prog);
-            // bar màu theo chữ
             barRef[0].setProgressTintList(android.content.res.ColorStateList.valueOf(tv.getCurrentTextColor()));
             barRef[0].setProgressBackgroundTintList(android.content.res.ColorStateList.valueOf(tv.getCurrentTextColor() & 0x33FFFFFF));
         }
@@ -403,7 +402,6 @@ root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlob
     }
 });
 //end add sync bar
-        
      //end add sync bar
         
         final View insetTopView = contentView.findViewWithTag("inset_top");
