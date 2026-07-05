@@ -523,7 +523,7 @@
 <!-- end TransactionDetailsActivity -->
 	
 <!-- Sync bar -->
-    <string name="sync_keyword">Đồng bộ</string>
+    <string name="sync_keyword">Đang đồng bộ</string>
     
     <string name="time_hour">giờ</string>
     <string name="time_day">ngày</string>
