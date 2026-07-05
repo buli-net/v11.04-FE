@@ -147,13 +147,13 @@ public final class WalletActivity extends AbstractWalletActivity {
 
 //add sync bar 2/2
 
-
 //add sync bar 2/2
 final View root = findViewById(android.R.id.content);
 final SharedPreferences prefs = getSharedPreferences("sync_prefs", MODE_PRIVATE);
 final int[] lastProg = { -1 };
 final ProgressBar[] barRef = new ProgressBar[1];
 final TextView[] percentRef = new TextView[1];
+final LinearLayout[] containerRef = new LinearLayout[1]; // <-- MỚI
 
 final String SYNC_KEY = getString(R.string.sync_keyword).toLowerCase();
 final String H = getString(R.string.time_hour).toLowerCase();
@@ -165,24 +165,31 @@ final String Y = getString(R.string.time_year).toLowerCase();
 root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
     @Override
     public void onGlobalLayout() {
-        // reset nếu bar cũ chết sau reset blockchain
         if (barRef[0]!= null && (barRef[0].getParent() == null || barRef[0].getWindowToken() == null)) {
             barRef[0] = null;
             percentRef[0] = null;
+            containerRef[0] = null;
             lastProg[0] = -1;
         }
 
         TextView tv = findSync((ViewGroup) root);
         boolean isSyncing = tv!= null;
 
+        // === FIX ẢNH CỦA MÀY: xóa hẳn container khi hết sync ===
         if (!isSyncing) {
-            if (barRef[0]!= null) barRef[0].setVisibility(View.GONE);
-            if (percentRef[0]!= null) percentRef[0].setVisibility(View.GONE);
+            if (containerRef[0]!= null) {
+                ViewParent p = containerRef[0].getParent();
+                if (p instanceof ViewGroup) ((ViewGroup)p).removeView(containerRef[0]);
+                containerRef[0] = null;
+            }
+            barRef[0] = null;
+            percentRef[0] = null;
+            lastProg[0] = -1;
             return;
         }
 
         if ("wrapped".equals(tv.getTag()) && barRef[0] == null) {
-            tv.setTag(null); // bar chết thì wrap lại
+            tv.setTag(null);
         }
 
         if ("wrapped".equals(tv.getTag())) {
@@ -232,10 +239,10 @@ root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlob
                 container.addView(bar);
                 header.addView(container, idx);
 
+                containerRef[0] = container; // <-- LƯU LẠI
                 barRef[0] = bar;
                 percentRef[0] = percent;
 
-                // anti-blur
                 tv.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
                 percent.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
                 container.requestLayout();
@@ -249,8 +256,11 @@ root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlob
         if (barRef[0] == null || percentRef[0] == null) return;
         String txt = tv.getText().toString().toLowerCase();
         if (!txt.contains(SYNC_KEY)) {
-            barRef[0].setVisibility(View.GONE);
-            percentRef[0].setVisibility(View.GONE);
+            if (containerRef[0]!= null) {
+                ViewParent p = containerRef[0].getParent();
+                if (p instanceof ViewGroup) ((ViewGroup)p).removeView(containerRef[0]);
+                containerRef[0] = null;
+            }
             return;
         }
         barRef[0].setVisibility(View.VISIBLE);
@@ -289,7 +299,6 @@ root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlob
             View v = g.getChildAt(i);
             if (v instanceof TextView) {
                 String t = ((TextView) v).getText().toString().toLowerCase();
-                // FIX QUAN TRỌNG: chỉ tìm đúng SYNC_KEY, bỏ "btc"
                 if (t.contains(SYNC_KEY)) return (TextView) v;
             }
             if (v instanceof ViewGroup) {
