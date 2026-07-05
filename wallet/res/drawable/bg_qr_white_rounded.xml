@@ -2,5 +2,5 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
     <solid android:color="#FFFFFF" />
-    <corners android:radius="12dp" />   <!-- đổi 12dp = 8dp nếu muốn bo nhẹ hơn -->
+    <corners android:radius="4dp" />   <!-- đổi 12dp = 8dp nếu muốn bo nhẹ hơn -->
 </shape>
