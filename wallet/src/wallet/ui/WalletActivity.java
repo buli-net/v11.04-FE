@@ -146,13 +146,14 @@ public final class WalletActivity extends AbstractWalletActivity {
         contentView = findViewById(android.R.id.content); 
 
 //add sync bar 2/2
+
 final View root = findViewById(android.R.id.content);
 final SharedPreferences prefs = getSharedPreferences("sync_prefs", MODE_PRIVATE);
 final int[] lastProg = { -1 };
 final ProgressBar[] barRef = new ProgressBar[1];
 final TextView[] percentRef = new TextView[1];
 
-// lấy string theo locale
+// lấy string theo locale - FIX: lower ngay từ đầu
 final String SYNC_KEY = getString(R.string.sync_keyword).toLowerCase();
 final String H = getString(R.string.time_hour).toLowerCase();
 final String D = getString(R.string.time_day).toLowerCase();
@@ -165,7 +166,10 @@ root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlob
     public void onGlobalLayout() {
         TextView tv = findSync((ViewGroup) root);
 
-        boolean isSyncing = tv!= null && tv.getText().toString().toLowerCase().contains(SYNC_KEY);
+        // FIX: so sánh lowercase hết
+        String tvText = tv!= null? tv.getText().toString().toLowerCase() : "";
+        boolean isSyncing = tv!= null && tvText.contains(SYNC_KEY);
+
         if (!isSyncing) {
             if (barRef[0]!= null) barRef[0].setVisibility(View.GONE);
             if (percentRef[0]!= null) percentRef[0].setVisibility(View.GONE);
@@ -231,6 +235,7 @@ root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlob
         if (barRef[0] == null || percentRef[0] == null) return;
 
         String txt = tv.getText().toString().toLowerCase();
+        // FIX: chỉ check SYNC_KEY đã lower
         if (!txt.contains(SYNC_KEY)) {
             barRef[0].setVisibility(View.GONE);
             percentRef[0].setVisibility(View.GONE);
@@ -243,6 +248,7 @@ root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlob
         int h = 0;
         try {
             int v = Integer.parseInt(txt.replaceAll("[^0-9]", ""));
+            // FIX: so sánh với H/D/W/M/Y đã lower
             if (txt.contains(H)) h = v;
             else if (txt.contains(D)) h = v * 24;
             else if (txt.contains(W)) h = v * 7 * 24;
@@ -277,6 +283,7 @@ root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlob
             View v = g.getChildAt(i);
             if (v instanceof TextView) {
                 String t = ((TextView) v).getText().toString().toLowerCase();
+                // FIX: lower hết, bỏ fallback cứng "synchronizing"
                 if (t.contains(SYNC_KEY) || t.contains("btc")) return (TextView) v;
             }
             if (v instanceof ViewGroup) {
