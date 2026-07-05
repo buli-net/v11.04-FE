@@ -143,9 +143,9 @@ public final class WalletActivity extends AbstractWalletActivity {
         setContentView(R.layout.wallet_content);
         setActionBar(findViewById(R.id.wallet_appbar));
         getActionBar().setDisplayHomeAsUpEnabled(false);
-        contentView = findViewById(android.R.id.content);
+        contentView = findViewById(android.R.id.content); 
 
- //add sync bar  2/2      
+//add sync bar 2/2
 final View root = findViewById(android.R.id.content);
 final SharedPreferences prefs = getSharedPreferences("sync_prefs", MODE_PRIVATE);
 final int[] lastProg = { -1 };
@@ -153,22 +153,19 @@ final ProgressBar[] barRef = new ProgressBar[1];
 final TextView[] percentRef = new TextView[1];
 
 // lấy string theo locale
-final String SYNC_KEY = getString(R.string.sync_keyword);
-final String H = getString(R.string.time_hour);
-final String D = getString(R.string.time_day);
-final String W = getString(R.string.time_week);
-final String M = getString(R.string.time_month);
-final String Y = getString(R.string.time_year);
+final String SYNC_KEY = getString(R.string.sync_keyword).toLowerCase();
+final String H = getString(R.string.time_hour).toLowerCase();
+final String D = getString(R.string.time_day).toLowerCase();
+final String W = getString(R.string.time_week).toLowerCase();
+final String M = getString(R.string.time_month).toLowerCase();
+final String Y = getString(R.string.time_year).toLowerCase();
 
 root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
     @Override
     public void onGlobalLayout() {
         TextView tv = findSync((ViewGroup) root);
 
-        boolean isSyncing = tv!= null && (
-            tv.getText().toString().contains(SYNC_KEY) ||
-            tv.getText().toString().toLowerCase().contains(",") // fallback
-        );
+        boolean isSyncing = tv!= null && tv.getText().toString().toLowerCase().contains(SYNC_KEY);
         if (!isSyncing) {
             if (barRef[0]!= null) barRef[0].setVisibility(View.GONE);
             if (percentRef[0]!= null) percentRef[0].setVisibility(View.GONE);
@@ -234,7 +231,7 @@ root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlob
         if (barRef[0] == null || percentRef[0] == null) return;
 
         String txt = tv.getText().toString().toLowerCase();
-        if (!txt.contains(SYNC_KEY.toLowerCase()) &&!txt.contains(",")) {
+        if (!txt.contains(SYNC_KEY)) {
             barRef[0].setVisibility(View.GONE);
             percentRef[0].setVisibility(View.GONE);
             return;
@@ -246,11 +243,11 @@ root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlob
         int h = 0;
         try {
             int v = Integer.parseInt(txt.replaceAll("[^0-9]", ""));
-            if (txt.contains(H.toLowerCase())) h = v;
-            else if (txt.contains(D.toLowerCase())) h = v * 24;
-            else if (txt.contains(W.toLowerCase())) h = v * 7 * 24;
-            else if (txt.contains(M.toLowerCase())) h = v * 30 * 24;
-            else if (txt.contains(Y.toLowerCase())) h = v * 365 * 24;
+            if (txt.contains(H)) h = v;
+            else if (txt.contains(D)) h = v * 24;
+            else if (txt.contains(W)) h = v * 7 * 24;
+            else if (txt.contains(M)) h = v * 30 * 24;
+            else if (txt.contains(Y)) h = v * 365 * 24;
         } catch (Exception ignored) {}
         int max = prefs.getInt("max_hours", 0);
         if (h > max) { max = h; prefs.edit().putInt("max_hours", max).apply(); }
@@ -279,8 +276,8 @@ root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlob
         for (int i = 0; i < g.getChildCount(); i++) {
             View v = g.getChildAt(i);
             if (v instanceof TextView) {
-                String t = ((TextView) v).getText().toString();
-                if (t.contains(SYNC_KEY) || t.toLowerCase().contains(",") || t.contains("BTC")) return (TextView) v;
+                String t = ((TextView) v).getText().toString().toLowerCase();
+                if (t.contains(SYNC_KEY) || t.contains("btc")) return (TextView) v;
             }
             if (v instanceof ViewGroup) {
                 TextView t = findSync((ViewGroup) v);
