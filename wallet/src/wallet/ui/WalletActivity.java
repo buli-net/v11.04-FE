@@ -81,6 +81,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import java.util.Locale;
+import android.view.ViewParent;
 //end
 
 public final class WalletActivity extends AbstractWalletActivity {
