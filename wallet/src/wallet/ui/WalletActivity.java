@@ -147,8 +147,6 @@ public final class WalletActivity extends AbstractWalletActivity {
 
 //add sync bar 2/2
 
-//add sync bar 2/2
-
 final View root = findViewById(android.R.id.content);
 final SharedPreferences prefs = getSharedPreferences("sync_prefs", MODE_PRIVATE);
 final int[] lastProg = { -1 };
@@ -223,26 +221,15 @@ root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlob
         percent.setVisibility(View.VISIBLE);
         bar.setVisibility(View.VISIBLE);
 
-        String s = tv.getText().toString(); // FIX: không toLowerCase
+        String s = tv.getText().toString().toLowerCase();
         int h = 0;
         try {
-            // FIX: lấy số Unicode (4, 3, ١٢)
-            java.util.regex.Matcher m = java.util.regex.Pattern.compile("(\\p{N}+)").matcher(s);
-            int v = 0;
-            if (m.find()) {
-                String num = m.group(1)
-                   .replace('٠','0').replace('١','1').replace('٢','2').replace('٣','3')
-                   .replace('٤','4').replace('٥','5').replace('٦','6').replace('٧','7')
-                   .replace('٨','8').replace('٩','9');
-                v = Integer.parseInt(num.replaceAll("[^0-9]", ""));
-            }
-            String low = s.toLowerCase(java.util.Locale.ROOT);
-            if (low.contains("h") || s.contains("时") || s.contains("小时") || s.contains("ساعة")) h = v;
-            else if (low.contains("d") || s.contains("天") || s.contains("日") || s.contains("يوم")) h = v * 24;
-            else if (low.contains("w") || s.contains("周") || s.contains("星期") || s.contains("أسبوع") || s.contains("اسبوع")) h = v * 7 * 24;
-            else if (low.contains("m") || s.contains("月") || s.contains("شهر")) h = v * 30 * 24;
-            else if (low.contains("y") || s.contains("年") || s.contains("سنة")) h = v * 365 * 24;
-            else h = v * 24; // mặc định cho tiếng Trung "落后 4天"
+            int v = Integer.parseInt(s.replaceAll("[^0-9]", ""));
+            if (s.contains(H)) h = v;
+            else if (s.contains(D)) h = v * 24;
+            else if (s.contains(W)) h = v * 7 * 24;
+            else if (s.contains(M)) h = v * 30 * 24;
+            else if (s.contains(Y)) h = v * 365 * 24;
         } catch (Exception ignored) {}
         int max = prefs.getInt("max_hours", 0);
         if (h > max) { max = h; prefs.edit().putInt("max_hours", max).apply(); }
@@ -283,12 +270,8 @@ root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlob
         for (int i = 0; i < g.getChildCount(); i++) {
             View v = g.getChildAt(i);
             if (v instanceof TextView) {
-                String raw = ((TextView) v).getText().toString();
-                String txt = raw.replaceAll("[\\u200E\\u200F\\u202A-\\u202E]", "");
-                // FIX: không dùng KEY nữa, bắt mọi ngôn ngữ bằng số Unicode
-                if (txt.matches(".*\\p{N}.*") && txt.length() < 60 &&!txt.contains("+") &&!txt.contains("-0.00")) {
-                    if (v.getTop() < 400) return (TextView) v;
-                }
+                String txt = ((TextView) v).getText().toString().toLowerCase();
+                if (txt.contains(KEY)) return (TextView) v;
             }
             if (v instanceof ViewGroup) {
                 TextView t = findSync((ViewGroup) v);
@@ -331,8 +314,7 @@ root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlob
     }
 });
 //end add sync bar
-//end add sync bar
-        
+    
         final View insetTopView = contentView.findViewWithTag("inset_top");
         if (insetTopView != null) {
             ViewCompat.setOnApplyWindowInsetsListener(insetTopView, (v, windowInsets) -> {
