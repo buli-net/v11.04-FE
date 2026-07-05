@@ -146,13 +146,13 @@ public final class WalletActivity extends AbstractWalletActivity {
         contentView = findViewById(android.R.id.content); 
 
 //add sync bar 2/2
+
 final View root = findViewById(android.R.id.content);
 final SharedPreferences prefs = getSharedPreferences("sync_prefs", MODE_PRIVATE);
 final int[] lastProg = { -1 };
 final ProgressBar[] barRef = new ProgressBar[1];
 final TextView[] percentRef = new TextView[1];
 
-// lấy string theo locale - lower ngay
 final String SYNC_KEY = getString(R.string.sync_keyword).toLowerCase();
 final String H = getString(R.string.time_hour).toLowerCase();
 final String D = getString(R.string.time_day).toLowerCase();
@@ -163,8 +163,14 @@ final String Y = getString(R.string.time_year).toLowerCase();
 root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
     @Override
     public void onGlobalLayout() {
-        TextView tv = findSync((ViewGroup) root);
+        // === FIX RESET: nếu bar cũ bị detach thì reset ===
+        if (barRef[0]!= null && (barRef[0].getParent() == null || barRef[0].getWindowToken() == null)) {
+            barRef[0] = null;
+            percentRef[0] = null;
+            lastProg[0] = -1;
+        }
 
+        TextView tv = findSync((ViewGroup) root);
         String tvText = tv!= null? tv.getText().toString().toLowerCase() : "";
         boolean isSyncing = tv!= null && tvText.contains(SYNC_KEY);
 
@@ -172,6 +178,11 @@ root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlob
             if (barRef[0]!= null) barRef[0].setVisibility(View.GONE);
             if (percentRef[0]!= null) percentRef[0].setVisibility(View.GONE);
             return;
+        }
+
+        // nếu tv đã wrap nhưng bar chết -> unwrap lại
+        if ("wrapped".equals(tv.getTag()) && barRef[0] == null) {
+            tv.setTag(null);
         }
 
         if ("wrapped".equals(tv.getTag())) {
@@ -200,14 +211,14 @@ root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlob
                 int pad = (int)(8 * getResources().getDisplayMetrics().density);
                 percent.setPadding(pad, 0, 0, 0);
                 percent.setGravity(android.view.Gravity.CENTER_VERTICAL);
+                percent.setPaintFlags(percent.getPaintFlags() & ~android.graphics.Paint.UNDERLINE_TEXT_FLAG);
 
                 int idx = header.indexOfChild(tv);
                 header.removeView(tv);
+                tv.setPaintFlags(tv.getPaintFlags() & ~android.graphics.Paint.UNDERLINE_TEXT_FLAG);
 
                 topRow.addView(tv, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
-                LinearLayout.LayoutParams lpPct = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                lpPct.gravity = android.view.Gravity.CENTER_VERTICAL;
-                topRow.addView(percent, lpPct);
+                topRow.addView(percent, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
                 ProgressBar bar = new ProgressBar(WalletActivity.this, null, android.R.attr.progressBarStyleHorizontal);
                 bar.setMax(10000);
@@ -225,15 +236,10 @@ root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlob
                 barRef[0] = bar;
                 percentRef[0] = percent;
 
-                // === FIX BLUR ===
+                // anti-blur
                 tv.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
                 percent.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
                 container.requestLayout();
-                tv.post(() -> {
-                    tv.invalidate();
-                    percent.invalidate();
-                });
-                // === END FIX ===
 
                 updateProgress(tv);
             } catch (Exception ignored) {}
@@ -242,14 +248,12 @@ root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlob
 
     private void updateProgress(TextView tv) {
         if (barRef[0] == null || percentRef[0] == null) return;
-
         String txt = tv.getText().toString().toLowerCase();
         if (!txt.contains(SYNC_KEY)) {
             barRef[0].setVisibility(View.GONE);
             percentRef[0].setVisibility(View.GONE);
             return;
         }
-
         barRef[0].setVisibility(View.VISIBLE);
         percentRef[0].setVisibility(View.VISIBLE);
 
@@ -272,15 +276,11 @@ root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlob
             percentRef[0].setVisibility(View.GONE);
             return;
         }
-
         if (prog!= lastProg[0]) {
             lastProg[0] = prog;
-            percentRef[0].setText(String.format(Locale.US, getString(R.string.sync_percent_format), prog / 100f));
+            percentRef[0].setText(String.format(java.util.Locale.US, getString(R.string.sync_percent_format), prog / 100f));
             percentRef[0].setTextColor(tv.getCurrentTextColor());
-            percentRef[0].setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, tv.getTextSize());
             barRef[0].setProgress(prog);
-            barRef[0].setProgressTintList(android.content.res.ColorStateList.valueOf(tv.getCurrentTextColor()));
-            barRef[0].setProgressBackgroundTintList(android.content.res.ColorStateList.valueOf(tv.getCurrentTextColor() & 0x33FFFFFF));
         }
         tv.postDelayed(() -> updateProgress(tv), 500);
     }
@@ -299,7 +299,8 @@ root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlob
         }
         return null;
     }
-});   
+});
+
 //end add sync bar
         
         final View insetTopView = contentView.findViewWithTag("inset_top");
