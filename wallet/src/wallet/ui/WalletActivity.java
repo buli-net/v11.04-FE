@@ -146,7 +146,7 @@ public final class WalletActivity extends AbstractWalletActivity {
         contentView = findViewById(android.R.id.content); 
 
 //add sync bar 2/2
-//add sync bar 2/2 - DYNAMIC WIDTH
+
 final View root = findViewById(android.R.id.content);
 final SharedPreferences prefs = getSharedPreferences("sync_prefs", MODE_PRIVATE);
 final int[] lastProg = { -1 };
@@ -180,12 +180,12 @@ root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlob
         bar.setProgressTintList(android.content.res.ColorStateList.valueOf(syncTextColor));
         bar.setProgressBackgroundTintList(android.content.res.ColorStateList.valueOf(syncTextColor & 0x33FFFFFF));
 
+        float d = getResources().getDisplayMetrics().density;
+
         if (bar.getParent() == null) {
             ViewGroup p = (ViewGroup) tv.getParent();
             int idx = p.indexOfChild(tv);
             p.removeView(tv);
-
-            float d = getResources().getDisplayMetrics().density;
 
             LinearLayout wrap = new LinearLayout(WalletActivity.this);
             wrap.setOrientation(LinearLayout.VERTICAL);
@@ -241,12 +241,12 @@ root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlob
             bar.setProgress(prog);
         }
 
-        // ==== UPDATE BAR WIDTH THEO CHỮ MỖI LẦN ====
-        float d = getResources().getDisplayMetrics().density;
+        // ==== BAR = TEXT + GAP + % ====
         percent.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         int textW = (int) tv.getPaint().measureText(tv.getText().toString());
         int percentW = percent.getMeasuredWidth();
-        int wantedWidth = textW + (int)(8 * d) + percentW + (int)(8 * d);
+        int gap = (int)(8 * d);
+        int wantedWidth = textW + gap + percentW;
 
         View qr = findQr((ViewGroup) root);
         int qrLeft = qr!= null? getLeftOnScreen(qr) : root.getWidth();
@@ -258,7 +258,7 @@ root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlob
             lp.width = barW;
             bar.setLayoutParams(lp);
         }
-        // ==== END UPDATE ====
+        // ==== END ====
 
         if (h == 0) {
             View w = root.findViewWithTag("sync_wrap");
@@ -313,7 +313,6 @@ root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlob
         return l[0];
     }
 });
-//end add sync bar
 //end add sync bar
         
         final View insetTopView = contentView.findViewWithTag("inset_top");
