@@ -146,9 +146,7 @@ public final class WalletActivity extends AbstractWalletActivity {
         contentView = findViewById(android.R.id.content); 
 
 //add sync bar 2/2
-
-
-//add sync bar 2/2 - FINAL CENTERED
+//add sync bar 2/2 - DYNAMIC WIDTH
 final View root = findViewById(android.R.id.content);
 final SharedPreferences prefs = getSharedPreferences("sync_prefs", MODE_PRIVATE);
 final int[] lastProg = { -1 };
@@ -209,19 +207,9 @@ root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlob
             row.addView(percent, lpPercent);
             wrap.addView(row);
 
-            // AUTO WIDTH
-            int textW = (int) tv.getPaint().measureText(tv.getText().toString());
-            percent.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-            int percentW = percent.getMeasuredWidth();
-            int wantedWidth = textW + (int)(8 * d) + percentW + (int)(8 * d);
-
-            View qr = findQr((ViewGroup) root);
-            int qrLeft = qr!= null? getLeftOnScreen(qr) : root.getWidth();
-            int maxAllowed = Math.max(0, qrLeft - (int)(16 * d));
-            int barW = Math.min(wantedWidth, maxAllowed);
-
             int h = (int)(3 * d);
-            LinearLayout.LayoutParams lpB = new LinearLayout.LayoutParams(barW, h);
+            LinearLayout.LayoutParams lpB = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT, h);
             lpB.topMargin = (int)(6 * d);
             lpB.gravity = android.view.Gravity.CENTER_HORIZONTAL;
             bar.setLayoutParams(lpB);
@@ -252,6 +240,26 @@ root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlob
             percent.setText(String.format(java.util.Locale.US, FMT, prog / 100f));
             bar.setProgress(prog);
         }
+
+        // ==== UPDATE BAR WIDTH THEO CHỮ MỖI LẦN ====
+        float d = getResources().getDisplayMetrics().density;
+        percent.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        int textW = (int) tv.getPaint().measureText(tv.getText().toString());
+        int percentW = percent.getMeasuredWidth();
+        int wantedWidth = textW + (int)(8 * d) + percentW + (int)(8 * d);
+
+        View qr = findQr((ViewGroup) root);
+        int qrLeft = qr!= null? getLeftOnScreen(qr) : root.getWidth();
+        int maxAllowed = Math.max(0, qrLeft - (int)(16 * d));
+        int barW = Math.min(wantedWidth, maxAllowed);
+
+        ViewGroup.LayoutParams lp = bar.getLayoutParams();
+        if (lp.width!= barW) {
+            lp.width = barW;
+            bar.setLayoutParams(lp);
+        }
+        // ==== END UPDATE ====
+
         if (h == 0) {
             View w = root.findViewWithTag("sync_wrap");
             if (w!= null) ((ViewGroup) w.getParent()).removeView(w);
