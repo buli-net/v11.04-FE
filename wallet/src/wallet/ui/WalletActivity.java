@@ -147,7 +147,7 @@ public final class WalletActivity extends AbstractWalletActivity {
 
 //add sync bar 2/2
 
-//add sync bar 2/2 - FIX CRASH
+//add sync bar 2/2 - FIXED
 final View root = findViewById(android.R.id.content);
 final SharedPreferences prefs = getSharedPreferences("sync_prefs", MODE_PRIVATE);
 final int[] lastProg = { -1 };
@@ -181,7 +181,6 @@ root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlob
         bar.setProgressTintList(android.content.res.ColorStateList.valueOf(syncTextColor));
         bar.setProgressBackgroundTintList(android.content.res.ColorStateList.valueOf(syncTextColor & 0x33FFFFFF));
 
-        // FIX: bọc tv vào wrapper 1 lần duy nhất, tránh add vào parent lạ
         if (bar.getParent() == null) {
             ViewGroup p = (ViewGroup) tv.getParent();
             int idx = p.indexOfChild(tv);
@@ -193,7 +192,6 @@ root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlob
             wrap.setLayoutParams(new ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-            // hàng trên: tv + percent
             LinearLayout row = new LinearLayout(WalletActivity.this);
             row.setOrientation(LinearLayout.HORIZONTAL);
             row.addView(tv, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
@@ -232,9 +230,9 @@ root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlob
             percent.setText(String.format(Locale.US, FMT, prog / 100f));
             bar.setProgress(prog);
         }
-        if (h == 0) { // sync xong thì gỡ
+        if (h == 0) {
             View w = root.findViewWithTag("sync_wrap");
-            if (w!= null) ((ViewGroup)w.getParent()).removeView(w);
+            if (w!= null) ((ViewGroup) w.getParent()).removeView(w);
         }
     }
 
@@ -253,11 +251,40 @@ root.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlob
         return null;
     }
 
-    private TextView findTextViewWithText(ViewGroup g, String txt) {... } // giữ nguyên của mày
-    private View findQr(ViewGroup g) {... } // giữ nguyên
-    private int getLeftOnScreen(View v) {... } // giữ nguyên
+    private TextView findTextViewWithText(ViewGroup g, String txt) {
+        for (int i = 0; i < g.getChildCount(); i++) {
+            View v = g.getChildAt(i);
+            if (v instanceof TextView && ((TextView) v).getText().toString().contains(txt))
+                return (TextView) v;
+            if (v instanceof ViewGroup) {
+                TextView t = findTextViewWithText((ViewGroup) v, txt);
+                if (t!= null) return t;
+            }
+        }
+        return null;
+    }
+
+    private View findQr(ViewGroup g) {
+        for (int i = 0; i < g.getChildCount(); i++) {
+            View v = g.getChildAt(i);
+            if (v instanceof ImageView && v.getWidth() > 50 && v.getX() > g.getWidth() * 0.6)
+                return v;
+            if (v instanceof ViewGroup) {
+                View t = findQr((ViewGroup) v);
+                if (t!= null) return t;
+            }
+        }
+        return null;
+    }
+
+    private int getLeftOnScreen(View v) {
+        int[] l = new int[2];
+        v.getLocationOnScreen(l);
+        return l[0];
+    }
 });
 //end add sync bar
+
 //end add sync bar
         
         final View insetTopView = contentView.findViewWithTag("inset_top");
