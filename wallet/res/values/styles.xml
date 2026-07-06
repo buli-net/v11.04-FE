@@ -159,4 +159,14 @@
     <item name="android:fontFamily">sans-serif-medium</item>
 </style>
     <!-- end -->
+
+    <!-- cardview -->
+    <style name="CardView" parent="">
+        <item name="cardViewStyle">@style/CardView.Light</item>
+    </style>
+    <style name="CardView.Light" parent="">
+        <item name="cardBackgroundColor">@color/cardview_light_background</item>
+        <item name="cardCornerRadius">@dimen/cardview_default_radius</item>
+        <item name="cardElevation">@dimen/cardview_default_elevation</item>
+    </style>
 </resources>
