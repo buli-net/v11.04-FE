@@ -56,6 +56,9 @@ import java.util.Map;
 import wallet.R;
 import wallet.WalletApplication;
 
+import org.bitcoinj.core.SegwitAddress;
+import org.bitcoinj.core.Utils;
+
 public class TransactionDetailsActivity extends Activity {
     private TextView tvDirection, tvAmount, tvStatus, tvFee, tvTime, tvHeight, tvMeta, tvTxid;
     private TextView tvAge;
@@ -350,8 +353,8 @@ public class TransactionDetailsActivity extends Activity {
                 }
                 if (in.getWitness() != null && in.getWitness().getPushCount() >= 2) {
                     byte[] pubkey = in.getWitness().getPush(1);
-                    byte[] hash160 = org.bitcoinj.core.Utils.sha256hash160(pubkey);
-                    return org.bitcoinj.core.SegwitAddress.fromHash(params, hash160).toString();
+                    byte[] hash160 = Utils.sha256hash160(pubkey);
+return SegwitAddress.fromHash(params, hash160).toString();
                 }
                 if (mineOnly == null) {
                     try {
