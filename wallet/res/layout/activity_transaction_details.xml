@@ -7,65 +7,15 @@
     android:background="@color/tx_page_bg">
 
     <!-- HEADER - cho vào AppBar để có hiệu ứng scroll|enterAlways -->
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appbar_tx"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
-        app:elevation="0dp">
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_scrollFlags="scroll|enterAlways|snap"
-            app:cardCornerRadius="2dp"
-            app:cardElevation="4dp"
-            app:cardBackgroundColor="@color/tx_card_bg"
-            android:layout_margin="8dp"
-            android:layout_marginBottom="4dp">
-            
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="16dp">
-
-                <ImageView android:id="@+id/iv_tx_qr"
-                    android:layout_width="72dp"
-                    android:layout_height="72dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:scaleType="fitCenter"
-                    android:padding="4dp"
-                    android:background="@drawable/bg_qr_white_rounded"
-                    android:clipToOutline="true"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:contentDescription="@string/tx_details_qr_desc" />
-
-                <TextView android:id="@+id/tv_direction"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_toStartOf="@id/iv_tx_qr"
-                    android:layout_marginEnd="12dp"
-                    android:textStyle="bold"
-                    android:textSize="28sp"
-                    android:textColor="@color/tx_text_primary"
-                    android:fontFamily="sans-serif-medium" />
-
-                <TextView android:id="@+id/tv_amount"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/tv_direction"
-                    android:layout_alignStart="@id/tv_direction"
-                    android:layout_toStartOf="@id/iv_tx_qr"
-                    android:layout_marginTop="4dp"
-                    android:textSize="28sp"
-                    android:textStyle="bold" />
-            </RelativeLayout>
-        </androidx.cardview.widget.CardView>
-    </com.google.android.material.appbar.AppBarLayout>
+    <!-- HEADER - bỏ AppBarLayout -->
+<androidx.cardview.widget.CardView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="2dp"
+    app:cardElevation="4dp"
+    app:cardBackgroundColor="@color/tx_card_bg"
+    android:layout_margin="8dp"
+    android:layout_marginBottom="4dp">
 
     <!-- NỘI DUNG CUỘN - đổi ScrollView -> NestedScrollView -->
     <androidx.core.widget.NestedScrollView
