@@ -30,8 +30,9 @@ import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
 
-import androidx.annotation.Nullable;
+//import androidx.annotation.Nullable;
 //import androidx.cardview.R;
+import wallet.R;
 
 /**
  * A rounded rectangle drawable which also includes a shadow around.
