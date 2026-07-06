@@ -374,7 +374,7 @@ class RoundRectDrawableWithShadow extends Drawable {
         return content + (mRawMaxShadowSize * SHADOW_MULTIPLIER + mInsetShadow) * 2;
     }
 
-    void setColor(@Nullable ColorStateList color) {
+    void setColor(ColorStateList color) {
         setBackground(color);
         invalidateSelf();
     }
