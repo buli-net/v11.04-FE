@@ -310,7 +310,7 @@ public class TransactionDetailsActivity extends Activity {
         if (script == null) return null;
         try {
             return script.getToAddress(params).toString();
-        } catch (ScriptException | Exception e) {
+        } catch (Exception e) {  // Sửa lỗi multi-catch
             return null;
         }
     }
