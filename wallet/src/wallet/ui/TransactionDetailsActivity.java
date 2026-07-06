@@ -35,6 +35,7 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 import org.bitcoinj.base.Coin;
 import org.bitcoinj.base.Sha256Hash;
+import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.TransactionConfidence;
@@ -56,27 +57,16 @@ import java.util.Map;
 import wallet.R;
 import wallet.WalletApplication;
 
-/**
- * Transaction Details screen.
- * Shows amount, status, fee, and full input/output breakdown.
- * Compatible with AppTheme.My.Preference, extends android.app.Activity.
- */
 public class TransactionDetailsActivity extends Activity {
-    // Main amount / status views
     private TextView tvDirection, tvAmount, tvStatus, tvFee, tvTime, tvHeight, tvMeta, tvTxid;
-    // Age view - time elapsed since transaction
     private TextView tvAge;
-    // Full input/output list views
     private TextView tvFrom, tvTo;
-    // Actual counterparty sender/receiver views (single address)
     private TextView tvActualFrom, tvActualTo;
 
-    // QR live
     private ImageView ivQr;
     private Bitmap currentQrBitmap;
     private TextView tvTxidCopy;
 
-    // --- LIVE PATCH: keep tx/wallet/params for listener ---
     private Transaction tx;
     private Wallet wallet;
     private NetworkParameters params;
@@ -87,14 +77,10 @@ public class TransactionDetailsActivity extends Activity {
             runOnUiThread(() -> refreshLiveFields());
         }
     };
-    // --- END LIVE PATCH ---
 
-    // --- QR DIALOG LIVE PATCH ---
     private Dialog qrDialog;
     private ImageView qrDialogImageView;
-    // --- END QR DIALOG LIVE PATCH ---
 
-    // Age ticker - updates the Age field every second
     private final Handler ageHandler = new Handler(Looper.getMainLooper());
     private final Runnable ageRunnable = new Runnable() {
         @Override
@@ -110,14 +96,12 @@ public class TransactionDetailsActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transaction_details);
 
-        // Setup ActionBar
         ActionBar ab = getActionBar();
         if (ab != null) {
             ab.setDisplayHomeAsUpEnabled(true);
             ab.setTitle(R.string.tx_details_title);
         }
 
-        // Bind views
         tvDirection = findViewById(R.id.tv_direction);
         tvAmount = findViewById(R.id.tv_amount);
         tvStatus = findViewById(R.id.tv_status);
@@ -134,7 +118,6 @@ public class TransactionDetailsActivity extends Activity {
         ivQr = findViewById(R.id.iv_tx_qr);
         tvTxidCopy = findViewById(R.id.tv_txid_copy);
 
-        // Right-align Transaction details values to match mockup
         if (tvStatus != null) { tvStatus.setGravity(Gravity.END); tvStatus.setTextAlignment(TextView.TEXT_ALIGNMENT_VIEW_END); }
         if (tvFee != null) { tvFee.setGravity(Gravity.END); tvFee.setTextAlignment(TextView.TEXT_ALIGNMENT_VIEW_END); }
         if (tvTime != null) { tvTime.setGravity(Gravity.END); tvTime.setTextAlignment(TextView.TEXT_ALIGNMENT_VIEW_END); }
@@ -142,7 +125,6 @@ public class TransactionDetailsActivity extends Activity {
         if (tvMeta != null) { tvMeta.setGravity(Gravity.END); tvMeta.setTextAlignment(TextView.TEXT_ALIGNMENT_VIEW_END); }
         if (tvAge != null) { tvAge.setGravity(Gravity.END); tvAge.setTextAlignment(TextView.TEXT_ALIGNMENT_VIEW_END); }
 
-        // Get transaction hash from intent
         String txidStr = getIntent().getStringExtra("txid");
         if (txidStr == null) {
             Toast.makeText(this, getString(R.string.tx_details_missing_txid), Toast.LENGTH_SHORT).show();
@@ -150,7 +132,6 @@ public class TransactionDetailsActivity extends Activity {
             return;
         }
 
-        // Load wallet
         WalletApplication app = (WalletApplication) getApplication();
         wallet = app.getWallet();
         if (wallet == null) {
@@ -160,7 +141,6 @@ public class TransactionDetailsActivity extends Activity {
         }
         params = wallet.getNetworkParameters();
 
-        // Load transaction
         try {
             tx = wallet.getTransaction(Sha256Hash.wrap(txidStr));
         } catch (Exception e) {
@@ -172,7 +152,6 @@ public class TransactionDetailsActivity extends Activity {
             return;
         }
 
-        // --- Amount and direction ---
         Coin value = Coin.ZERO;
         try {
             Coin v = tx.getValue(wallet);
@@ -188,15 +167,12 @@ public class TransactionDetailsActivity extends Activity {
                 isSend ? R.color.tx_amount_sent : R.color.tx_amount_recv));
         } catch (Exception ignored) {}
 
-        // --- Confirmation status: Pending / Building / Confirmed ---
         refreshLiveFields();
 
-        // --- Fee ---
         Coin fee = null;
         try { fee = tx.getFee(); } catch (Exception ignored) {}
         tvFee.setText(fee != null ? fee.toPlainString() + " BTC" : "—");
 
-        // --- Time ---
         Date updateTime = null;
         try { updateTime = tx.getUpdateTime(); } catch (Exception ignored) {}
         if (updateTime != null) {
@@ -205,7 +181,6 @@ public class TransactionDetailsActivity extends Activity {
             tvTime.setText("—");
         }
 
-        // --- Size / weight / fee rate / RBF ---
         int size = 0, weight = 0;
         boolean rbf = false;
         try { size = tx.getMessageSize(); } catch (Exception ignored) {}
@@ -221,7 +196,6 @@ public class TransactionDetailsActivity extends Activity {
         }
         tvMeta.setText(size + " bytes · " + weight + " wu" + feeRate + (rbf ? " · RBF" : ""));
 
-        // --- Actual sender / receiver ---
         String actualFrom = null;
         String actualTo = null;
         try {
@@ -243,7 +217,6 @@ public class TransactionDetailsActivity extends Activity {
         copyOnClick(tvActualFrom, actualFrom);
         copyOnClick(tvActualTo, actualTo);
 
-        // --- Full input / output list ---
         StringBuilder fromSb = new StringBuilder();
         Coin totalFrom = Coin.ZERO;
         int inCount = 0;
@@ -262,7 +235,6 @@ public class TransactionDetailsActivity extends Activity {
                         if (addr == null) addr = "unknown";
                         type = getAddressType(addr, connected.getScriptPubKey());
                     } else {
-                        // FIX: lấy địa chỉ từ witness nếu không có parent
                         String witAddr = getInputAddress(tx, params, wallet, null);
                         if (witAddr != null) addr = witAddr;
                     }
@@ -299,12 +271,10 @@ public class TransactionDetailsActivity extends Activity {
         copyOnClick(tvFrom, fromText);
         copyOnClick(tvTo, toText);
 
-        // --- Transaction ID ---
         String hash = tx.getTxId().toString();
         tvTxid.setText(hash);
         copyOnClick(tvTxid, hash);
 
-        // --- QR live + copy full ---
         setupQr();
         updateLiveQr();
     }
@@ -337,7 +307,6 @@ public class TransactionDetailsActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    /** Extract a base58/bech32 address from a script, or null if not standard. */
     private String getAddressFromScript(Script script, NetworkParameters params) {
         if (script == null) return null;
         try {
@@ -349,7 +318,6 @@ public class TransactionDetailsActivity extends Activity {
         }
     }
 
-    /** Detect script type from address prefix and script pattern. */
     private String getAddressType(String addr, Script script) {
         try {
             if (script != null && ScriptPattern.isOpReturn(script)) return "OP_RETURN";
@@ -378,13 +346,10 @@ public class TransactionDetailsActivity extends Activity {
                     String a = getAddressFromScript(connected.getScriptPubKey(), params);
                     if (a != null) return a;
                 }
-                // FIX SIGNET: đọc từ witness
                 if (in.getWitness() != null && in.getWitness().getPushCount() >= 2) {
-                    try {
-                        byte[] pubkey = in.getWitness().getPush(1);
-                        org.bitcoinj.core.ECKey key = org.bitcoinj.core.ECKey.fromPublicOnly(pubkey);
-                        return key.toAddress(params).toString();
-                    } catch (Exception ignored) {}
+                    byte[] pubkey = in.getWitness().getPush(1);
+                    ECKey key = ECKey.fromPublicOnly(pubkey);
+                    return key.toAddress(params).toString();
                 }
                 if (mineOnly == null) {
                     try {
@@ -426,8 +391,6 @@ public class TransactionDetailsActivity extends Activity {
         } catch (Exception ignored) {}
     }
 
-    // ---------- QR live / copy full ----------
-
     private boolean isDark() {
         return (getResources().getConfiguration().uiMode 
             & android.content.res.Configuration.UI_MODE_NIGHT_MASK)
@@ -443,24 +406,24 @@ public class TransactionDetailsActivity extends Activity {
         }
     }
 
-private String buildLiveTxText() {
-    String ageStr = getTv(tvAge);
-    return getString(R.string.qr_direction) + ": " + getTv(tvDirection) + "\n"
-            + getString(R.string.qr_amount) + ": " + getTv(tvAmount) + "\n\n"
-            + getString(R.string.qr_sender_receiver) + "\n"
-            + getString(R.string.qr_from) + ": " + getTv(tvActualFrom) + "\n"
-            + getString(R.string.qr_to) + ": " + getTv(tvActualTo) + "\n\n"
-            + getString(R.string.qr_tx_details) + "\n"
-            + getString(R.string.qr_status) + ": " + getTv(tvStatus) + "\n"
-            + getString(R.string.qr_fee) + ": " + getTv(tvFee) + "\n"
-            + getString(R.string.qr_size_weight) + ": " + getTv(tvMeta) + "\n"
-            + getString(R.string.qr_confirmations) + ": " + getTv(tvHeight) + "\n"
-            + getString(R.string.qr_time) + ": " + getTv(tvTime) + "\n"
-            + getString(R.string.qr_age) + ": " + ageStr + "\n\n"
-            + getString(R.string.qr_sent_details) + "\n" + getTv(tvFrom) + "\n\n"
-            + getString(R.string.qr_received_details) + "\n" + getTv(tvTo) + "\n\n"
-            + getString(R.string.qr_txid) + "\n" + getTv(tvTxid);
-}
+    private String buildLiveTxText() {
+        String ageStr = getTv(tvAge);
+        return getString(R.string.qr_direction) + ": " + getTv(tvDirection) + "\n"
+                + getString(R.string.qr_amount) + ": " + getTv(tvAmount) + "\n\n"
+                + getString(R.string.qr_sender_receiver) + "\n"
+                + getString(R.string.qr_from) + ": " + getTv(tvActualFrom) + "\n"
+                + getString(R.string.qr_to) + ": " + getTv(tvActualTo) + "\n\n"
+                + getString(R.string.qr_tx_details) + "\n"
+                + getString(R.string.qr_status) + ": " + getTv(tvStatus) + "\n"
+                + getString(R.string.qr_fee) + ": " + getTv(tvFee) + "\n"
+                + getString(R.string.qr_size_weight) + ": " + getTv(tvMeta) + "\n"
+                + getString(R.string.qr_confirmations) + ": " + getTv(tvHeight) + "\n"
+                + getString(R.string.qr_time) + ": " + getTv(tvTime) + "\n"
+                + getString(R.string.qr_age) + ": " + ageStr + "\n\n"
+                + getString(R.string.qr_sent_details) + "\n" + getTv(tvFrom) + "\n\n"
+                + getString(R.string.qr_received_details) + "\n" + getTv(tvTo) + "\n\n"
+                + getString(R.string.qr_txid) + "\n" + getTv(tvTxid);
+    }
     
     private String getTv(TextView tv) {
         return tv != null && tv.getText() != null ? tv.getText().toString() : "";
@@ -468,7 +431,6 @@ private String buildLiveTxText() {
 
     private void updateLiveQr() {
         try {
-            // FIX: QR chỉ chứa TXID để tránh "Data too big" trên tx lớn
             String qrText = tx != null ? tx.getTxId().toString() : getTv(tvTxid);
             if (ivQr != null) {
                 currentQrBitmap = encodeQr(qrText, 512);
@@ -488,27 +450,26 @@ private String buildLiveTxText() {
         copy(buildLiveTxText());
     }
 
-    // --- QR dialog with Save / Share / Explore ---
     private void showQrDialog() {
         boolean dark = isDark();
         int bgColor = dark ? Color.BLACK : Color.WHITE;
         
- int dialogTheme = dark
-    ? android.R.style.Theme_Black_NoTitleBar_Fullscreen
-    : android.R.style.Theme_Light_NoTitleBar_Fullscreen;
+        int dialogTheme = dark
+            ? android.R.style.Theme_Black_NoTitleBar_Fullscreen
+            : android.R.style.Theme_Light_NoTitleBar_Fullscreen;
 
-qrDialog = new Dialog(this, dialogTheme);
+        qrDialog = new Dialog(this, dialogTheme);
 
-qrDialog.getWindow().setFlags(
-    android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN,
-    android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        qrDialog.getWindow().setFlags(
+            android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-if (android.os.Build.VERSION.SDK_INT >= 21) {
-    qrDialog.getWindow().setStatusBarColor(bgColor);
-}
-qrDialog.getWindow().getDecorView().setSystemUiVisibility(
-   android.view.View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-  | android.view.View.SYSTEM_UI_FLAG_FULLSCREEN);
+        if (android.os.Build.VERSION.SDK_INT >= 21) {
+            qrDialog.getWindow().setStatusBarColor(bgColor);
+        }
+        qrDialog.getWindow().getDecorView().setSystemUiVisibility(
+           android.view.View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+          | android.view.View.SYSTEM_UI_FLAG_FULLSCREEN);
         
         LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
@@ -519,14 +480,13 @@ qrDialog.getWindow().getDecorView().setSystemUiVisibility(
 
         qrDialogImageView = new ImageView(this);
         qrDialogImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        qrDialogImageView.setPadding(48, 48, 48, 48);
+        qrDialogImageView.setPadding(48, 48, 48);
         LinearLayout.LayoutParams imgLp = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f);
         qrDialogImageView.setLayoutParams(imgLp);
         qrDialogImageView.setOnClickListener(v -> qrDialog.dismiss());
         root.addView(qrDialogImageView);
 
-        // bottom action bar
         LinearLayout bar = new LinearLayout(this);
         bar.setOrientation(LinearLayout.HORIZONTAL);
         bar.setGravity(Gravity.CENTER);
@@ -634,7 +594,7 @@ qrDialog.getWindow().getDecorView().setSystemUiVisibility(
         Map<EncodeHintType, Object> hints = new HashMap<>();
         hints.put(EncodeHintType.MARGIN, 1);
         hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
-        BitMatrix bitMatrix = writer.encode(text, BarcodeFormat.QR_CODE, size, size, hints);
+        BitMatrix bitMatrix = writer.encode(text, BarcodeFormat.QR_CODE, size, hints);
         int w = bitMatrix.getWidth();
         int h = bitMatrix.getHeight();
         Bitmap bmp = Bitmap.createBitmap(w, h, Bitmap.Config.RGB_565);
@@ -646,73 +606,41 @@ qrDialog.getWindow().getDecorView().setSystemUiVisibility(
         return bmp;
     }
 
-    // Format elapsed time as years/months/days/hours/minutes/seconds ago
-private String formatAge(Date txTime) {
-    if (txTime == null) return "—";
+    private String formatAge(Date txTime) {
+        if (txTime == null) return "—";
+        java.util.Calendar then = java.util.Calendar.getInstance();
+        then.setTime(txTime);
+        java.util.Calendar now = java.util.Calendar.getInstance();
 
-    // Lấy thời gian lúc giao dịch và bây giờ
-    java.util.Calendar then = java.util.Calendar.getInstance();
-    then.setTime(txTime);
-    java.util.Calendar now = java.util.Calendar.getInstance();
+        int years = now.get(java.util.Calendar.YEAR) - then.get(java.util.Calendar.YEAR);
+        int months = now.get(java.util.Calendar.MONTH) - then.get(java.util.Calendar.MONTH);
+        int days = now.get(java.util.Calendar.DAY_OF_MONTH) - then.get(java.util.Calendar.DAY_OF_MONTH);
+        int hours = now.get(java.util.Calendar.HOUR_OF_DAY) - then.get(java.util.Calendar.HOUR_OF_DAY);
+        int minutes = now.get(java.util.Calendar.MINUTE) - then.get(java.util.Calendar.MINUTE);
+        int seconds = now.get(java.util.Calendar.SECOND) - then.get(java.util.Calendar.SECOND);
 
-    // Tính chênh lệch từng phần
-    int years = now.get(java.util.Calendar.YEAR) - then.get(java.util.Calendar.YEAR);
-    int months = now.get(java.util.Calendar.MONTH) - then.get(java.util.Calendar.MONTH);
-    int days = now.get(java.util.Calendar.DAY_OF_MONTH) - then.get(java.util.Calendar.DAY_OF_MONTH);
-    int hours = now.get(java.util.Calendar.HOUR_OF_DAY) - then.get(java.util.Calendar.HOUR_OF_DAY);
-    int minutes = now.get(java.util.Calendar.MINUTE) - then.get(java.util.Calendar.MINUTE);
-    int seconds = now.get(java.util.Calendar.SECOND) - then.get(java.util.Calendar.SECOND);
+        if (seconds < 0) { seconds += 60; minutes--; }
+        if (minutes < 0) { minutes += 60; hours--; }
+        if (hours < 0) { hours += 24; days--; }
+        if (days < 0) {
+            java.util.Calendar temp = (java.util.Calendar) now.clone();
+            temp.add(java.util.Calendar.MONTH, -1);
+            days += temp.getActualMaximum(java.util.Calendar.DAY_OF_MONTH);
+            months--;
+        }
+        if (months < 0) { months += 12; years--; }
 
-    // Nếu âm thì mượn đơn vị lớn hơn
-    if (seconds < 0) {
-        seconds = seconds + 60;
-        minutes = minutes - 1;
+        String result = "";
+        if (years > 0) result += years + " " + getString(years == 1 ? R.string.qr_year : R.string.qr_years) + " ";
+        if (months > 0) result += months + " " + getString(months == 1 ? R.string.qr_month : R.string.qr_months) + " ";
+        if (days > 0) result += days + " " + getString(days == 1 ? R.string.qr_day : R.string.qr_days) + " ";
+        if (hours > 0 || !result.isEmpty()) result += hours + " " + getString(hours == 1 ? R.string.qr_hour : R.string.qr_hours) + " ";
+        if (minutes > 0 || !result.isEmpty()) result += minutes + " " + getString(minutes == 1 ? R.string.qr_minute : R.string.qr_minutes) + " ";
+        result += seconds + " " + getString(seconds == 1 ? R.string.qr_second : R.string.qr_seconds) + " ";
+        result += getString(R.string.qr_ago);
+        return result;
     }
-    if (minutes < 0) {
-        minutes = minutes + 60;
-        hours = hours - 1;
-    }
-    if (hours < 0) {
-        hours = hours + 24;
-        days = days - 1;
-    }
-    if (days < 0) {
-        // Lấy số ngày của tháng trước
-        java.util.Calendar temp = (java.util.Calendar) now.clone();
-        temp.add(java.util.Calendar.MONTH, -1);
-        int daysInLastMonth = temp.getActualMaximum(java.util.Calendar.DAY_OF_MONTH);
-        days = days + daysInLastMonth;
-        months = months - 1;
-    }
-    if (months < 0) {
-        months = months + 12;
-        years = years - 1;
-    }
-
-    // Ghép chuỗi kết quả
-    String result = "";
-    if (years > 0) {
-        result = result + years + " " + getString(years == 1 ? R.string.qr_year : R.string.qr_years) + " ";
-    }
-    if (months > 0) {
-        result = result + months + " " + getString(months == 1 ? R.string.qr_month : R.string.qr_months) + " ";
-    }
-    if (days > 0) {
-        result = result + days + " " + getString(days == 1 ? R.string.qr_day : R.string.qr_days) + " ";
-    }
-    if (hours > 0 || result.length() > 0) {
-        result = result + hours + " " + getString(hours == 1 ? R.string.qr_hour : R.string.qr_hours) + " ";
-    }
-    if (minutes > 0 || result.length() > 0) {
-        result = result + minutes + " " + getString(minutes == 1 ? R.string.qr_minute : R.string.qr_minutes) + " ";
-    }
-    result = result + seconds + " " + getString(seconds == 1 ? R.string.qr_second : R.string.qr_seconds) + " ";
-    result = result + getString(R.string.qr_ago);
-
-    return result;
-}
     
-    // ---------- LIVE PATCH: refresh status/conf + QR ----------
     private void refreshLiveFields() {
         if (tx == null || tvStatus == null || tvHeight == null) return;
 
@@ -749,7 +677,6 @@ private String formatAge(Date txTime) {
         }
         tvHeight.setText(confStr);
 
-        // Update Age field
         if (tvAge != null) {
             Date updateTime = null;
             try { updateTime = tx.getUpdateTime(); } catch (Exception ignored) {}
@@ -758,5 +685,4 @@ private String formatAge(Date txTime) {
 
         updateLiveQr();
     }
-    // ---------- END LIVE PATCH ----------
 }
