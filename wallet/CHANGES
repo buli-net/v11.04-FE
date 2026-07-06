@@ -23,15 +23,15 @@ v11.04 mod by buli
 * - 2/7/2026
 + Add Create paper wallet
 
-- Create file wallet/src/wallet/util/Bip38Helper.java
 - Create file wallet/res/layout/paper_wallet_print.xml
 - Create file wallet/res/layout/activity_paper_wallet.xml
 - Create file wallet/src/wallet/ui/PaperWalletActivity.java
+- Create file wallet/src/wallet/util/PrintHelper.java
+- Create file wallet/src/wallet/util/Bip38Helper.java
 
 - Add code file wallet/res/xml/file_provider.xml [ add code line 9-->13 ]
 - Add code file wallet/AndroidManifest.xml [add code line 98-->105]
 - Add code file wallet/res/values/strings.xml [add code line 383 --> 446]
-- Add code file wallet/build.gradle [add code line 14]
 - Add code file wallet/src/wallet/ui/WalletActivity.java [ add code line 460--> 465]
 - Add code file wallet/res/menu/wallet_options.xml [add code line 71-->76]
 
