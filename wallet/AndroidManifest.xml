@@ -94,8 +94,9 @@
             android:label="Transaction Details"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:theme="@style/My.Preference" />
-            <!--    android:parentActivityName="wallet.ui.WalletActivity"  -->        
+            android:parentActivityName="wallet.ui.WalletActivity"
+          <!--  android:theme="@style/My.Preference" /> -->
+                
 <!-- Create paper wallet -->     
         <activity
     android:name="wallet.ui.PaperWalletActivity"
