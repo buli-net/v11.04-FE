@@ -1,5 +1,16 @@
 v11.04 mod by buli
 
+* -6/7/2026
++ Active layout hide at file wallet/res/values/layouts.xml
+
+    - wallet_actions_top edit false > true
+    - show_local_balance edit false > true
+    - show_wallet_address_dialog_hint edit false > true
+    - address_book_two_panes edit false > true
+    - network_monitor_two_panes edit false > true
+    
+
+
 * - 5/7/2026
 + Update language pack
 - Update string resources file 
@@ -47,7 +58,7 @@ v11.04 mod by buli
 
 - Add code file wallet/res/values/strings.xml [add code line 448 --> 524]
 - Add code file wallet/res/menu/wallet_transactions_context.xml [ add code line 11->18 ]
-- Add code file wallet/AndroidManifest.xml [ add code line 91-->98 ]
+- Add code file wallet/AndroidManifest.xml [ add code line 91-->97 ]
 - Add code file wallet/src/wallet/ui/WalletTransactionsFragment.java [ add code line 63-->65, 313-->319 ]
 - Add code file wallet/res/values/colors.xml [ add code line 53 ]
 - Add code file wallet/res/values-night/colors.xml [ add code line 30 ]
