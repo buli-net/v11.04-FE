@@ -520,7 +520,7 @@ public class TransactionDetailsActivity extends Activity {
         col.setLayoutParams(lp);
         col.setClickable(true);
         col.setOnClickListener(onClick);
-        col.setPadding(8, 8, 8, 8);
+        col.setPadding(8, 8, 8);
 
         ImageView iv = new ImageView(this);
         iv.setImageResource(iconRes);
@@ -532,7 +532,7 @@ public class TransactionDetailsActivity extends Activity {
 
         TextView tv = new TextView(this);
         tv.setText(label);
-        tv.setTextColor(dark ? 0xFFBBBBBB : 0xFF666);
+        tv.setTextColor(dark ? 0xFFBBBBBB : 0xFF666666);
         tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13);
         tv.setGravity(Gravity.CENTER);
         tv.setPadding(0, 8, 0, 0);
