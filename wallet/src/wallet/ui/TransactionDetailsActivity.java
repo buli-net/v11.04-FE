@@ -35,7 +35,6 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 import org.bitcoinj.base.Coin;
 import org.bitcoinj.base.Sha256Hash;
-import org.bitcoinj.core.Address;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.core.Transaction;
@@ -332,8 +331,10 @@ public class TransactionDetailsActivity extends Activity {
     }
 
     /**
-     * Lấy địa chỉ từ một input. Thử theo thứ tự: connectedOutput, scriptSig (P2PKH), witness (P2WPKH).
-     * Nếu mineOnly != null, chỉ trả về nếu địa chỉ thuộc (mineOnly=true) hoặc không thuộc (mineOnly=false) ví.
+     * Lấy địa chỉ từ một input.
+     * - Nếu có connectedOutput: dùng scriptPubKey và kiểm tra mineOnly (nếu có) qua connected.isMine()
+     * - Nếu không có connectedOutput: chỉ trả về nếu mineOnly == null (không yêu cầu lọc)
+     * - Trích xuất từ scriptSig (P2PKH) hoặc witness (P2WPKH)
      */
     private String getAddressFromInput(TransactionInput in, NetworkParameters params, Wallet wallet, Boolean mineOnly) {
         // 1. Thử từ connected output
@@ -351,6 +352,9 @@ public class TransactionDetailsActivity extends Activity {
             }
         }
 
+        // Nếu không có connectedOutput hoặc không thỏa mineOnly, chỉ trả về nếu không yêu cầu lọc
+        if (mineOnly != null) return null;
+
         // 2. Thử từ scriptSig (P2PKH)
         Script scriptSig = in.getScriptSig();
         if (scriptSig != null && ScriptPattern.isP2PKHInput(scriptSig)) {
@@ -358,10 +362,7 @@ public class TransactionDetailsActivity extends Activity {
                 byte[] pubKey = ScriptPattern.extractPubKeyFromScriptSig(scriptSig);
                 if (pubKey != null) {
                     ECKey key = ECKey.fromPublicOnly(pubKey);
-                    String addr = key.toAddress(params).toString();
-                    if (mineOnly == null) return addr;
-                    boolean isMine = wallet.isAddressMine(Address.fromString(params, addr));
-                    if ((mineOnly && isMine) || (!mineOnly && !isMine)) return addr;
+                    return key.toAddress(params).toString();
                 }
             } catch (Exception ignored) {}
         }
@@ -373,10 +374,7 @@ public class TransactionDetailsActivity extends Activity {
             if (last != null && (last.length == 33 || last.length == 65)) {
                 try {
                     ECKey key = ECKey.fromPublicOnly(last);
-                    String addr = key.toAddress(params).toString();
-                    if (mineOnly == null) return addr;
-                    boolean isMine = wallet.isAddressMine(Address.fromString(params, addr));
-                    if ((mineOnly && isMine) || (!mineOnly && !isMine)) return addr;
+                    return key.toAddress(params).toString();
                 } catch (Exception ignored) {}
             }
         }
