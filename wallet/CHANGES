@@ -1,6 +1,15 @@
 v11.04 mod by buli
 
 * -6/7/2026
+
++ Clone dependencies
+- implementation 'androidx.cardview:cardview:1.0.0'
+  - Crete file wallet/res/values/attrs.xml
+  - Create file wallet/src/wallet/java/androidx/cardview/widget/CardView.java
+
+
+
+
 + Active layout hide at file wallet/res/values/layouts.xml
 
     - wallet_actions_top edit false > true
