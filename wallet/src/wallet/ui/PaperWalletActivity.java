@@ -23,7 +23,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.content.FileProvider;
-import androidx.print.PrintHelper;
+import wallet.util.PrintHelper;
+//import androidx.print.PrintHelper;
 
 import org.bitcoinj.crypto.ECKey;
 import org.bitcoinj.base.Network;
