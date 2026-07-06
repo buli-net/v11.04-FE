@@ -409,45 +409,23 @@ public class TransactionDetailsActivity extends Activity {
     }
 
     private String buildLiveTxText() {
-        String ageStr = getTv(tvAge);
-        return getString(R.string.qr_direction) + ": " + getTv(tvDirection) + "
-"
-                + getString(R.string.qr_amount) + ": " + getTv(tvAmount) + "
-
-"
-                + getString(R.string.qr_sender_receiver) + "
-"
-                + getString(R.string.qr_from) + ": " + getTv(tvActualFrom) + "
-"
-                + getString(R.string.qr_to) + ": " + getTv(tvActualTo) + "
-
-"
-                + getString(R.string.qr_tx_details) + "
-"
-                + getString(R.string.qr_status) + ": " + getTv(tvStatus) + "
-"
-                + getString(R.string.qr_fee) + ": " + getTv(tvFee) + "
-"
-                + getString(R.string.qr_size_weight) + ": " + getTv(tvMeta) + "
-"
-                + getString(R.string.qr_confirmations) + ": " + getTv(tvHeight) + "
-"
-                + getString(R.string.qr_time) + ": " + getTv(tvTime) + "
-"
-                + getString(R.string.qr_age) + ": " + ageStr + "
-
-"
-                + getString(R.string.qr_sent_details) + "
-" + getTv(tvFrom) + "
-
-"
-                + getString(R.string.qr_received_details) + "
-" + getTv(tvTo) + "
-
-"
-                + getString(R.string.qr_txid) + "
-" + getTv(tvTxid);
-    }
+    String ageStr = getTv(tvAge);
+    return getString(R.string.qr_direction) + ": " + getTv(tvDirection) + "\n"
+            + getString(R.string.qr_amount) + ": " + getTv(tvAmount) + "\n\n"
+            + getString(R.string.qr_sender_receiver) + "\n"
+            + getString(R.string.qr_from) + ": " + getTv(tvActualFrom) + "\n"
+            + getString(R.string.qr_to) + ": " + getTv(tvActualTo) + "\n\n"
+            + getString(R.string.qr_tx_details) + "\n"
+            + getString(R.string.qr_status) + ": " + getTv(tvStatus) + "\n"
+            + getString(R.string.qr_fee) + ": " + getTv(tvFee) + "\n"
+            + getString(R.string.qr_size_weight) + ": " + getTv(tvMeta) + "\n"
+            + getString(R.string.qr_confirmations) + ": " + getTv(tvHeight) + "\n"
+            + getString(R.string.qr_time) + ": " + getTv(tvTime) + "\n"
+            + getString(R.string.qr_age) + ": " + ageStr + "\n\n"
+            + getString(R.string.qr_sent_details) + "\n" + getTv(tvFrom) + "\n\n"
+            + getString(R.string.qr_received_details) + "\n" + getTv(tvTo) + "\n\n"
+            + getString(R.string.qr_txid) + "\n" + getTv(tvTxid);
+}
     
     private String getTv(TextView tv) {
         return tv != null && tv.getText() != null ? tv.getText().toString() : "";
@@ -595,9 +573,7 @@ public class TransactionDetailsActivity extends Activity {
     private void shareTx() {
         try {
             String txid = tx != null ? tx.getTxId().toString() : getTv(tvTxid);
-            String shareText = buildLiveTxText() + "
-
-https://mempool.space/tx/" + txid;
+            String shareText = buildLiveTxText() + "\n\nhttps://mempool.space/tx/" + txid;
             Intent i = new Intent(Intent.ACTION_SEND);
             i.setType("text/plain");
             i.putExtra(Intent.EXTRA_TEXT, shareText);
