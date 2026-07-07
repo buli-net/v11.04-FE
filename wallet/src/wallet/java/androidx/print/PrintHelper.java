@@ -16,18 +16,19 @@
 
 package androidx.print;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
+import android.graphics.ColorSpace;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CancellationSignal;
@@ -41,9 +42,10 @@ import android.print.pdf.PrintedPdfDocument;
 import android.util.Log;
 
 import androidx.annotation.IntDef;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -55,6 +57,7 @@ import java.lang.annotation.RetentionPolicy;
 /**
  * Helper for printing bitmaps.
  */
+@SuppressWarnings("deprecation")
 public final class PrintHelper {
     private static final String LOG_TAG = "PrintHelper";
     // will be <= 300 dpi on A4 (8.3×11.7) paper (worst case of 150 dpi)
@@ -65,14 +68,15 @@ public final class PrintHelper {
      *
      * There is a bug in the PrintActivity that causes it to ignore the orientation
      */
-    private static final boolean PRINT_ACTIVITY_RESPECTS_ORIENTATION =
-            Build.VERSION.SDK_INT < 20 || Build.VERSION.SDK_INT > 23;
+    @SuppressWarnings("WeakerAccess") /* synthetic access */
+    static final boolean PRINT_ACTIVITY_RESPECTS_ORIENTATION = Build.VERSION.SDK_INT > 23;
 
     /**
      * Whether the print subsystem handles min margins correctly. If not the print helper needs
      * to fake this.
      */
-    private static final boolean IS_MIN_MARGINS_HANDLING_CORRECT = Build.VERSION.SDK_INT != 23;
+    @SuppressWarnings("WeakerAccess") /* synthetic access */
+    static final boolean IS_MIN_MARGINS_HANDLING_CORRECT = Build.VERSION.SDK_INT != 23;
 
     /**
      * image will be scaled but leave white space
@@ -87,11 +91,13 @@ public final class PrintHelper {
     /**
      * this is a black and white image
      */
+    @SuppressLint("InlinedApi")
     public static final int COLOR_MODE_MONOCHROME = PrintAttributes.COLOR_MODE_MONOCHROME;
 
     /**
      * this is a color image (default)
      */
+    @SuppressLint("InlinedApi")
     public static final int COLOR_MODE_COLOR = PrintAttributes.COLOR_MODE_COLOR;
 
     /**
@@ -128,10 +134,12 @@ public final class PrintHelper {
     @Retention(RetentionPolicy.SOURCE)
     private @interface Orientation {}
 
-    private final Context mContext;
+    @SuppressWarnings("WeakerAccess") /* synthetic access */
+    final Context mContext;
 
     BitmapFactory.Options mDecodeOptions = null;
-    private final Object mLock = new Object();
+    @SuppressWarnings("WeakerAccess") /* synthetic access */
+    final Object mLock = new Object();
 
     @ScaleMode int mScaleMode = SCALE_MODE_FILL;
     @ColorMode int mColorMode = COLOR_MODE_COLOR;
@@ -144,7 +152,7 @@ public final class PrintHelper {
      */
     public static boolean systemSupportsPrint() {
         // Supported on Android 4.4 or later.
-        return Build.VERSION.SDK_INT >= 19;
+        return true;
     }
 
     /**
@@ -222,7 +230,7 @@ public final class PrintHelper {
      */
     public int getOrientation() {
         // Unset defaults to landscape but might turn image
-        if (Build.VERSION.SDK_INT >= 19 && mOrientation == 0) {
+        if (mOrientation == 0) {
             return ORIENTATION_LANDSCAPE;
         }
         return mOrientation;
@@ -246,30 +254,29 @@ public final class PrintHelper {
      * @param bitmap  The bitmap to print.
      * @param callback Optional callback to observe when printing is finished.
      */
-    public void printBitmap(@NonNull final String jobName, @NonNull final Bitmap bitmap,
-            @Nullable final OnPrintFinishCallback callback) {
-        if (Build.VERSION.SDK_INT < 19 || bitmap == null) {
+    public void printBitmap(final @NonNull String jobName, final @NonNull Bitmap bitmap,
+            final @Nullable OnPrintFinishCallback callback) {
+        if (bitmap == null) {
             return;
         }
 
         PrintManager printManager =
                 (PrintManager) mContext.getSystemService(Context.PRINT_SERVICE);
-        PrintAttributes.MediaSize mediaSize;
-        if (isPortrait(bitmap)) {
-            mediaSize = PrintAttributes.MediaSize.UNKNOWN_PORTRAIT;
-        } else {
-            mediaSize = PrintAttributes.MediaSize.UNKNOWN_LANDSCAPE;
-        }
-        PrintAttributes attr = new PrintAttributes.Builder()
-                .setMediaSize(mediaSize)
-                .setColorMode(mColorMode)
-                .build();
 
-        printManager.print(jobName,
-                new PrintBitmapAdapter(jobName, mScaleMode, bitmap, callback), attr);
+        PrintAttributes.Builder builder = new PrintAttributes.Builder();
+        builder.setColorMode(mColorMode);
+        if (isPortrait(bitmap)) {
+            builder.setMediaSize(PrintAttributes.MediaSize.UNKNOWN_PORTRAIT);
+        } else {
+            builder.setMediaSize(PrintAttributes.MediaSize.UNKNOWN_LANDSCAPE);
+        }
+
+        PrintDocumentAdapter printAdapter = new PrintBitmapAdapter(jobName, mScaleMode, bitmap,
+                callback);
+
+        printManager.print(jobName, printAdapter, builder.build());
     }
 
-    @RequiresApi(19)
     private class PrintBitmapAdapter extends PrintDocumentAdapter {
         private final String mJobName;
         private final int mFittingMode;
@@ -343,18 +350,15 @@ public final class PrintHelper {
      * @throws FileNotFoundException if <code>Uri</code> is not pointing to a valid image.
      * @param callback Optional callback to observe when printing is finished.
      */
-    public void printBitmap(@NonNull final String jobName, @NonNull final Uri imageFile,
-            @Nullable final OnPrintFinishCallback callback)
+    public void printBitmap(final @NonNull String jobName, final @NonNull Uri imageFile,
+            final @Nullable OnPrintFinishCallback callback)
             throws FileNotFoundException {
-        if (Build.VERSION.SDK_INT < 19) {
-            return;
-        }
-
         PrintDocumentAdapter printDocumentAdapter = new PrintUriAdapter(jobName, imageFile,
                 callback, mScaleMode);
 
         PrintManager printManager =
                 (PrintManager) mContext.getSystemService(Context.PRINT_SERVICE);
+
         PrintAttributes.Builder builder = new PrintAttributes.Builder();
         builder.setColorMode(mColorMode);
 
@@ -363,19 +367,19 @@ public final class PrintHelper {
         } else if (mOrientation == ORIENTATION_PORTRAIT) {
             builder.setMediaSize(PrintAttributes.MediaSize.UNKNOWN_PORTRAIT);
         }
-        PrintAttributes attr = builder.build();
 
-        printManager.print(jobName, printDocumentAdapter, attr);
+
+        printManager.print(jobName, printDocumentAdapter, builder.build());
     }
 
-    @RequiresApi(19)
+    @SuppressWarnings("deprecation")
     private class PrintUriAdapter extends PrintDocumentAdapter {
-        private final String mJobName;
-        private final Uri mImageFile;
-        private final OnPrintFinishCallback mCallback;
-        private final int mFittingMode;
-        private PrintAttributes mAttributes;
-        AsyncTask<Uri, Boolean, Bitmap> mLoadBitmap;
+        final String mJobName;
+        final Uri mImageFile;
+        final OnPrintFinishCallback mCallback;
+        final int mFittingMode;
+        PrintAttributes mAttributes;
+        android.os.AsyncTask<Uri, Boolean, Bitmap> mLoadBitmap;
         Bitmap mBitmap;
 
         PrintUriAdapter(String jobName, Uri imageFile, OnPrintFinishCallback callback,
@@ -398,6 +402,7 @@ public final class PrintHelper {
                 mAttributes = newPrintAttributes;
             }
 
+
             if (cancellationSignal.isCanceled()) {
                 layoutResultCallback.onLayoutCancelled();
                 return;
@@ -413,7 +418,7 @@ public final class PrintHelper {
                 return;
             }
 
-            mLoadBitmap = new AsyncTask<Uri, Boolean, Bitmap>() {
+            mLoadBitmap = new android.os.AsyncTask<Uri, Boolean, Bitmap>() {
                 @Override
                 protected void onPreExecute() {
                     // First register for cancellation requests.
@@ -489,10 +494,14 @@ public final class PrintHelper {
             }.execute();
         }
 
-        private void cancelLoad() {
+        @SuppressWarnings("deprecation") // Call to requestCancelDecode()
+        void cancelLoad() {
             synchronized (mLock) { // prevent race with set null below
                 if (mDecodeOptions != null) {
-                    mDecodeOptions.requestCancelDecode();
+                    if (Build.VERSION.SDK_INT < 24) {
+                        // This only affects API 23 and older.
+                        mDecodeOptions.requestCancelDecode();
+                    }
                     mDecodeOptions = null;
                 }
             }
@@ -529,7 +538,8 @@ public final class PrintHelper {
      * @param bitmap The bitmap to be printed.
      * @return true iff the picture should best be printed on a portrait orientation paper.
      */
-    private static boolean isPortrait(Bitmap bitmap) {
+    @SuppressWarnings("WeakerAccess") /* synthetic access */
+    static boolean isPortrait(Bitmap bitmap) {
         return bitmap.getWidth() <= bitmap.getHeight();
     }
 
@@ -540,20 +550,20 @@ public final class PrintHelper {
      *
      * @return A builder that will build print attributes that match the other attributes
      */
-    @RequiresApi(19)
     private static PrintAttributes.Builder copyAttributes(PrintAttributes other) {
-        PrintAttributes.Builder b = (new PrintAttributes.Builder())
-                .setMediaSize(other.getMediaSize())
-                .setResolution(other.getResolution())
-                .setMinMargins(other.getMinMargins());
+        PrintAttributes.Builder b = new PrintAttributes.Builder();
+        b.setMediaSize(other.getMediaSize());
+        b.setResolution(other.getResolution());
+        b.setMinMargins(other.getMinMargins());
+
 
         if (other.getColorMode() != 0) {
             b.setColorMode(other.getColorMode());
         }
 
         if (Build.VERSION.SDK_INT >= 23) {
-            if (other.getDuplexMode() != 0) {
-                b.setDuplexMode(other.getDuplexMode());
+            if (Api23Impl.getDuplexMode(other) != 0) {
+                Api23Impl.setDuplexMode(b, Api23Impl.getDuplexMode(other));
             }
         }
 
@@ -570,7 +580,8 @@ public final class PrintHelper {
      *                    {@link #SCALE_MODE_FIT}
      * @return Matrix to be used in canvas.drawBitmap(bitmap, matrix, null) call
      */
-    private static Matrix getMatrix(int imageWidth, int imageHeight, RectF content,
+    @SuppressWarnings("WeakerAccess") /* synthetic access */
+    static Matrix getMatrix(int imageWidth, int imageHeight, RectF content,
             @ScaleMode int fittingMode) {
         Matrix matrix = new Matrix();
 
@@ -602,8 +613,8 @@ public final class PrintHelper {
      * @param cancellationSignal  Signal cancelling operation
      * @param writeResultCallback Callback to call once written
      */
-    @RequiresApi(19)
-    private void writeBitmap(final PrintAttributes attributes, final int fittingMode,
+    @SuppressWarnings("WeakerAccess") /* synthetic access */
+    void writeBitmap(final PrintAttributes attributes, final int fittingMode,
             final Bitmap bitmap, final ParcelFileDescriptor fileDescriptor,
             final CancellationSignal cancellationSignal,
             final PrintDocumentAdapter.WriteResultCallback writeResultCallback) {
@@ -613,11 +624,12 @@ public final class PrintHelper {
         } else {
             // If the handling of any margin != 0 is broken, strip the margins and add them to
             // the bitmap later
-            pdfAttributes = copyAttributes(attributes)
-                    .setMinMargins(new PrintAttributes.Margins(0, 0, 0, 0)).build();
+            PrintAttributes.Builder builder = copyAttributes(attributes);
+            builder.setMinMargins(new PrintAttributes.Margins(0, 0, 0, 0));
+            pdfAttributes = builder.build();
         }
 
-        (new AsyncTask<Void, Void, Throwable>() {
+        new android.os.AsyncTask<Void, Void, Throwable>() {
             @Override
             protected Throwable doInBackground(Void... params) {
                 try {
@@ -625,8 +637,8 @@ public final class PrintHelper {
                         return null;
                     }
 
-                    PrintedPdfDocument pdfDocument = new PrintedPdfDocument(mContext,
-                            pdfAttributes);
+                    PrintedPdfDocument pdfDocument =
+                            new PrintedPdfDocument(mContext, pdfAttributes);
 
                     Bitmap maybeGrayscale = convertBitmapForColorMode(bitmap,
                             pdfAttributes.getColorMode());
@@ -640,14 +652,16 @@ public final class PrintHelper {
 
                         RectF contentRect;
                         if (IS_MIN_MARGINS_HANDLING_CORRECT) {
-                            contentRect = new RectF(page.getInfo().getContentRect());
+                            PdfDocument.PageInfo pageInfo = page.getInfo();
+                            contentRect = new RectF(pageInfo.getContentRect());
                         } else {
                             // Create dummy doc that has the margins to compute correctly sized
                             // content rectangle
                             PrintedPdfDocument dummyDocument = new PrintedPdfDocument(mContext,
                                     attributes);
                             PdfDocument.Page dummyPage = dummyDocument.startPage(1);
-                            contentRect = new RectF(dummyPage.getInfo().getContentRect());
+                            PdfDocument.PageInfo pageInfo = dummyPage.getInfo();
+                            contentRect = new RectF(pageInfo.getContentRect());
                             dummyDocument.finishPage(dummyPage);
                             dummyDocument.close();
                         }
@@ -678,8 +692,8 @@ public final class PrintHelper {
                         }
 
                         // Write the document.
-                        pdfDocument.writeTo(
-                                new FileOutputStream(fileDescriptor.getFileDescriptor()));
+                        pdfDocument.writeTo(new FileOutputStream(
+                                            fileDescriptor.getFileDescriptor()));
                         return null;
                     } finally {
                         pdfDocument.close();
@@ -708,15 +722,14 @@ public final class PrintHelper {
                     writeResultCallback.onWriteCancelled();
                 } else if (throwable == null) {
                     // Done.
-                    writeResultCallback.onWriteFinished(
-                            new PageRange[] { PageRange.ALL_PAGES });
+                    writeResultCallback.onWriteFinished(new PageRange[]{PageRange.ALL_PAGES});
                 } else {
                     // Failed.
                     Log.e(LOG_TAG, "Error writing printed content", throwable);
                     writeResultCallback.onWriteFailed(null);
                 }
             }
-        }).execute();
+        }.execute();
     }
 
     /**
@@ -726,8 +739,8 @@ public final class PrintHelper {
      * @return the Bitmap
      * @throws FileNotFoundException if the Uri does not point to an image
      */
-    private Bitmap loadConstrainedBitmap(Uri uri)
-            throws FileNotFoundException {
+    @SuppressWarnings("WeakerAccess") /* synthetic access */
+    Bitmap loadConstrainedBitmap(Uri uri) throws FileNotFoundException {
         if (uri == null || mContext == null) {
             throw new IllegalArgumentException("bad argument to getScaledBitmap");
         }
@@ -762,6 +775,9 @@ public final class PrintHelper {
             mDecodeOptions = new BitmapFactory.Options();
             mDecodeOptions.inMutable = true;
             mDecodeOptions.inSampleSize = sampleSize;
+            if (Build.VERSION.SDK_INT >= 26) {
+                mDecodeOptions.inPreferredColorSpace = Api26Impl.get(ColorSpace.Named.SRGB);
+            }
             decodeOptions = mDecodeOptions;
         }
         try {
@@ -796,7 +812,8 @@ public final class PrintHelper {
         }
     }
 
-    private static Bitmap convertBitmapForColorMode(Bitmap original, @ColorMode int colorMode) {
+    @SuppressWarnings("WeakerAccess") /* synthetic access */
+    static Bitmap convertBitmapForColorMode(Bitmap original, @ColorMode int colorMode) {
         if (colorMode != COLOR_MODE_MONOCHROME) {
             return original;
         }
@@ -813,5 +830,32 @@ public final class PrintHelper {
         c.setBitmap(null);
 
         return grayscale;
+    }
+
+    @RequiresApi(23)
+    static class Api23Impl {
+        private Api23Impl() {
+            // This class is not instantiable.
+        }
+
+        static int getDuplexMode(PrintAttributes printAttributes) {
+            return printAttributes.getDuplexMode();
+        }
+
+        static void setDuplexMode(PrintAttributes.Builder builder, int duplexMode) {
+            builder.setDuplexMode(duplexMode);
+        }
+    }
+
+    @RequiresApi(26)
+    static class Api26Impl {
+        private Api26Impl() {
+            // This class is not instantiable.
+        }
+
+        static ColorSpace get(ColorSpace.Named name) {
+            return ColorSpace.get(name);
+        }
+
     }
 }
