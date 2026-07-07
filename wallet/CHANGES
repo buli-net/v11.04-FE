@@ -10,6 +10,7 @@ v11.04 mod by buli
   - Crete file wallet/res/values/colors_cardview.xml
   - Crete file wallet/res/values/dimens_cardview.xml
   - Crete file wallet/res/values/styles_cardview.xml
+  - Create file wallet/res/values-v23/styles_cardview.xml
 
   - Create file wallet/src/wallet/java/androidx/cardview/widget/CardView.java
   - Create file wallet/src/wallet/java/androidx/cardview/widget/CardViewApi17Impl.java
