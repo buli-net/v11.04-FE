@@ -3,6 +3,8 @@ v11.04 mod by buli
 * -6/7/2026
 
 + Clone dependencies
+- File wallet/build.gradle // line 19
+
 - implementation 'androidx.cardview:cardview:1.0.0'
   - Crete file wallet/res/values/attrs.xml
   - Crete file wallet/res/values/colors_cardview.xml
