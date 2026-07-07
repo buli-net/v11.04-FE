@@ -5,7 +5,18 @@ v11.04 mod by buli
 + Clone dependencies
 - implementation 'androidx.cardview:cardview:1.0.0'
   - Crete file wallet/res/values/attrs.xml
+  - Crete file wallet/res/values/colors_cardview.xml
+  - Crete file wallet/res/values/dimens_cardview.xml
+  - Crete file wallet/res/values/styles_cardview.xml
+
   - Create file wallet/src/wallet/java/androidx/cardview/widget/CardView.java
+  - Create file wallet/src/wallet/java/androidx/cardview/widget/CardViewApi17Impl.java
+  - Create file wallet/src/wallet/java/androidx/cardview/widget/CardViewApi21Impl.java
+  - Create file wallet/src/wallet/java/androidx/cardview/widget/CardViewBaseImpl.java
+  - Create file wallet/src/wallet/java/androidx/cardview/widget/CardViewDelegate.java
+  - Create file wallet/src/wallet/java/androidx/cardview/widget/CardViewImpl.java
+  - Create file wallet/src/wallet/java/androidx/cardview/widget/RoundRectDrawable.java
+  - Create file wallet/src/wallet/java/androidx/cardview/widget/RoundRectDrawableWithShadow.java
 
 
 
