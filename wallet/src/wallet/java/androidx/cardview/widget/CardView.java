@@ -31,7 +31,8 @@ import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.Px;
-import androidx.cardview.R;
+//import androidx.cardview.R;
+import androidx.cardview.widget.R;
 import wallet.R;
 
 /**
