@@ -57,17 +57,6 @@ android {
     defaultConfig {
         // if you fork the app for an alt-coin, change this ID
         applicationId 'corp.wallet.bitcoin'
-
-
-        //// clone bitcoinj
-
-    sourceSets {
-        main.java.srcDirs = ['src/wallet/java']
-        release.java.srcDirs = ['src/wallet/java']
-        debug.java.srcDirs = ['src/wallet/java']
-    }
-        
-        ////
     }
 
     buildTypes {
@@ -105,7 +94,8 @@ android {
     sourceSets {
         main { // configured for testnet by default
             manifest.srcFile 'AndroidManifest.xml'
-            java.srcDirs = ['src']
+           // java.srcDirs = ['src']
+            java.srcDirs = ['src', 'src/wallet/java']
             res.srcDirs = ['res']
             assets.srcDirs = ['assets']
         }
