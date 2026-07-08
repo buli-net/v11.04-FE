@@ -134,6 +134,10 @@ android {
     lintOptions {
         abortOnError false
         disable 'MissingTranslation'
+        ///clone btc
+
+    warning 'UnknownNullness'
+        ////
     }
 
     packagingOptions {
