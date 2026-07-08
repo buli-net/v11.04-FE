@@ -22,18 +22,18 @@ jobs:
         run: |
           wget https://repo1.maven.org/maven2/com/sun/mail/android-mail/1.6.7/android-mail-1.6.7-sources.jar
           mkdir -p temp_mail
-          cd temp_mail && unzip../android-mail-1.6.7-sources.jar
+          cd temp_mail && unzip ../android-mail-1.6.7-sources.jar
           cp -r javax wallet/src/wallet/java/
           cp -r com wallet/src/wallet/java/
-          cd.. && rm -rf android-mail-1.6.7-sources.jar temp_mail
+          cd .. && rm -rf android-mail-1.6.7-sources.jar temp_mail
 
       - name: Clone javax.activation 1.2.0
         run: |
           wget https://repo1.maven.org/maven2/com/sun/activation/javax.activation/1.2.0/javax.activation-1.2.0-sources.jar
           mkdir -p temp_act
-          cd temp_act && unzip../javax.activation-1.2.0-sources.jar
+          cd temp_act && unzip ../javax.activation-1.2.0-sources.jar
           cp -r javax wallet/src/wallet/java/
-          cd.. && rm -rf javax.activation-1.2.0-sources.jar temp_act
+          cd .. && rm -rf javax.activation-1.2.0-sources.jar temp_act
 
       - name: Remove DBAppender
         run: |
@@ -43,5 +43,5 @@ jobs:
       - name: Commit
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "Vendor logback-android + javax.mail + activation"
+          commit_message: "Vendor logback-android 3.0.0 + android-mail + activation"
           file_pattern: wallet/src/wallet/java/**
