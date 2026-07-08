@@ -52,8 +52,6 @@ android {
 
         //// clone bitcoinj
 
-
-    namespace 'corp.wallet.bitcoin'
     sourceSets {
         main.java.srcDirs = ['src/wallet/java']
         release.java.srcDirs = ['src/wallet/java']
