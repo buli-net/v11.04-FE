@@ -103,21 +103,11 @@ v11.04 mod by buli
 - wallet/src/wallet/Constants.java [ // line 153. add code line 154 ]
 - wallet/res/xml/network_security_config.xml [ // line 14. add code line 15 ]
 - wallet/AndroidManifest.xml [ // line 70. add code line 71 ]
-- Create file: buli-net.github.io/version [ check version update mainnet ]
-- Create file: buli-net.github.io/version-test [ check version update testnet3 ]
-- Create file: buli.github.io/version-signet [ check version update signet ]
-
 -----------------------------------------------------------------------
 
 + update link check fees wallet.schildbach.de/fees ->. buli-net.github.io/fees
 
 - wallet/src/wallet/Constants.java [ // line 157. add code line 158 ]
-- Create file buli-net.github.io/fees [ check fees mainnet ]
-- Create file buli-net.github.io/fees-test [ check fees testnet3 ]
-- Create file buli-net.github.io/fees-signet [ check fees signet ]
-
-+ Create index [ web main index ]
-- Create file buli-net.github.io/index.html
 
 -------------------------------------------------------------------------
 
