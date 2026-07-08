@@ -1,10 +1,10 @@
 name: Unzip bitcoinj source
 
 on:
-  workflow_dispatch: # Bấm tay để chạy
+  workflow_dispatch:
 
 permissions:
-  contents: write # Cấp quyền push cho GITHUB_TOKEN
+  contents: write
 
 jobs:
   unzip:
@@ -12,14 +12,12 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Unzip and move bitcoinj
         run: |
           cd wallet/src/wallet/java
           unzip bitcoinj-master.zip
-          mv bitcoinj-master/core/src/main/java/org./org/
+          mv bitcoinj-master/core/src/main/java/org bitcoinj-master/core/src/main/java/org/bitcoinj ./org/
           rm -rf bitcoinj-master.zip bitcoinj-master
           
       - name: Commit files
@@ -27,6 +25,3 @@ jobs:
         with:
           commit_message: Add bitcoinj source
           file_pattern: wallet/src/wallet/java/org/
-          commit_user_name: github-actions[bot]
-          commit_user_email: 41898282+github-actions[bot]@users.noreply.github.com
-          commit_author: buli-net <285223619+buli-net@users.noreply.github.com>
