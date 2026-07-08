@@ -14,10 +14,10 @@ jobs:
 
       - name: Unzip
         run: |
-          unzip -o junit.zip -d test/wallet/
+          unzip -o junit.zip -d wallet/test/wallet/
           rm -f junit.zip
 
       - name: Commit
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "Add JUnit source to test/wallet"
+          commit_message: "Add JUnit source to wallet/test/wallet"
