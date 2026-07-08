@@ -12,16 +12,37 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-          
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Unzip and move bitcoinj
         run: |
           cd wallet/src/wallet/java
           unzip bitcoinj-master.zip
-          mv bitcoinj-master/core/src/main/java/org bitcoinj-master/core/src/main/java/org/bitcoinj ./org/
+          mkdir -p org/bitcoinj
+          mv bitcoinj-master/base/src/main/java/org/bitcoinj/base./org/bitcoinj/
+          mv bitcoinj-master/base/src/main/java/org/bitcoinj/base/exceptions./org/bitcoinj/base/
+          mv bitcoinj-master/base/src/main/java/org/bitcoinj/base/internal./org/bitcoinj/base/
+          mv bitcoinj-master/base/src/main/java/org/bitcoinj/base/utils./org/bitcoinj/base/
+          mv bitcoinj-master/core/src/main/java/org/bitcoinj/core./org/bitcoinj/
+          mv bitcoinj-master/core/src/main/java/org/bitcoinj/crypto./org/bitcoinj/
+          mv bitcoinj-master/core/src/main/java/org/bitcoinj/kits./org/bitcoinj/
+          mv bitcoinj-master/core/src/main/java/org/bitcoinj/net./org/bitcoinj/
+          mv bitcoinj-master/core/src/main/java/org/bitcoinj/params./org/bitcoinj/
+          mv bitcoinj-master/core/src/main/java/org/bitcoinj/script./org/bitcoinj/
+          mv bitcoinj-master/core/src/main/java/org/bitcoinj/signers./org/bitcoinj/
+          mv bitcoinj-master/core/src/main/java/org/bitcoinj/store./org/bitcoinj/
+          mv bitcoinj-master/core/src/main/java/org/bitcoinj/testing./org/bitcoinj/
+          mv bitcoinj-master/core/src/main/java/org/bitcoinj/uri./org/bitcoinj/
+          mv bitcoinj-master/core/src/main/java/org/bitcoinj/utils./org/bitcoinj/
+          mv bitcoinj-master/core/src/main/java/org/bitcoinj/wallet./org/bitcoinj/
           rm -rf bitcoinj-master.zip bitcoinj-master
-          
+
       - name: Commit files
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: Add bitcoinj source
+          commit_message: Add full bitcoinj source base and core
           file_pattern: wallet/src/wallet/java/org/
+          commit_user_name: github-actions[bot]
+          commit_user_email: 41898282+github-actions[bot]@users.noreply.github.com
+          commit_author: buli-net <285223619+buli-net@users.noreply.github.com>
