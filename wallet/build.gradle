@@ -17,8 +17,9 @@ configurations {
 
 dependencies {
 ///clone btc
-        implementation 'com.google.protobuf:protobuf-java:3.25.3'
-        implementation 'androidx.annotation:annotation:1.1.0'
+      
+    implementation 'com.google.protobuf:protobuf-java:3.25.3'
+    // implementation 'androidx.annotation:annotation:1.1.0'
     implementation 'org.bouncycastle:bcprov-jdk18on:1.78.1'
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
 /////
@@ -101,7 +102,13 @@ android {
         main { // configured for testnet by default
             manifest.srcFile 'AndroidManifest.xml'
            // java.srcDirs = ['src']
+  //clone btc
             java.srcDirs = ['src', 'src/wallet/java']
+
+          proto.srcDirs = ['src/wallet/java/org/bitcoinj/wallet/proto']
+////////////
+
+            
             res.srcDirs = ['res']
             assets.srcDirs = ['assets']
         }
@@ -178,13 +185,5 @@ task svgToPngMipmap(type: fr.avianey.androidsvgdrawable.gradle.SvgDrawableTask) 
 protobuf {
     protoc {
         artifact = "com.google.protobuf:protoc:3.25.3"
-    }
-    generatedFilesBaseDir = "$projectDir/src/wallet/java"
-    generateProtoTasks {
-        all().each { task ->
-            task.builtins {
-                java {}
-            }
-        }
     }
 }
