@@ -11,10 +11,11 @@ configurations {
 }
 
 dependencies {
-
+///clone btc
+        implementation 'androidx.annotation:annotation:1.6.0'
     implementation 'org.bouncycastle:bcprov-jdk18on:1.78.1'
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
-
+/////
  //   implementation 'androidx.annotation:annotation:1.10.0'
     implementation 'androidx.core:core:1.18.0'
     implementation 'androidx.activity:activity:1.13.0'
