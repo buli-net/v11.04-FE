@@ -1,7 +1,9 @@
 plugins {
     id 'com.android.application'
     id 'androidsvgdrawable'
+    id 'com.google.protobuf' version '0.9.4'// clone bitcoinj
 }
+    
 
 configurations {
     all*.exclude group: 'androidx.viewpager', module: 'viewpager'
@@ -158,4 +160,20 @@ task svgToPngMipmap(type: fr.avianey.androidsvgdrawable.gradle.SvgDrawableTask) 
     targetedDensities = ['xxhdpi', 'xxxhdpi']
     outputFormat = 'PNG'
     outputType = 'mipmap'
+}
+
+/////clone bitcoinj
+protobuf {
+    protoc {
+        artifact = 'com.google.protobuf:protoc:3.25.3'
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                java {
+                    option "lite"
+                }
+            }
+        }
+    }
 }
