@@ -25,7 +25,7 @@ jobs:
           mkdir -p temp_mail
           cd temp_mail && unzip ../android-mail-1.6.7-sources.jar
           mkdir -p ../wallet/src/wallet/java/com/sun/mail/
-          # Chỉ lấy 4 package này, bỏ pop3/imap/handlers
+          # Chỉ lấy 4 thư mục này thôi
           cp -r com/sun/mail/smtp ../wallet/src/wallet/java/com/sun/mail/
           cp -r com/sun/mail/util ../wallet/src/wallet/java/com/sun/mail/
           cp -r com/sun/mail/auth ../wallet/src/wallet/java/com/sun/mail/
@@ -34,10 +34,10 @@ jobs:
 
       - name: Strip javax + DB + SQLiteAppender
         run: |
-          # Xoá toàn bộ javax vì không dùng
+          # Xoá sạch javax vì SMTPAppender không cần
           rm -rf wallet/src/wallet/java/javax
           
-          # Xoá SQLiteAppender + DB
+          # Xoá SQLiteAppender + DB package
           rm -f wallet/src/wallet/java/ch/qos/logback/classic/android/SQLiteAppender.java
           rm -rf wallet/src/wallet/java/ch/qos/logback/classic/db/
 
