@@ -19,30 +19,30 @@ jobs:
           cp -r logback-android-v_3.0.0/logback-android/src/main/java/ch wallet/src/wallet/java/
           rm -rf v_3.0.0.zip logback-android-v_3.0.0
 
-      - name: Clone android-mail 1.6.7
+      - name: Clone android-mail 1.6.7 minimal
         run: |
           wget https://repo1.maven.org/maven2/com/sun/mail/android-mail/1.6.7/android-mail-1.6.7-sources.jar
           mkdir -p temp_mail
           cd temp_mail && unzip ../android-mail-1.6.7-sources.jar
           mkdir -p ../wallet/src/wallet/java/
-          # Chỉ lấy com/sun/mail, bỏ javax/mail
-          cp -r com ../wallet/src/wallet/java/
+          # Chỉ copy smtp + util, bỏ pop3/imap/handlers
+          cp -r com/sun/mail/smtp ../wallet/src/wallet/java/com/sun/mail/
+          cp -r com/sun/mail/util ../wallet/src/wallet/java/com/sun/mail/
+          cp -r com/sun/mail/auth ../wallet/src/wallet/java/com/sun/mail/
+          cp -r com/sun/mail/iap ../wallet/src/wallet/java/com/sun/mail/
           cd .. && rm -rf android-mail-1.6.7-sources.jar temp_mail
 
-      - name: Strip AWT + DB + javax.mail
+      - name: Strip AWT + DB + javax
         run: |
-          # Xoá activation vì có AWT
-          rm -rf wallet/src/wallet/java/javax/activation
+          # Xoá toàn bộ javax vì SMTPAppender không cần
+          rm -rf wallet/src/wallet/java/javax
           
-          # Xoá nguyên javax/mail vì dính activation/DataHandler
-          rm -rf wallet/src/wallet/java/javax/mail
-          
-          # Xoá SQLiteAppender + DB package
+          # Xoá SQLiteAppender + DB
           rm -f wallet/src/wallet/java/ch/qos/logback/classic/android/SQLiteAppender.java
           rm -rf wallet/src/wallet/java/ch/qos/logback/classic/db/
 
       - name: Commit
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "Vendor logback-android 3.0.0 + android-mail, strip javax"
+          commit_message: "Vendor logback-android 3.0.0 + android-mail SMTP only"
           file_pattern: wallet/src/wallet/java/**
