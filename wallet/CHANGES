@@ -3,9 +3,6 @@ v11.04 mod by buli
 * -6/7/2026
 
 + Clone dependencies
-- File wallet/build.gradle
-+ // line 19
-+ // line 14
 
 - implementation 'com.google.zxing:core:3.5.4'
    - File wallet/build.gradle // line 30
@@ -16,16 +13,17 @@ v11.04 mod by buli
    - Create file wallet/src/wallet/java/org/slf4j/ ....[all file & foder]....
 
 - implementation 'androidx.annotation:annotation:1.10.0'
+  - File wallet/build.gradle // line 15
   - Create file wallet/src/wallet/java/external-annotations/androidx/annotation/annotations.xml
   - Create file wallet/src/wallet/java/androidx/annotation/.....[ all file & foder ]....
 
 - implementation 'androidx.cardview:cardview:1.0.0'
+  - File wallet/build.gradle // line 20
   - Crete file wallet/res/values/attrs.xml
   - Crete file wallet/res/values/colors_cardview.xml
   - Crete file wallet/res/values/dimens_cardview.xml
   - Crete file wallet/res/values/styles_cardview.xml
   - Create file wallet/res/values-v23/styles_cardview.xml
-
   - Create file wallet/src/wallet/java/androidx/cardview/widget/....[all file]....
   
 
