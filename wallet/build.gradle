@@ -13,7 +13,7 @@ configurations {
 dependencies {
 
     implementation 'org.bouncycastle:bcprov-jdk18on:1.78.1'
-
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'
 
  //   implementation 'androidx.annotation:annotation:1.10.0'
     implementation 'androidx.core:core:1.18.0'
@@ -48,6 +48,19 @@ android {
     defaultConfig {
         // if you fork the app for an alt-coin, change this ID
         applicationId 'corp.wallet.bitcoin'
+
+
+        //// clone bitcoinj
+
+
+    namespace 'corp.wallet.bitcoin'
+    sourceSets {
+        main.java.srcDirs = ['src/wallet/java']
+        release.java.srcDirs = ['src/wallet/java']
+        debug.java.srcDirs = ['src/wallet/java']
+    }
+        
+        ////
     }
 
     buildTypes {
