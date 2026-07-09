@@ -27,7 +27,6 @@ jobs:
           git log -1 --pretty=full
           git status
           git rev-parse HEAD > commit.txt
-          echo "Commit saved to commit.txt"
 
       - name: Setup Gradle (cache + UI)
         uses: gradle/actions/setup-gradle@v5
@@ -41,29 +40,17 @@ jobs:
             caches/*/tmp
           add-job-summary-as-pr-comment: never
 
+      # JAVA 17 - chỉ để chạy sdkmanager mới
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
 
-      - name: Verify Java
-        run: |
-          java -version
-          javac -version
+      - name: Verify Java 17
+        run: java -version
 
       - name: Patch Gradle version limit
-        run: |
-          sed -i 's/7.0/8.0/g' settings.gradle
-          grep -n "Gradle" settings.gradle || true
-
-      - name: Patch build.gradle - fix Value is null
-        run: |
-          sed -i '/outputFileName/d' wallet/build.gradle
-          sed -i '/variant.flavorName/d' wallet/build.gradle
-          sed -i '/applicationVariants.all/d' wallet/build.gradle
-          sed -i '/variant.outputs.all/d' wallet/build.gradle
-          sed -i '/^android {/a \    applicationVariants.all { v -> v.outputs.all { o -> o.outputFileName = "bitcoin-wallet-${v.name}.apk" } }' wallet/build.gradle
-          grep -n "outputFileName" wallet/build.gradle
+        run: sed -i 's/7.0/8.0/g' settings.gradle
 
       - name: Install Android SDK 34
         run: |
@@ -74,11 +61,9 @@ jobs:
           unzip -q commandlinetools-linux-11076708_latest.zip -d $ANDROID_HOME/cmdline-tools
           mv $ANDROID_HOME/cmdline-tools/cmdline-tools $ANDROID_HOME/cmdline-tools/latest
           export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
-          mkdir -p $ANDROID_HOME/licenses
           yes | sdkmanager --sdk_root=$ANDROID_HOME --licenses
-          yes | sdkmanager --sdk_root=$ANDROID_HOME "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+          sdkmanager --sdk_root=$ANDROID_HOME "platform-tools" "platforms;android-34" "build-tools;34.0.0"
           echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
-          echo "PATH=$ANDROID_HOME/platform-tools:$PATH" >> $GITHUB_ENV
 
       - name: Patch SDK metadata for old AGP
         run: |
@@ -86,25 +71,26 @@ jobs:
           find $ANDROID_HOME -name package.xml -exec sed -i '/extension-level/d' {} \;
           find $ANDROID_HOME -name package.xml -exec sed -i '/base-extension/d' {} \;
 
-      - name: Verify SDK
-        run: |
-          ls -la $ANDROID_HOME
-          ls -la $ANDROID_HOME/platforms/android-34
+      # QUAY VỀ JAVA 11 - đúng với project gốc
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '11'
+
+      - name: Verify Java 11
+        run: java -version
 
       - name: Create local.properties
         run: |
           echo "sdk.dir=$ANDROID_HOME" > local.properties
           cat local.properties
 
-      - name: Setup Gradle wrapper
+      - name: Setup Gradle wrapper 6.9.4
         run: |
           if [ ! -f ./gradlew ]; then
-            echo "Wrapper missing, creating..."
-            wget -q https://services.gradle.org/distributions/gradle-7.6.1-bin.zip
-            unzip -q gradle-7.6.1-bin.zip
-            ./gradle-7.6.1/bin/gradle wrapper --gradle-version 7.6.1 --distribution-type bin
-          else
-            echo "Wrapper exists"
+            wget -q https://services.gradle.org/distributions/gradle-6.9.4-bin.zip
+            unzip -q gradle-6.9.4-bin.zip
+            ./gradle-6.9.4/bin/gradle wrapper --gradle-version 6.9.4 --distribution-type bin
           fi
           chmod +x gradlew
           ./gradlew --version
@@ -120,49 +106,35 @@ jobs:
 
       - name: Collect APKs
         run: |
-          mkdir -p out
-          mkdir -p logs
-          find . -name "*.apk" -type f
+          mkdir -p out logs
           find wallet/build/outputs/apk -name "*release*.apk" -exec cp -v {} out/ \;
           ls -lh out/
-          du -sh out/
           sha256sum out/*.apk > out/raw-sha256.txt
           cat out/raw-sha256.txt
 
       - name: Find apksigner
         run: |
           APK=$(find "$ANDROID_HOME/build-tools" -name apksigner -type f | sort -V | tail -1)
-          echo "Found: $APK"
           echo "APKSIGNER=$APK" >> $GITHUB_ENV
           "$APK" --version
 
       - name: Decode keystore
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > keystore.jks
-          ls -lh keystore.jks
           keytool -list -v -keystore keystore.jks -storepass "${{ secrets.KEYSTORE_PASSWORD }}" -alias "${{ secrets.KEY_ALIAS }}" | tee keystore-info.txt
 
       - name: Sign APKs
         run: |
           mkdir -p signed
           for apk in out/*.apk; do
-            base=$(basename "$apk" .apk)
-            base=$(echo $base | sed 's/-unsigned//')
-            outname="${base}-signed.apk"
-            echo "=== Signing $apk ==="
-            "$APKSIGNER" sign \
-              --ks keystore.jks \
-              --ks-pass pass:"${{ secrets.KEYSTORE_PASSWORD }}" \
-              --ks-key-alias "${{ secrets.KEY_ALIAS }}" \
-              --key-pass pass:"${{ secrets.KEY_PASSWORD }}" \
-              --out "signed/$outname" "$apk"
+            base=$(basename "$apk" .apk | sed 's/-unsigned//')
+            "$APKSIGNER" sign --ks keystore.jks --ks-pass pass:"${{ secrets.KEYSTORE_PASSWORD }}" --ks-key-alias "${{ secrets.KEY_ALIAS }}" --key-pass pass:"${{ secrets.KEY_PASSWORD }}" --out "signed/${base}-signed.apk" "$apk"
           done
           ls -lh signed/
 
       - name: Verify signatures
         run: |
           for apk in signed/*.apk; do
-            echo "Verifying: $(basename $apk)"
             "$APKSIGNER" verify --verbose --print-certs "$apk" | tee verify-$(basename $apk).txt
           done
 
@@ -172,11 +144,9 @@ jobs:
         run: |
           for apk in signed/*.apk; do
             ACTUAL=$("$APKSIGNER" verify --print-certs "$apk" | grep SHA-256 | head -1 | awk '{print $NF}' | tr '[:upper:]' '[:lower:]')
-            echo "APK: $(basename $apk)"
-            echo "Actual: $ACTUAL"
             if [ -n "$EXPECTED_SHA256" ]; then
               EXP=$(echo "$EXPECTED_SHA256" | tr '[:upper:]' '[:lower:]')
-              if [ "$ACTUAL" != "$EXP" ]; then echo "ERROR"; exit 1; fi
+              [ "$ACTUAL" = "$EXP" ] || exit 1
             fi
           done
 
@@ -185,12 +155,10 @@ jobs:
           {
             echo "Bitcoin Wallet v11 Build Report"
             echo "Build Date (UTC): $(date -u)"
-            echo "Java: 17 (Temurin)"
-            echo "Gradle: 7.6.1"
+            echo "Java: 11 (for build)"
+            echo "Gradle: 6.9.4"
             echo "Commit: $(cat commit.txt)"
-            echo ""
             cat out/raw-sha256.txt
-            echo ""
             sha256sum signed/*.apk
           } > report.txt
           cat report.txt
