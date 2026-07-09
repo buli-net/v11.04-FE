@@ -13,12 +13,21 @@ configurations {
 //   all*.exclude group: 'org.slf4j', module: 'slf4j-api'
 
 
-        // chặn tất cả bản annotation từ Maven
-    exclude group: 'androidx.annotation', module: 'annotation'
-    exclude group: 'androidx.annotation', module: 'annotation-jvm'
-    exclude group: 'androidx.annotation', module: 'annotation-experimental'
-    // mày đã copy cả GuardedBy vào repo nên cũng chặn jcip
-    exclude group: 'net.jcip', module: 'jcip-annotations'
+
+    // chặn mọi module androidx.annotation từ Maven
+    implementation {
+        exclude group: 'androidx.annotation'
+    }
+    compile {
+        exclude group: 'androidx.annotation'
+    }
+    // chặn luôn jcip vì mày đã copy GuardedBy vào repo
+    implementation {
+        exclude group: 'net.jcip'
+    }
+
+
+    
 }
 
 
