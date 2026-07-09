@@ -68,6 +68,10 @@ jobs:
           mkdir -p $ANDROID_HOME/licenses
           yes | sdkmanager --sdk_root=$ANDROID_HOME --licenses
           yes | sdkmanager --sdk_root=$ANDROID_HOME "platform-tools" "platforms;android-28" "build-tools;28.0.3"
+          find $ANDROID_HOME -name package.xml -type f -exec sed -i '/<base-extension>/,/<\/base-extension>/d' {} \;
+          find $ANDROID_HOME -name package.xml -type f -exec sed -i '/<extension-level>/,/<\/extension-level>/d' {} \;
+          find $ANDROID_HOME -name package.xml -type f -exec sed -i 's/<base-extension[^>]*\/>//g' {} \;
+          find $ANDROID_HOME -name package.xml -type f -exec sed -i 's/<extension-level[^>]*\/>//g' {} \;
           echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
           echo "PATH=$ANDROID_HOME/platform-tools:$PATH" >> $GITHUB_ENV
 
