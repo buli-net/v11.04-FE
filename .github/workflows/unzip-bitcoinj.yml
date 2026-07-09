@@ -1,0 +1,25 @@
+name: Unzip bitcoinj
+
+on:
+  workflow_dispatch:   # bấm chạy tay từ tab Actions
+
+jobs:
+  unzip:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Unzip file
+        run: |
+          cd v11.04-FE/wallet/src/wallet
+          unzip -o bitcoinj-0.17.1.zip -d bitcoinj-0.17.1
+          rm bitcoinj-0.17.1.zip
+
+      - name: Commit kết quả
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add .
+          git commit -m "Unzip bitcoinj-0.17.1.zip" || echo "No changes"
+          git push
