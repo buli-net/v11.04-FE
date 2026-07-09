@@ -27,7 +27,20 @@ v11.04 mod by buli
   - Crete file wallet/res/values/styles_cardview.xml
   - Create file wallet/res/values-v23/styles_cardview.xml
   - Create file wallet/src/wallet/java/androidx/cardview/widget/....[all file]....
-  
+
+
+ - implementation 'net.jcip:jcip-annotations:1.0'
+   - Create file wallet/src/wallet/java/net/jcip/annotations/...[all file]....
+
+
+- implementation 'org.bitcoinj:bitcoinj-core:0.17.1'
+  - Create file wallet/src/wallet/java/org/bitcoinj/....[all foder & file]....
+  - Create file wallet/src/wallet/proto/...[all file].....
+  - Create file wallet/src/wallet/resources/...[all file & foder].....
+
+  - Add & // code file wallet/build.gradle
+     + Add code line 4, 8, 14->21, 25->27, 55->69, 111, 114
+     + // code line 41, 110
 ----------------------------------------------------------------------------------------
 
 + Active layout hide at file wallet/res/values/layouts.xml
