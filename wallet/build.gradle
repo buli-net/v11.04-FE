@@ -6,27 +6,23 @@ plugins {
 
 configurations {
     all*.exclude group: 'com.google.guava', module: 'listenablefuture'
-//all*.exclude group: 'com.google.guava', module: 'failureaccess'
     all*.exclude group: 'androidx.viewpager', module: 'viewpager'
     all*.exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7'
     all*.exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
-    all*.exclude group: 'org.slf4j', module: 'slf4j-api' // clone slf4j-api
+    all*.exclude group: 'org.slf4j', module: 'slf4j-api'
 }
 
 dependencies {
-implementation 'com.google.protobuf:protobuf-java:3.21.12'
+    // protobuf - chỉ cần 1 dòng
+    implementation 'com.google.protobuf:protobuf-java:3.21.12'
 
-implementation 'com.google.guava:guava:31.1-android'
-implementation 'org.bouncycastle:bcprov-jdk18on:1.77'
-implementation 'org.slf4j:slf4j-api:1.7.36'
-implementation 'com.google.protobuf:protobuf-java:3.21.12'
-implementation 'javax.annotation:javax.annotation-api:1.3.2'
-
-    
+    // các lib mày thêm cho bitcoinj source
+    implementation 'com.google.guava:guava:31.1-android'
+    implementation 'org.bouncycastle:bcprov-jdk18on:1.77'
+    implementation 'org.slf4j:slf4j-api:1.7.36'
+    implementation 'javax.annotation:javax.annotation-api:1.3.2'
 
     implementation 'androidx.viewpager2:viewpager2:1.1.0'
-  //  implementation 'androidx.cardview:cardview:1.0.0'
-   
     implementation 'androidx.core:core:1.18.0'
     implementation 'androidx.activity:activity:1.13.0'
     implementation 'androidx.fragment:fragment:1.8.9'
@@ -37,14 +33,25 @@ implementation 'javax.annotation:javax.annotation-api:1.3.2'
     implementation 'androidx.sqlite:sqlite:2.4.0'
     implementation "androidx.room:room-runtime:2.6.1"
     annotationProcessor "androidx.room:room-compiler:2.6.1"
-  //  implementation fileTree(dir: 'libs', include: ['*.jar'])
-    //noinspection GradleDependency
+
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
-    //noinspection GradleDependency
     implementation 'com.squareup.okhttp3:logging-interceptor:4.12.0'
     implementation 'com.squareup.moshi:moshi:1.11.0'
-    implementation 'com.github.tony19:logback-android:3.0.0' 
-   
+    implementation 'com.github.tony19:logback-android:3.0.0'
+}
+
+// ---- PROTOBUF CONFIG - PHẢI ĐỂ NGOÀI android {} ----
+protobuf {
+    protoc {
+        artifact = 'com.google.protobuf:protoc:3.21.12'
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                java {}
+            }
+        }
+    }
 }
 
 android {
@@ -52,7 +59,6 @@ android {
     buildToolsVersion '36.1.0'
 
     defaultConfig {
-        // if you fork the app for an alt-coin, change this ID
         applicationId 'corp.wallet.bitcoin'
     }
 
@@ -70,10 +76,8 @@ android {
 
     flavorDimensions 'network'
     productFlavors {
-        Testnet { // capital T because testnet flavor not allowed
+        Testnet {
             dimension 'network'
-            // if you fork the app, replace the following applicationId by this:
-            // applicationIdSuffix '.testnet'
             applicationId 'de.schildbach.wallet_test'
         }
         Signet {
@@ -82,21 +86,17 @@ android {
         }
         Mainnet {
             dimension 'network'
-            // if you fork the app, replace the following applicationId by this:
-            // applicationIdSuffix '.mainnet'
             applicationId 'de.schildbach.wallet'
         }
     }
 
     sourceSets {
-
-android.sourceSets.main.proto.srcDirs += ['src/wallet/proto']
-        
-        main { // configured for testnet by default
+        main {
             manifest.srcFile 'AndroidManifest.xml'
-            java.srcDirs = ['src']
+            java.srcDirs = ['src', 'src/wallet/java']  // thêm chỗ chứa bitcoinj source
             res.srcDirs = ['res']
             assets.srcDirs = ['assets']
+            proto.srcDirs += ['src/wallet/proto']  // <-- đúng chỗ
         }
         Signet {
             res.srcDirs = ['res-signet']
@@ -126,7 +126,7 @@ android.sourceSets.main.proto.srcDirs += ['src/wallet/proto']
         exclude 'META-INF/androidx/**/LICENSE.txt'
         exclude 'META-INF/*.version'
         exclude 'META-INF/proguard/**'
-        exclude 'META-INF/services/**' // ineffective, for some reason
+        exclude 'META-INF/services/**'
         exclude 'META-INF/*.kotlin_module'
         exclude 'META-INF/kotlin-project-structure-metadata.json'
         exclude 'META-INF/**/coroutines.pro'
@@ -150,10 +150,7 @@ android.sourceSets.main.proto.srcDirs += ['src/wallet/proto']
 
     applicationVariants.all { variant ->
         variant.outputs.all {
-            outputFileName = "../../" + // all outputs go to build/outputs/apk
-                    "bitcoin-wallet-" +
-                    "${variant.flavorName.toLowerCase()}-" +
-                    "${variant.buildType.name}.apk"
+            outputFileName = "../../bitcoin-wallet-${variant.flavorName.toLowerCase()}-${variant.buildType.name}.apk"
         }
     }
 }
@@ -164,19 +161,4 @@ task svgToPngMipmap(type: fr.avianey.androidsvgdrawable.gradle.SvgDrawableTask) 
     targetedDensities = ['xxhdpi', 'xxxhdpi']
     outputFormat = 'PNG'
     outputType = 'mipmap'
-}
-
-
-
-protobuf {
-    protoc {
-        artifact = 'com.google.protobuf:protoc:3.21.12'
-    }
-    generateProtoTasks {
-        all().each { task ->
-            task.builtins {
-                java {}
-            }
-        }
-    }
 }
