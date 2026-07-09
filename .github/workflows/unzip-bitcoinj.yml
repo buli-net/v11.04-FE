@@ -1,18 +1,17 @@
 name: Unzip bitcoinj
 
 on:
-  workflow_dispatch:   # bấm chạy tay từ tab Actions
+  workflow_dispatch:
 
 jobs:
   unzip:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Unzip file
         run: |
-          cd v11.04-FE/wallet/src/wallet
+          cd wallet/src/wallet
           unzip -o bitcoinj-0.17.1.zip -d bitcoinj-0.17.1
           rm bitcoinj-0.17.1.zip
 
