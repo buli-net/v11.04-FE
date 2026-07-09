@@ -16,7 +16,7 @@ jobs:
 
       - name: Unzip slf4j.zip
         run: |
-          cd wallet/src/wallet
+          cd wallet/src/wallet/java/org
           unzip -o slf4j.zip -d slf4j
           rm slf4j.zip
 
