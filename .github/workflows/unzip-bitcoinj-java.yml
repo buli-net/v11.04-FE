@@ -1,7 +1,7 @@
-name: Unzip bitcoinj
+name: Unzip bitcoinj - java
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:   # chạy tay từ tab Actions
 
 permissions:
   contents: write
@@ -10,17 +10,19 @@ jobs:
   unzip:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Unzip file
+      - name: Unzip java.zip
         run: |
           cd wallet/src/wallet
+          # nếu file java.zip nằm đúng chỗ này
           unzip -o java.zip -d java
           rm java.zip
 
-      - name: Commit kết quả
+      - name: Commit
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
