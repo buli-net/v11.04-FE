@@ -41,7 +41,6 @@ jobs:
             caches/*/tmp
           add-job-summary-as-pr-comment: never
 
-      # FIX 1: Java 17 (sdkmanager mới cần)
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
@@ -52,13 +51,16 @@ jobs:
           java -version
           javac -version
 
-      # FIX 2: Patch settings.gradle để cho Gradle 7+
       - name: Patch Gradle version limit
         run: |
           sed -i 's/7.0/8.0/g' settings.gradle
           grep -n "Gradle" settings.gradle || true
 
-      # FIX 3: Install Android SDK 34
+      - name: Patch build.gradle outputFileName
+        run: |
+          sed -i 's|outputFileName = "../../" +|outputFileName = "bitcoin-wallet-" +|' wallet/build.gradle
+          sed -i 's|"\.\./\.\./" + // all outputs go to build/outputs/apk||' wallet/build.gradle
+
       - name: Install Android SDK 34
         run: |
           export ANDROID_HOME=$HOME/android-sdk
@@ -74,6 +76,13 @@ jobs:
           echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
           echo "PATH=$ANDROID_HOME/platform-tools:$PATH" >> $GITHUB_ENV
 
+      - name: Patch SDK metadata for old AGP
+        run: |
+          find $ANDROID_HOME -name package.xml -exec sed -i 's/\.0<\/api-level>/<\/api-level>/g' {} \;
+          find $ANDROID_HOME -name package.xml -exec sed -i '/extension-level/d' {} \;
+          find $ANDROID_HOME -name package.xml -exec sed -i '/base-extension/d' {} \;
+          find $ANDROID_HOME -name package.xml -exec grep api-level {} \;
+
       - name: Verify SDK
         run: |
           ls -la $ANDROID_HOME
@@ -84,7 +93,6 @@ jobs:
           echo "sdk.dir=$ANDROID_HOME" > local.properties
           cat local.properties
 
-      # FIX 4: Gradle 7.6.1 thay vì 4.10.3
       - name: Setup Gradle wrapper
         run: |
           if [ ! -f ./gradlew ]; then
@@ -176,7 +184,6 @@ jobs:
             echo "Build Date (UTC): $(date -u)"
             echo "Java: 17 (Temurin)"
             echo "Gradle: 7.6.1"
-            echo "AGP: 7.x"
             echo "Commit: $(cat commit.txt)"
             echo ""
             cat out/raw-sha256.txt
