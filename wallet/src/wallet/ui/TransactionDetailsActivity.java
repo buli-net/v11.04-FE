@@ -479,6 +479,7 @@ private String buildLiveTxText() {
     private void showQrDialog() {
         boolean dark = isDark();
         int bgColor = dark ? Color.BLACK : Color.WHITE;
+        // int bgColor = dark ? Color.WHITE : Color.WHITE;
         
  int dialogTheme = dark
     ? android.R.style.Theme_Black_NoTitleBar_Fullscreen
@@ -507,7 +508,7 @@ qrDialog.getWindow().getDecorView().setSystemUiVisibility(
         qrDialogImageView = new ImageView(this);
         qrDialogImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
         qrDialogImageView.setPadding(48, 48, 48, 48);
-        qrDialogImageView.setBackgroundResource(R.drawable.bg_qr_white_rounded);
+     //   qrDialogImageView.setBackgroundResource(R.drawable.bg_qr_white_rounded);
         LinearLayout.LayoutParams imgLp = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f);
         qrDialogImageView.setLayoutParams(imgLp);
