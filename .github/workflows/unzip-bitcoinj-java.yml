@@ -1,0 +1,24 @@
+name: Unzip bitcoinj
+
+on:
+  workflow_dispatch:
+
+jobs:
+  unzip:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Unzip file
+        run: |
+          cd wallet/src/wallet
+          unzip -o java.zip -d java
+          rm java.zip
+
+      - name: Commit kết quả
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add .
+          git commit -m "Unzip java.zip" || echo "No changes"
+          git push
