@@ -7,20 +7,20 @@ v11.04 mod by buli
 + Clone dependencies
 
 - implementation 'com.google.zxing:core:3.5.4'
-   - File wallet/build.gradle // line 30
+   - File wallet/build.gradle // line 43
    - Create file wallet/src/wallet/java/com/google/zxing/ ..[all file & foder]....
 
 - implementation 'org.slf4j:slf4j-api:2.0.17'
-   - File wallet/build.gradle // line 36. add code line 10
+   - File wallet/build.gradle // line 49. add code line 12
    - Create file wallet/src/wallet/java/org/slf4j/ ....[all file & foder]....
 
 - implementation 'androidx.annotation:annotation:1.10.0'
-  - File wallet/build.gradle // line 15
+  - File wallet/build.gradle // line 28
   - Create file wallet/src/wallet/java/external-annotations/androidx/annotation/annotations.xml
   - Create file wallet/src/wallet/java/androidx/annotation/.....[ all file & foder ]....
 
 - implementation 'androidx.cardview:cardview:1.0.0'
-  - File wallet/build.gradle // line 20
+  - File wallet/build.gradle // line 33
   - Crete file wallet/res/values/attrs.xml
   - Crete file wallet/res/values/colors_cardview.xml
   - Crete file wallet/res/values/dimens_cardview.xml
@@ -30,6 +30,7 @@ v11.04 mod by buli
 
 
  - implementation 'net.jcip:jcip-annotations:1.0'
+   - Add code & // line 25
    - Create file wallet/src/wallet/java/net/jcip/annotations/...[all file]....
 
 
@@ -41,6 +42,8 @@ v11.04 mod by buli
   - Add & // code file wallet/build.gradle
      + Add code line 4, 8, 14->21, 25->27, 55->69, 111, 114
      + // code line 41, 110
+
+  - Add code file wallet/proguard.cfg line 126->137
 ----------------------------------------------------------------------------------------
 
 + Active layout hide at file wallet/res/values/layouts.xml
