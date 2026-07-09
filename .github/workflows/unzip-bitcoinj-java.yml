@@ -1,4 +1,4 @@
-name: Unzip bitcoinj
+name: Unzip bitcoinj-java
 
 on:
   workflow_dispatch:
