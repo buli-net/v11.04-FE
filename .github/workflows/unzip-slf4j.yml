@@ -14,16 +14,16 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Unzip slf4j.zip
+      - name: Unzip org.zip
         run: |
           cd wallet/src/wallet/java
-          unzip -o slf4j.zip -d slf4j
-          rm slf4j.zip
+          unzip -o org.zip -d org
+          rm org.zip
 
       - name: Commit
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add .
-          git commit -m "Unzip slf4j.zip" || echo "No changes"
+          git commit -m "Unzip org.zip" || echo "No changes"
           git push
