@@ -18,7 +18,7 @@ jobs:
         run: |
           cd wallet/src/wallet/java/org
           unzip -o slf4j.zip -d slf4j
-          rm org.zip
+          rm slf4j.zip
 
       - name: Commit
         run: |
