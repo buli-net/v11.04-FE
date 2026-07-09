@@ -12,7 +12,9 @@ jobs:
         run: |
           echo "=== RUNNER INFO ==="
           uname -a
+          lsb_release -a
           date -u
+          echo "Runner: $RUNNER_NAME"
 
       - uses: actions/checkout@v5
         with:
@@ -21,23 +23,42 @@ jobs:
 
       - name: Verify commit details
         run: |
+          echo "=== GIT INFO ==="
           git log -1 --pretty=full
+          git status
           git rev-parse HEAD > commit.txt
+          echo "Commit saved to commit.txt"
 
       - name: Setup Gradle (cache + UI)
         uses: gradle/actions/setup-gradle@v5
         with:
           cache-cleanup: never
+          cache-read-only: false
+          gradle-home-cache-includes: |
+            caches
+            notifications
+          gradle-home-cache-excludes: |
+            caches/*/tmp
+          add-job-summary-as-pr-comment: never
 
-      # Java 11 cho Gradle 6.9.4
+      # FIX 1: Java 17 (sdkmanager mới cần)
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: '11'
+          java-version: '17'
 
       - name: Verify Java
-        run: java -version
+        run: |
+          java -version
+          javac -version
 
+      # FIX 2: Patch settings.gradle để cho Gradle 7+
+      - name: Patch Gradle version limit
+        run: |
+          sed -i 's/7.0/8.0/g' settings.gradle
+          grep -n "Gradle" settings.gradle || true
+
+      # FIX 3: Install Android SDK 34
       - name: Install Android SDK 34
         run: |
           export ANDROID_HOME=$HOME/android-sdk
@@ -47,20 +68,32 @@ jobs:
           unzip -q commandlinetools-linux-11076708_latest.zip -d $ANDROID_HOME/cmdline-tools
           mv $ANDROID_HOME/cmdline-tools/cmdline-tools $ANDROID_HOME/cmdline-tools/latest
           export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
+          mkdir -p $ANDROID_HOME/licenses
           yes | sdkmanager --sdk_root=$ANDROID_HOME --licenses
-          sdkmanager --sdk_root=$ANDROID_HOME "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+          yes | sdkmanager --sdk_root=$ANDROID_HOME "platform-tools" "platforms;android-34" "build-tools;34.0.0"
           echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
+          echo "PATH=$ANDROID_HOME/platform-tools:$PATH" >> $GITHUB_ENV
+
+      - name: Verify SDK
+        run: |
+          ls -la $ANDROID_HOME
+          ls -la $ANDROID_HOME/platforms/android-34
 
       - name: Create local.properties
-        run: echo "sdk.dir=$ANDROID_HOME" > local.properties
+        run: |
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
+          cat local.properties
 
-      # FIX: Gradle 6.9.4 (vừa >=5.6 cho protobuf, vừa <7.0 cho project cũ)
+      # FIX 4: Gradle 7.6.1 thay vì 4.10.3
       - name: Setup Gradle wrapper
         run: |
           if [ ! -f ./gradlew ]; then
-            wget -q https://services.gradle.org/distributions/gradle-6.9.4-bin.zip
-            unzip -q gradle-6.9.4-bin.zip
-            ./gradle-6.9.4/bin/gradle wrapper --gradle-version 6.9.4
+            echo "Wrapper missing, creating..."
+            wget -q https://services.gradle.org/distributions/gradle-7.6.1-bin.zip
+            unzip -q gradle-7.6.1-bin.zip
+            ./gradle-7.6.1/bin/gradle wrapper --gradle-version 7.6.1 --distribution-type bin
+          else
+            echo "Wrapper exists"
           fi
           chmod +x gradlew
           ./gradlew --version
@@ -71,47 +104,86 @@ jobs:
       - name: Build release APKs
         run: |
           unset ANDROID_NDK_HOME
-          ./gradlew :wallet:assembleRelease -x lint --stacktrace
+          unset NDK_HOME
+          ./gradlew :wallet:assembleRelease -x lint --stacktrace --info
 
       - name: Collect APKs
         run: |
           mkdir -p out
-          find wallet/build/outputs/apk -name "*release*.apk" -exec cp {} out/ \;
+          mkdir -p logs
+          find . -name "*.apk" -type f
+          find wallet/build/outputs/apk -name "*release*.apk" -exec cp -v {} out/ \;
+          ls -lh out/
+          du -sh out/
           sha256sum out/*.apk > out/raw-sha256.txt
+          cat out/raw-sha256.txt
 
       - name: Find apksigner
         run: |
-          APK=$(find "$ANDROID_HOME/build-tools" -name apksigner | sort -V | tail -1)
+          APK=$(find "$ANDROID_HOME/build-tools" -name apksigner -type f | sort -V | tail -1)
+          echo "Found: $APK"
           echo "APKSIGNER=$APK" >> $GITHUB_ENV
+          "$APK" --version
 
       - name: Decode keystore
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > keystore.jks
+          ls -lh keystore.jks
           keytool -list -v -keystore keystore.jks -storepass "${{ secrets.KEYSTORE_PASSWORD }}" -alias "${{ secrets.KEY_ALIAS }}" | tee keystore-info.txt
 
       - name: Sign APKs
         run: |
           mkdir -p signed
           for apk in out/*.apk; do
-            base=$(basename "$apk" .apk | sed 's/-unsigned//')
-            "$APKSIGNER" sign --ks keystore.jks --ks-pass pass:"${{ secrets.KEYSTORE_PASSWORD }}" --ks-key-alias "${{ secrets.KEY_ALIAS }}" --key-pass pass:"${{ secrets.KEY_PASSWORD }}" --out "signed/${base}-signed.apk" "$apk"
+            base=$(basename "$apk" .apk)
+            base=$(echo $base | sed 's/-unsigned//')
+            outname="${base}-signed.apk"
+            echo "=== Signing $apk ==="
+            "$APKSIGNER" sign \
+              --ks keystore.jks \
+              --ks-pass pass:"${{ secrets.KEYSTORE_PASSWORD }}" \
+              --ks-key-alias "${{ secrets.KEY_ALIAS }}" \
+              --key-pass pass:"${{ secrets.KEY_PASSWORD }}" \
+              --out "signed/$outname" "$apk"
           done
+          ls -lh signed/
 
       - name: Verify signatures
         run: |
           for apk in signed/*.apk; do
+            echo "Verifying: $(basename $apk)"
             "$APKSIGNER" verify --verbose --print-certs "$apk" | tee verify-$(basename $apk).txt
+          done
+
+      - name: Authenticity check
+        env:
+          EXPECTED_SHA256: ${{ secrets.EXPECTED_CERT_SHA256 }}
+        run: |
+          for apk in signed/*.apk; do
+            ACTUAL=$("$APKSIGNER" verify --print-certs "$apk" | grep SHA-256 | head -1 | awk '{print $NF}' | tr '[:upper:]' '[:lower:]')
+            echo "APK: $(basename $apk)"
+            echo "Actual: $ACTUAL"
+            if [ -n "$EXPECTED_SHA256" ]; then
+              EXP=$(echo "$EXPECTED_SHA256" | tr '[:upper:]' '[:lower:]')
+              if [ "$ACTUAL" != "$EXP" ]; then echo "ERROR"; exit 1; fi
+            fi
           done
 
       - name: Generate report
         run: |
           {
-            echo "Build Date: $(date -u)"
-            echo "Java: 11"
-            echo "Gradle: 6.9.4"
+            echo "Bitcoin Wallet v11 Build Report"
+            echo "Build Date (UTC): $(date -u)"
+            echo "Java: 17 (Temurin)"
+            echo "Gradle: 7.6.1"
+            echo "AGP: 7.x"
             echo "Commit: $(cat commit.txt)"
+            echo ""
+            cat out/raw-sha256.txt
+            echo ""
             sha256sum signed/*.apk
           } > report.txt
+          cat report.txt
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v6.0.0
@@ -123,3 +195,5 @@ jobs:
             keystore-info.txt
             out/raw-sha256.txt
             verify-*.txt
+          retention-days: 90
+          compression-level: 0
