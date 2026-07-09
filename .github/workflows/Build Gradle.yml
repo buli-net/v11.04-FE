@@ -12,7 +12,6 @@ jobs:
         run: |
           echo "=== RUNNER INFO ==="
           uname -a
-          lsb_release -a
           date -u
 
       - uses: actions/checkout@v5
@@ -30,16 +29,15 @@ jobs:
         with:
           cache-cleanup: never
 
-      # FIX 1: Java 17 cho AGP 7+
+      # Java 11 cho Gradle 6.9.4
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: '11'
 
       - name: Verify Java
         run: java -version
 
-      # FIX 2: Cài SDK 34 thay vì 28
       - name: Install Android SDK 34
         run: |
           export ANDROID_HOME=$HOME/android-sdk
@@ -56,13 +54,13 @@ jobs:
       - name: Create local.properties
         run: echo "sdk.dir=$ANDROID_HOME" > local.properties
 
-      # FIX 3: Gradle 7.6.1 thay vì 4.10.3 (protobuf cần >=5.6)
+      # FIX: Gradle 6.9.4 (vừa >=5.6 cho protobuf, vừa <7.0 cho project cũ)
       - name: Setup Gradle wrapper
         run: |
           if [ ! -f ./gradlew ]; then
-            wget -q https://services.gradle.org/distributions/gradle-7.6.1-bin.zip
-            unzip -q gradle-7.6.1-bin.zip
-            ./gradle-7.6.1/bin/gradle wrapper --gradle-version 7.6.1
+            wget -q https://services.gradle.org/distributions/gradle-6.9.4-bin.zip
+            unzip -q gradle-6.9.4-bin.zip
+            ./gradle-6.9.4/bin/gradle wrapper --gradle-version 6.9.4
           fi
           chmod +x gradlew
           ./gradlew --version
@@ -109,8 +107,8 @@ jobs:
         run: |
           {
             echo "Build Date: $(date -u)"
-            echo "Java: 17"
-            echo "Gradle: 7.6.1"
+            echo "Java: 11"
+            echo "Gradle: 6.9.4"
             echo "Commit: $(cat commit.txt)"
             sha256sum signed/*.apk
           } > report.txt
