@@ -56,10 +56,13 @@ jobs:
           sed -i 's/7.0/8.0/g' settings.gradle
           grep -n "Gradle" settings.gradle || true
 
-      - name: Patch build.gradle outputFileName
+      - name: Patch build.gradle - fix Value is null line 159
         run: |
-          sed -i 's|outputFileName = "../../" +|outputFileName = "bitcoin-wallet-" +|' wallet/build.gradle
-          sed -i 's|"\.\./\.\./" + // all outputs go to build/outputs/apk||' wallet/build.gradle
+          # Xóa toàn bộ block applicationVariants cũ (gây NullPointer)
+          sed -i '/applicationVariants.all/,/^    }/d' wallet/build.gradle
+          # Thêm lại block an toàn vào trước đóng android {
+          sed -i '/^android {/a \    applicationVariants.all { variant -> variant.outputs.all { output -> output.outputFileName = "bitcoin-wallet-${variant.name}.apk" } }' wallet/build.gradle
+          grep -A2 "applicationVariants" wallet/build.gradle
 
       - name: Install Android SDK 34
         run: |
@@ -81,7 +84,6 @@ jobs:
           find $ANDROID_HOME -name package.xml -exec sed -i 's/\.0<\/api-level>/<\/api-level>/g' {} \;
           find $ANDROID_HOME -name package.xml -exec sed -i '/extension-level/d' {} \;
           find $ANDROID_HOME -name package.xml -exec sed -i '/base-extension/d' {} \;
-          find $ANDROID_HOME -name package.xml -exec grep api-level {} \;
 
       - name: Verify SDK
         run: |
