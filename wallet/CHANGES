@@ -44,6 +44,11 @@ v11.04 mod by buli
      + // code line 41, 110
 
   - Add code file wallet/proguard.cfg line 126->137
+
+- implementation 'org.bouncycastle:bcprov-jdk18on:1.77'
+  - Create file wallet/src/wallet/java/org/bouncycastle/ ....[all file & foder]....
+  - Create file fake fix error wallet/src/wallet/java/javax/naming/....[all file & foder]...
+  - // line 27 file wallet/build.gradle
 ----------------------------------------------------------------------------------------
 
 + Active layout hide at file wallet/res/values/layouts.xml
