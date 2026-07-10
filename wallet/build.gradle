@@ -106,15 +106,6 @@ android {
 
     sourceSets {
         main {
-            java {
-                exclude '**/LDAP*.java'
-                exclude '**/X509LDAP*.java'
-            }
-        }
-    
-
-
-
             
             manifest.srcFile 'AndroidManifest.xml'
            // java.srcDirs = ['src']  
@@ -122,6 +113,16 @@ android {
             res.srcDirs = ['res']
             assets.srcDirs = ['assets']
             proto.srcDirs += ['src/wallet/proto']  // <-- clone bitcoinj
+      
+        
+        
+        java {
+                exclude '**/LDAP*.java'
+                exclude '**/X509LDAP*.java'
+            }
+        
+        
+        
         }
         Signet {
             res.srcDirs = ['res-signet']
