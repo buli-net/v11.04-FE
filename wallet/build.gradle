@@ -21,6 +21,8 @@ configurations.all {
 //end
 
 dependencies {
+    implementation 'javax.naming:jndi:1.2.1'
+
     
  ///implementation 'net.jcip:jcip-annotations:1.0' ///clone bitcoinj
     implementation 'com.google.protobuf:protobuf-java:3.21.12' /// clone bitcoinj
