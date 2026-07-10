@@ -1,7 +1,31 @@
 package javax.naming.directory;
 import javax.naming.*;
 public interface DirContext extends Context {
-    Attributes getAttributes(String name) throws NamingException;
-    NamingEnumeration<SearchResult> search(String name, String filter, SearchControls cons) throws NamingException;
-    NamingEnumeration<SearchResult> search(String name, String filterExpr, Object[] filterArgs, SearchControls cons) throws NamingException;
+    int ADD_ATTRIBUTE=1,REPLACE_ATTRIBUTE=2,REMOVE_ATTRIBUTE=3;
+    Attributes getAttributes(String n) throws NamingException;
+    Attributes getAttributes(String n,String[] ids) throws NamingException;
+    void modifyAttributes(String n,int op,Attributes a) throws NamingException;
+    void modifyAttributes(String n,ModificationItem[] m) throws NamingException;
+    void bind(String n,Object o,Attributes a) throws NamingException;
+    void rebind(String n,Object o,Attributes a) throws NamingException;
+    DirContext createSubcontext(String n,Attributes a) throws NamingException;
+    DirContext getSchema(String n) throws NamingException;
+    DirContext getSchemaClassDefinition(String n) throws NamingException;
+    NamingEnumeration<SearchResult> search(String n,Attributes m) throws NamingException;
+    NamingEnumeration<SearchResult> search(String n,Attributes m,String[] r) throws NamingException;
+    NamingEnumeration<SearchResult> search(String n,String f,SearchControls c) throws NamingException;
+    NamingEnumeration<SearchResult> search(String n,String f,Object[] a,SearchControls c) throws NamingException;
+    Attributes getAttributes(Name n) throws NamingException;
+    Attributes getAttributes(Name n,String[] ids) throws NamingException;
+    void modifyAttributes(Name n,int op,Attributes a) throws NamingException;
+    void modifyAttributes(Name n,ModificationItem[] m) throws NamingException;
+    void bind(Name n,Object o,Attributes a) throws NamingException;
+    void rebind(Name n,Object o,Attributes a) throws NamingException;
+    DirContext createSubcontext(Name n,Attributes a) throws NamingException;
+    DirContext getSchema(Name n) throws NamingException;
+    DirContext getSchemaClassDefinition(Name n) throws NamingException;
+    NamingEnumeration<SearchResult> search(Name n,Attributes m) throws NamingException;
+    NamingEnumeration<SearchResult> search(Name n,Attributes m,String[] r) throws NamingException;
+    NamingEnumeration<SearchResult> search(Name n,String f,SearchControls c) throws NamingException;
+    NamingEnumeration<SearchResult> search(Name n,String f,Object[] a,SearchControls c) throws NamingException;
 }
