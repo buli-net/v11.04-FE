@@ -8,6 +8,8 @@ public interface Context {
     String SECURITY_AUTHENTICATION = "java.naming.security.authentication";
     String SECURITY_PRINCIPAL = "java.naming.security.principal";
     String SECURITY_CREDENTIALS = "java.naming.security.credentials";
+    String BATCHSIZE = "java.naming.batchsize";
+    String REFERRAL = "java.naming.referral";
     Object lookup(String name) throws NamingException;
     void close() throws NamingException;
 }
