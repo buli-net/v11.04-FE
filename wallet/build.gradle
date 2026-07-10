@@ -111,7 +111,7 @@ android {
                 exclude '**/X509LDAP*.java'
             }
         }
-    }
+    
 
 
 
