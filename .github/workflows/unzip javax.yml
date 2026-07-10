@@ -1,0 +1,29 @@
+name: Unzip javax
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  unzip:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Unzip javax.zip
+        run: |
+          cd wallet/src/wallet/java/
+          unzip -o javax.zip -d javax
+          rm javax.zip
+
+      - name: Commit
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add .
+          git commit -m "Unzip javax.zip" || echo "No changes"
+          git push
