@@ -23,8 +23,8 @@ configurations.all {
 dependencies {
 
  ///implementation 'net.jcip:jcip-annotations:1.0' ///clone bitcoinj
-  //  implementation 'com.google.protobuf:protobuf-java:3.21.12' /// clone bitcoinj
-    implementation 'org.bouncycastle:bcprov-jdk18on:1.77'   /// clone bitcoinj
+    implementation 'com.google.protobuf:protobuf-java:3.21.12' /// clone bitcoinj
+    //implementation 'org.bouncycastle:bcprov-jdk18on:1.77'   /// clone bitcoinj
  // implementation 'androidx.annotation:annotation:1.10.0'
     implementation 'androidx.core:core:1.18.0'
     implementation 'androidx.activity:activity:1.13.0'
