@@ -1,7 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'androidsvgdrawable'
-  //  id 'com.google.protobuf' version '0.8.10' /// clone bitcoinj
+    id 'com.google.protobuf' version '0.8.10' /// clone bitcoinj
 }
 
 configurations {
