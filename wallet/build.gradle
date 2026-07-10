@@ -21,8 +21,6 @@ configurations.all {
 //end
 
 dependencies {
-
-implementation 'javax:javaee-api:8.0' // clone bouncycastle
     
  ///implementation 'net.jcip:jcip-annotations:1.0' ///clone bitcoinj
     implementation 'com.google.protobuf:protobuf-java:3.21.12' /// clone bitcoinj
