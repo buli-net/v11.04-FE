@@ -40,8 +40,8 @@ v11.04 mod by buli
   - Create file wallet/src/wallet/resources/...[all file & foder].....
 
   - Add & // code file wallet/build.gradle
-     + Add code line 4, 8, 14->21, 25->27, 55->69, 111, 114
-     + // code line 41, 110
+     + Add code line 4, 8, 14->21, 24, 25->27, 55->75, 120, 123
+     + // code line 25, 26, 27, 41, 119
 
   - Add code file wallet/proguard.cfg line 126->137
 
