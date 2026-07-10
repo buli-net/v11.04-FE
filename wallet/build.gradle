@@ -21,9 +21,7 @@ configurations.all {
 //end
 
 dependencies {
-    implementation 'javax.naming:jndi:1.2.1'
 
-    
  ///implementation 'net.jcip:jcip-annotations:1.0' ///clone bitcoinj
     implementation 'com.google.protobuf:protobuf-java:3.21.12' /// clone bitcoinj
    // implementation 'org.bouncycastle:bcprov-jdk18on:1.77'   /// clone bitcoinj
@@ -108,6 +106,16 @@ android {
 
     sourceSets {
         main {
+            java {
+                exclude '**/LDAP*.java'
+                exclude '**/X509LDAP*.java'
+            }
+        }
+    }
+
+
+
+            
             manifest.srcFile 'AndroidManifest.xml'
            // java.srcDirs = ['src']  
             java.srcDirs = ['src', 'src/wallet/java']  // clone bitcoinj
