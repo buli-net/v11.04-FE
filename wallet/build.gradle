@@ -24,8 +24,8 @@ dependencies {
 
  ///implementation 'net.jcip:jcip-annotations:1.0' ///clone bitcoinj
     implementation 'com.google.protobuf:protobuf-java:3.21.12' /// clone bitcoinj
-    //implementation 'org.bouncycastle:bcprov-jdk18on:1.77'   /// clone bitcoinj
- // implementation 'androidx.annotation:annotation:1.10.0'
+    implementation 'org.bouncycastle:bcprov-jdk18on:1.77'   /// clone bitcoinj
+  //  implementation 'androidx.annotation:annotation:1.10.0'
     implementation 'androidx.core:core:1.18.0'
     implementation 'androidx.activity:activity:1.13.0'
     implementation 'androidx.fragment:fragment:1.8.9'
@@ -39,7 +39,7 @@ dependencies {
     implementation "androidx.room:room-runtime:2.6.1"
     annotationProcessor "androidx.room:room-compiler:2.6.1"
   ///  implementation 'org.bitcoinj:bitcoinj-core:0.17.1'
-    implementation 'com.google.guava:guava:33.4.0-android'
+ //   implementation 'com.google.guava:guava:33.4.0-android'
    // implementation 'com.google.zxing:core:3.5.4'
     //noinspection GradleDependency
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
