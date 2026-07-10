@@ -115,14 +115,6 @@ android {
             proto.srcDirs += ['src/wallet/proto']  // <-- clone bitcoinj
       
         
-        
-        java {
-                exclude '**/LDAP*.java'
-                exclude '**/X509LDAP*.java'
-            }
-        
-        
-        
         }
         Signet {
             res.srcDirs = ['res-signet']
