@@ -19,24 +19,6 @@ configurations.all {
 }   
 
 //end
-//vendor guava
-task compileStubs(type: JavaCompile) {
-    source = fileTree(dir: 'src/compileOnly/java', include: '**/*.java')
-    classpath = files()
-    destinationDir = file("$buildDir/tmp/compileOnlyStubs")
-    options.compilerArgs += [
-        '--patch-module',
-        "jdk.unsupported=${file('src/compileOnly/java').absolutePath}"
-    ]
-}
-task stubsJar(type: Jar) {
-    dependsOn compileStubs
-    from "$buildDir/tmp/compileOnlyStubs"
-    archiveName = "stubs.jar"
-    destinationDir = file("$buildDir/tmp")
-}
-preBuild.dependsOn stubsJar
-//end
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar']) // vendor libs
