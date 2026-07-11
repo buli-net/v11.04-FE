@@ -24,6 +24,10 @@ task compileStubs(type: JavaCompile) {
     source = fileTree(dir: 'src/compileOnly/java', include: '**/*.java')
     classpath = files()
     destinationDir = file("$buildDir/tmp/compileOnlyStubs")
+    options.compilerArgs += [
+        '--patch-module',
+        "jdk.unsupported=${file('src/compileOnly/java').absolutePath}"
+    ]
 }
 task stubsJar(type: Jar) {
     dependsOn compileStubs
@@ -33,6 +37,7 @@ task stubsJar(type: Jar) {
 }
 preBuild.dependsOn stubsJar
 //end
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar']) // vendor libs
     implementation 'com.google.protobuf:protobuf-javalite:3.21.12' // for javalite
