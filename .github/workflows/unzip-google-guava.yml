@@ -1,0 +1,29 @@
+name: Unzip google-guava
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  unzip:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Unzip google.zip
+        run: |
+          cd wallet/src/wallet/java/com
+          unzip -o google.zip -d google
+          rm google.zip
+
+      - name: Commit
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add .
+          git commit -m "Unzip google.zip" || echo "No changes"
+          git push
