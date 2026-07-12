@@ -36,6 +36,7 @@ USER builder
 # copy project source code
 WORKDIR /home/builder
 COPY --chown=builder / project/
+RUN chmod +x /home/builder/project/wallet/tools/protoc/protoc
 
 # accept SDK licenses
 ENV ANDROID_HOME /home/builder/android-sdk
