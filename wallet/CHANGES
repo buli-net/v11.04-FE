@@ -53,8 +53,8 @@ v11.04 mod by buli
 - implementation 'com.google.protobuf:protobuf-javalite:3.21.12'
   - Create file wallet/libs/protobuf-javalite-3.21.12.jar
   - Create file wallet/bin/protoc
-  - // code line 24 file wallet/build.gradle
-  - Add code file wallet/build.gradle line 79->99
+  - // code line file wallet/build.gradle line 14
+  - Add code file wallet/build.gradle line 52, 79->99
   - Add code file build.Containerfile line 39
 
 - implementation 'com.google.guava:guava:33.4.0-android'
