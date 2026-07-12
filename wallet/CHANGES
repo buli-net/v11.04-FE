@@ -40,8 +40,8 @@ v11.04 mod by buli
   - Create file wallet/src/wallet/resources/...[all file & foder].....
 
   - Add & // code file wallet/build.gradle
-     + Add code line 4, 8, 14->21, 24, 25->27, 55->75, 120, 123, 124
-     + // code line 25, 26, 27, 41, 119
+     + Add code line 4, 8, 15->21, 24, 25->27, 55->76, 140, 143
+     + // code line 25, 26, 27, 41, 139
 
   - Add code file wallet/proguard.cfg line 126->137
 
@@ -54,7 +54,7 @@ v11.04 mod by buli
   - Create file wallet/libs/protobuf-javalite-3.21.12.jar
   - Create file wallet/bin/protoc
   - // code line file wallet/build.gradle line 14
-  - Add code file wallet/build.gradle line 52, 79->99
+  - Add code file wallet/build.gradle line 52, 78->98
   - Add code file build.Containerfile line 39
 
 - implementation 'com.google.guava:guava:33.4.0-android'
