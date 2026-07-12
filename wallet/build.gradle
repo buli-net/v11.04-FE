@@ -77,6 +77,25 @@ dependencies {
 */
 //end
 
+//vendor protobuf
+
+protobuf {
+    protoc {
+        path = "$projectDir/tools/protoc/protoc"
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                java {
+                    option 'lite'
+                }
+            }
+        }
+    }
+}
+
+//end
+
 android {
     compileSdkVersion 'android-34'
     buildToolsVersion '36.1.0'
