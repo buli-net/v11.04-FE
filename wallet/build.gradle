@@ -21,7 +21,6 @@ configurations.all {
 //end
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar']) // vendor libs
   ///  implementation 'com.google.protobuf:protobuf-javalite:3.21.12' // for javalite
  //implementation 'net.jcip:jcip-annotations:1.0' ///clone bitcoinj
    // implementation 'com.google.protobuf:protobuf-java:3.21.12' /// for java
@@ -50,7 +49,7 @@ dependencies {
    // implementation 'org.slf4j:slf4j-api:2.0.17'
     implementation 'com.github.tony19:logback-android:3.0.0' 
     testImplementation 'junit:junit:4.13.2'
-    
+    implementation fileTree(dir: 'libs', include: ['*.jar']) // vendor libs
 }
 
 // ---- PROTOBUF CONFIG - clone bitcoinj----
@@ -79,12 +78,31 @@ dependencies {
 
 //vendor protobuf
 
+/*protobuf {
+    protoc {
+        path = "$projectDir/src/wallet/proto/protoc/protoc"
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                java {
+                    option 'lite'
+                }
+            }
+        }
+    }
+}
+*/
+
 protobuf {
     protoc {
         path = "$projectDir/src/wallet/proto/protoc/protoc"
     }
     generateProtoTasks {
         all().each { task ->
+            task.doFirst {
+                file("$projectDir/src/wallet/proto/protoc/protoc").setExecutable(true)
+            }
             task.builtins {
                 java {
                     option 'lite'
