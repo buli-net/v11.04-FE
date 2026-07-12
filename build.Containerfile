@@ -24,7 +24,8 @@ RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
     --mount=target=/var/cache/apt,type=cache,sharing=locked \
     /bin/rm -f /etc/apt/apt.conf.d/docker-clean && \
     /usr/bin/apt-get update && \
-    /usr/bin/apt-get --yes --no-install-recommends install disorderfs openjdk-21-jdk-headless gradle sdkmanager && \
+  #  /usr/bin/apt-get --yes --no-install-recommends install disorderfs openjdk-21-jdk-headless gradle sdkmanager && \
+   /usr/bin/apt-get --yes --no-install-recommends install disorderfs openjdk-21-jdk-headless gradle sdkmanager protobuf-compiler && \
     /bin/ln -fs /usr/share/zoneinfo/CET /etc/localtime && \
     /usr/sbin/dpkg-reconfigure --frontend noninteractive tzdata && \
     /bin/ln -s /proc/self/mounts /etc/mtab && \
