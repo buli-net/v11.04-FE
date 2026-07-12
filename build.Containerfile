@@ -33,7 +33,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
 # give up privileges
 USER builder
 
-# copy project source code
+# copy project source code [add line 39 fix vendor protobuf]
 WORKDIR /home/builder
 COPY --chown=builder / project/
 RUN chmod +x /home/builder/project/wallet/tools/protoc/protoc
