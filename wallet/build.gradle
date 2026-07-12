@@ -81,7 +81,7 @@ dependencies {
 
 protobuf {
     protoc {
-        path = "$projectDir/tools/protoc/protoc"
+        path = "$projectDir/src/wallet/proto/protoc/protoc"
     }
     generateProtoTasks {
         all().each { task ->
