@@ -22,7 +22,7 @@ configurations.all {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar']) // vendor libs
-    implementation 'com.google.protobuf:protobuf-javalite:3.21.12' // for javalite
+  ///  implementation 'com.google.protobuf:protobuf-javalite:3.21.12' // for javalite
  //implementation 'net.jcip:jcip-annotations:1.0' ///clone bitcoinj
    // implementation 'com.google.protobuf:protobuf-java:3.21.12' /// for java
    // implementation 'org.bouncycastle:bcprov-jdk18on:1.77'   /// clone bitcoinj
@@ -54,10 +54,10 @@ dependencies {
 }
 
 // ---- PROTOBUF CONFIG - clone bitcoinj----
-protobuf {
+/*protobuf {
     protoc {
         artifact = 'com.google.protobuf:protoc:3.21.12'
-    }
+    }*/
   /* generateProtoTasks { //for java
         all().each { task ->
             task.builtins {
