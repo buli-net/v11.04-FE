@@ -1,7 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'androidsvgdrawable'
-   id 'com.google.protobuf' version '0.8.10' /// clone bitcoinj
+ //  id 'com.google.protobuf' version '0.8.10' /// clone bitcoinj
 }
 
 configurations {
@@ -54,10 +54,10 @@ dependencies {
 }
 
 // ---- PROTOBUF CONFIG - clone bitcoinj----
-protobuf {
+/*protobuf {
     protoc {
         artifact = 'com.google.protobuf:protoc:3.21.12'
-    }
+    }*/
   /* generateProtoTasks { //for java
         all().each { task ->
             task.builtins {
@@ -66,7 +66,7 @@ protobuf {
         }
     }
 } */
-    generateProtoTasks { //for javalite
+/*    generateProtoTasks { //for javalite
         all().each { task ->
     task.builtins {
   java { option 'lite' }
@@ -74,7 +74,7 @@ protobuf {
         }
     }
 }
-
+*/
 //end
 
 android {
