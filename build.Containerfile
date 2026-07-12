@@ -36,7 +36,7 @@ USER builder
 # copy project source code [add line 39 fix vendor protobuf]
 WORKDIR /home/builder
 COPY --chown=builder / project/
-RUN chmod +x /home/builder/project/wallet/tools/protoc/protoc
+RUN chmod +x /home/builder/project/wallet/src/wallet/proto/protoc/protoc
 
 # accept SDK licenses
 ENV ANDROID_HOME /home/builder/android-sdk
