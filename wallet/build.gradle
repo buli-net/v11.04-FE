@@ -80,12 +80,12 @@ dependencies {
 
 protobuf {
     protoc {
-        path = "$projectDir/src/wallet/proto/protoc/protoc"
+        path = "$projectDir/bin/protoc"
     }
     generateProtoTasks {
         all().each { task ->
             task.doFirst {
-                file("$projectDir/src/wallet/proto/protoc/protoc").setExecutable(true)
+                file("$projectDir/bin/protoc").setExecutable(true)
             }
             task.builtins {
                 java {
