@@ -49,6 +49,12 @@ v11.04 mod by buli
   - Create file wallet/src/wallet/java/org/bouncycastle/ ....[all file & foder]....
   - Create file fake fix error wallet/src/wallet/java/javax/naming/....[all file & foder]...
   - // line 27 file wallet/build.gradle
+
+- implementation 'com.google.protobuf:protobuf-javalite:3.21.12'
+  - Create file wallet/libs/protobuf-javalite-3.21.12.jar
+  - Create file wallet/bin/protoc
+  - // code line 24 file wallet/build.gradle
+  - Add code file wallet/build.gradle line 
 ----------------------------------------------------------------------------------------
 
 + Active layout hide at file wallet/res/values/layouts.xml
