@@ -78,22 +78,6 @@ dependencies {
 
 //vendor protobuf
 
-/*protobuf {
-    protoc {
-        path = "$projectDir/src/wallet/proto/protoc/protoc"
-    }
-    generateProtoTasks {
-        all().each { task ->
-            task.builtins {
-                java {
-                    option 'lite'
-                }
-            }
-        }
-    }
-}
-*/
-
 protobuf {
     protoc {
         path = "$projectDir/src/wallet/proto/protoc/protoc"
