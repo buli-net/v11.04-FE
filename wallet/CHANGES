@@ -54,7 +54,7 @@ v11.04 mod by buli
   - Create file wallet/libs/protobuf-javalite-3.21.12.jar
   - Create file wallet/bin/protoc
   - // code line 24 file wallet/build.gradle
-  - Add code file wallet/build.gradle line 
+  - Add code file wallet/build.gradle line 79->99
 ----------------------------------------------------------------------------------------
 
 + Active layout hide at file wallet/res/values/layouts.xml
