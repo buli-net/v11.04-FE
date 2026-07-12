@@ -55,7 +55,19 @@ v11.04 mod by buli
   - Create file wallet/bin/protoc
   - // code line 24 file wallet/build.gradle
   - Add code file wallet/build.gradle line 79->99
-----------------------------------------------------------------------------------------
+  - Add code file build.Containerfile line 39
+
+- implementation 'com.google.guava:guava:33.4.0-android'
+  - Create file wallet/libs/...
+. wallet/libs/checker-qual-3.43.0.jar
+. wallet/libs/error_prone_annotations-2.36.0.jar
+. wallet/libs/failureaccess-1.0.3.jar
+. wallet/libs/guava-33.6.0-android.jar
+. wallet/libs/j2objc-annotations-3.0.0.jar
+. wallet/libs/jsr305-3.0.2.jar
+. wallet/libs/protobuf-javalite-3.21.12.jar
+
+---------------------------------------------------------------------------------------
 
 + Active layout hide at file wallet/res/values/layouts.xml
 
