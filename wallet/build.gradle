@@ -121,7 +121,7 @@ android {
             res.srcDirs = ['res']
             assets.srcDirs = ['assets']
             proto.srcDirs += ['src/wallet/proto']  // <-- clone bitcoinj
-            resources.srcDirs = ['src/wallet/resources'] //clone bitcoinj
+            
             
         }
         Signet {
