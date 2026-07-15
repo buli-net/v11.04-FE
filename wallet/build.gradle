@@ -211,11 +211,4 @@ task svgToPngMipmap(type: fr.avianey.androidsvgdrawable.gradle.SvgDrawableTask) 
 
 
 
-// clone activity
 
-/*configurations.all {
-    resolutionStrategy {
-        force 'androidx.activity:activity:1.13.0'
-    }
-}
-*/
