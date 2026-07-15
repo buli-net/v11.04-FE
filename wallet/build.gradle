@@ -19,8 +19,8 @@ configurations.all {
 }   
 
 //end
-
 dependencies {
+    implementation 'androidx.navigationevent:navigationevent:1.0.0'// clone activity 1.13.0
   //  implementation 'com.google.protobuf:protobuf-javalite:3.21.12' // for javalite
  //implementation 'net.jcip:jcip-annotations:1.0' ///clone bitcoinj
    // implementation 'com.google.protobuf:protobuf-java:3.21.12' /// for java
