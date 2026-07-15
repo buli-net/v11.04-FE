@@ -4,7 +4,7 @@ plugins {
     id 'com.google.protobuf' version '0.8.10' /// clone bitcoinj
 }
 configurations {
-    all*.exclude group: 'androidx.navigationevent', module: 'navigationevent' // clone navigati
+    
     all*.exclude group: 'androidx.activity', module: 'activity' // clone activity
     all*.exclude group: 'com.google.guava', module: 'listenablefuture' ///clone bitcoinj
     all*.exclude group: 'androidx.viewpager', module: 'viewpager'
