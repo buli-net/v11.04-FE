@@ -70,7 +70,7 @@ v11.04 mod by buli
 - implementation 'androidx.core:core:1.18.0'
   - // code line file wallet/build.gradle // line 29
   - Add line file wallet/build.gradle line 13
-  - Create file 
+  - Create file wallet/libs/core-1.18.0.aar
 ---------------------------------------------------------------------------------------
 
 + Active layout hide at file wallet/res/values/layouts.xml
