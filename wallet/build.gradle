@@ -49,7 +49,7 @@ dependencies {
    // implementation 'org.slf4j:slf4j-api:2.0.17'
     implementation 'com.github.tony19:logback-android:3.0.0' 
     testImplementation 'junit:junit:4.13.2'
-    implementation fileTree(dir: 'libs', include: ['*.jar']) // vendor libs
+    implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar']) // vendor libs
 }
 
 // ---- PROTOBUF CONFIG - clone bitcoinj----
