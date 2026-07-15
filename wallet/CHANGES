@@ -11,7 +11,7 @@ v11.04 mod by buli
    - Create file wallet/src/wallet/java/com/google/zxing/ ..[all file & foder]....
 
 - implementation 'org.slf4j:slf4j-api:2.0.17'
-   - File wallet/build.gradle // line 49. add code line 12
+   - File wallet/build.gradle // line 49
    - Create file wallet/src/wallet/java/org/slf4j/ ....[all file & foder]....
 
 - implementation 'androidx.annotation:annotation:1.10.0'
