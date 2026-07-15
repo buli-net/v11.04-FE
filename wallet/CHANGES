@@ -71,6 +71,11 @@ v11.04 mod by buli
   - // code line file wallet/build.gradle // line 29
   - Add line file wallet/build.gradle line 13
   - Create file wallet/libs/core-1.18.0.aar
+  - Add code file wallet/proguard.cfg line 140->146
+
+- implementation 'androidx.activity:activity:1.13.0'
+  - // file wallet/build.gradle line 30
+  - Create file wallet/libs/activity-1.13.0.aar
 ---------------------------------------------------------------------------------------
 
 + Active layout hide at file wallet/res/values/layouts.xml
