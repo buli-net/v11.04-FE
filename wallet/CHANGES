@@ -53,7 +53,7 @@ v11.04 mod by buli
 - implementation 'com.google.protobuf:protobuf-javalite:3.21.12'
   - Create file wallet/libs/protobuf-javalite-3.21.12.jar
   - Create file wallet/bin/protoc
-  - // code line file wallet/build.gradle line 14
+  - // code line file wallet/build.gradle line 24
   - Add code file wallet/build.gradle line 52, 78->98
   - Add code file build.Containerfile line 39
 
@@ -67,6 +67,10 @@ v11.04 mod by buli
 . wallet/libs/jsr305-3.0.2.jar
 . wallet/libs/protobuf-javalite-3.21.12.jar
 
+- implementation 'androidx.core:core:1.18.0'
+  - // code line file wallet/build.gradle // line 29
+  - Add line file wallet/build.gradle line 13
+  - Create file 
 ---------------------------------------------------------------------------------------
 
 + Active layout hide at file wallet/res/values/layouts.xml
