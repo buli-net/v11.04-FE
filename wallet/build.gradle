@@ -11,15 +11,15 @@ configurations {
     all*.exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
     all*.exclude group: 'androidx.core', module: 'core' // clone core:core
     
-
+all*.exclude group: 'androidx.annotation'
 
 
     
 }
-configurations.all { //clone bitcoinj
+/*configurations.all { //clone bitcoinj
     exclude group: 'androidx.annotation'
-}   
-//end
+}   */
+
 dependencies {
  
   //  implementation 'com.google.protobuf:protobuf-javalite:3.21.12' // for javalite
