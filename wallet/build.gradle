@@ -4,7 +4,6 @@ plugins {
     id 'com.google.protobuf' version '0.8.10' /// clone bitcoinj
 }
 configurations {
-    
     all*.exclude group: 'androidx.activity', module: 'activity' // clone activity
     all*.exclude group: 'com.google.guava', module: 'listenablefuture' ///clone bitcoinj
     all*.exclude group: 'androidx.viewpager', module: 'viewpager'
@@ -14,6 +13,7 @@ configurations {
     all*.exclude group: 'androidx.lifecycle', module: 'lifecycle-livedata'
     all*.exclude group: 'androidx.lifecycle', module: 'lifecycle-livedata-core'
     all*.exclude group: 'androidx.lifecycle', module: 'lifecycle-viewmodel'
+    all*.exclude group: 'androidx.fragment', module: 'fragment'
 }
 configurations.all { //clone bitcoinj
     exclude group: 'androidx.annotation'
