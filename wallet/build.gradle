@@ -19,7 +19,6 @@ configurations {
 configurations.all { //clone bitcoinj
     exclude group: 'androidx.annotation'
 }   
-
 dependencies {
  
   //  implementation 'com.google.protobuf:protobuf-javalite:3.21.12' // for javalite
