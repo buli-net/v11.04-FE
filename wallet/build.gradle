@@ -12,7 +12,7 @@ configurations {
     all*.exclude group: 'androidx.core', module: 'core' // clone core:core
     all*.exclude group: 'androidx.lifecycle', module: 'lifecycle-livedata'
    all*.exclude group: 'androidx.lifecycle', module: 'lifecycle-livedata-core'
-   all*.exclude group: 'androidx.lifecycle', module: 'lifecycle-viewmodel'
+//   all*.exclude group: 'androidx.lifecycle', module: 'lifecycle-viewmodel'
  //   all*.exclude group: 'androidx.fragment', module: 'fragment'
 }
 configurations.all { //clone bitcoinj
