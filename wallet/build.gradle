@@ -210,13 +210,4 @@ task svgToPngMipmap(type: fr.avianey.androidsvgdrawable.gradle.SvgDrawableTask) 
 }
 
 
-configurations.all {
-    resolutionStrategy.force 'androidx.fragment:fragment:1.6.2'
-    resolutionStrategy.force 'androidx.lifecycle:lifecycle-livedata:2.7.0'
-    resolutionStrategy.force 'androidx.lifecycle:lifecycle-livedata-core:2.7.0'
-    resolutionStrategy.force 'androidx.lifecycle:lifecycle-viewmodel:2.6.2'
-    
-    // chỉ loại fragment cũ, giữ lại 1.6.2 trong libs
-    // -> không exclude fragment ở đây nếu mày dùng fileTree, mà dùng force ở trên
-}
-
+ 
