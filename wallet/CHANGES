@@ -75,8 +75,8 @@ v11.04 mod by buli
 
 - implementation 'androidx.activity:activity:1.13.0'
   - // file wallet/build.gradle line 30
-  - Add code file wallet/build.gradle line 8, 23
-  - Create file wallet/libs/activity-1.13.0.aar
+  - Add code file wallet/build.gradle line 8
+  - Create file wallet/libs/activity-1.8.2.aar
   
 ---------------------------------------------------------------------------------------
 
