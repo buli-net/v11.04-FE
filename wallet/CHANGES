@@ -137,10 +137,10 @@ v11.04 mod by buli
 + Fix theme ui setting bug light/dark
 
 - wallet/AndroidManifest.xml [ add line 195, <!-- line 196->197 --> ]
-- wallet/res/values-night/styles.xml [ add code line 56->87 ]
-- wallet/res/values/styles.xml [ add code line 130->161 ]
-- wallet/res/values/colors.xml [ add code line 20 --> 22 ]
-- wallet/res/values-night/colors.xml [ add code line 11-->13 ]
+- wallet/res/values-night/styles.xml [ add code line 56->102 ]
+- wallet/res/values/styles.xml [ add code line 130->178 ]
+
+- Create file wallet/res/values-land/styles.xml
 
 ------------------------------------------------------------------
 
